@@ -1,0 +1,44 @@
+{
+  "name": "@qcanary/agent",
+  "version": "0.1.0",
+  "description": "Lightweight BullMQ job queue monitoring agent for Qcanary",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "bullmq",
+    "queue",
+    "monitoring",
+    "observability",
+    "job-queue"
+  ],
+  "author": "Qcanary",
+  "license": "MIT",
+  "peerDependencies": {
+    "bullmq": ">=4.0.0",
+    "ioredis": ">=5.0.0"
+  },
+  "devDependencies": {
+    "bullmq": "^5.34.0",
+    "ioredis": "^5.4.0",
+    "rimraf": "^6.0.0",
+    "typescript": "^5.7.0"
+  }
+}
