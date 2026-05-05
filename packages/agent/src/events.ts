@@ -6,14 +6,19 @@
  * objects. Each captured event is forwarded to a callback (typically
  * the transport layer's buffer).
  *
+ * When a job is addressable by ID, we optionally call `queue.getJob` to enrich
+ * jobName, duration, attempts, and (if includePayload) job data — without
+ * blocking the event loop (async continuation).
+ *
  * AGENT RULES enforced here:
  *  #1 — Never crash the host app: all listener callbacks wrapped in try/catch
- *  #3 — Never block the event loop: all async, uses QueueEvents' native stream
+ *  #2 — Never read job payloads by default; only when includePayload is true
+ *  #3 — Never block the event loop: getJob is async; handlers return immediately
  *  #6 — TypeScript strict: zero `any` types
  */
 
 import { QueueEvents } from 'bullmq';
-import type { Queue } from 'bullmq';
+import type { Job, Queue } from 'bullmq';
 import type { ConnectionOptions } from 'bullmq';
 import type {
   JobEvent,
@@ -33,6 +38,12 @@ export interface EventListenerOptions {
   /** Environment tag attached to every event */
   environment: string;
 
+  /**
+   * When true, each JobEvent may include the job's `data` as `payload`.
+   * @default false
+   */
+  includePayload: boolean;
+
   /** Optional Redis connection options for QueueEvents instances */
   connection?: ConnectionOptions;
 
@@ -46,12 +57,14 @@ export interface EventListenerOptions {
 export class EventListener {
   private readonly managed: ManagedQueueEvents[] = [];
   private readonly environment: string;
+  private readonly includePayload: boolean;
   private readonly onEvent: QueueEventCallback;
   private readonly onError: (error: Error) => void;
   private stopped = false;
 
   constructor(private readonly options: EventListenerOptions) {
     this.environment = options.environment;
+    this.includePayload = options.includePayload;
     this.onEvent = options.onEvent;
     this.onError = options.onError;
   }
@@ -72,14 +85,12 @@ export class EventListener {
 
         const queueEvents = new QueueEvents(queueName, {
           connection,
-          // Prefix must match the queue's prefix for events to be captured
           ...(queue.opts?.prefix ? { prefix: queue.opts.prefix } : {}),
         });
 
-        this.attachListeners(queueEvents, queueName);
+        this.attachListeners(queueEvents, queue);
         this.managed.push({ queueName, queueEvents });
       } catch (error) {
-        // Agent rule #1: never crash the host app
         this.safeOnError(error);
       }
     }
@@ -96,9 +107,10 @@ export class EventListener {
       try {
         await queueEvents.close();
       } catch (error) {
-        // Swallow close errors — agent rule #1
         this.safeOnError(
-          new Error(`Failed to close QueueEvents for "${queueName}": ${String(error)}`),
+          new Error(
+            `Failed to close QueueEvents for "${queueName}": ${String(error)}`,
+          ),
         );
       }
     });
@@ -111,28 +123,15 @@ export class EventListener {
   // Connection resolution
   // -------------------------------------------------------------------------
 
-  /**
-   * Resolve the Redis connection for QueueEvents.
-   *
-   * Priority:
-   *   1. Explicitly provided connection in constructor options
-   *   2. Duplicated from the Queue instance's existing connection
-   *
-   * QueueEvents needs its own dedicated Redis connection (BullMQ requirement).
-   */
   private resolveConnection(queue: Queue): ConnectionOptions {
-    // If the user explicitly provided connection options, use those
     if (this.options.connection) {
       return this.options.connection;
     }
 
-    // Attempt to extract connection opts from the Queue instance.
-    // BullMQ's Queue stores them in opts.connection.
     if (queue.opts?.connection) {
       return queue.opts.connection as ConnectionOptions;
     }
 
-    // Fallback: assume localhost Redis (common in development)
     return {
       host: '127.0.0.1',
       port: 6379,
@@ -143,81 +142,103 @@ export class EventListener {
   // Event listeners — all 7 event types
   // -------------------------------------------------------------------------
 
-  private attachListeners(queueEvents: QueueEvents, queueName: string): void {
+  private attachListeners(queueEvents: QueueEvents, queue: Queue): void {
+    const queueName = queue.name;
+
     // ----- completed -----
     queueEvents.on('completed', (args, _id) => {
-      this.safeEmit({
+      const jobId = args.jobId;
+      void this.withOptionalJob(queue, jobId, (job) => ({
         queueName,
-        jobId: args.jobId,
+        jobId,
+        jobName: job?.name,
         eventType: 'completed',
         status: 'completed',
+        durationMs: computeDurationMs(job),
         environment: this.environment,
         timestamp: nowISO(),
-      });
+        ...spreadPayload(this.includePayload, job),
+      }));
     });
 
     // ----- failed -----
     queueEvents.on('failed', (args, _id) => {
+      const jobId = args.jobId;
       const { message, stack } = extractErrorInfo(args.failedReason);
-      this.safeEmit({
+      void this.withOptionalJob(queue, jobId, (job) => ({
         queueName,
-        jobId: args.jobId,
+        jobId,
+        jobName: job?.name,
         eventType: 'failed',
         status: 'failed',
         errorMessage: message,
         errorStack: stack,
+        attempts: job?.attemptsMade,
         environment: this.environment,
         timestamp: nowISO(),
-      });
+        ...spreadPayload(this.includePayload, job),
+      }));
     });
 
     // ----- stalled -----
     queueEvents.on('stalled', (args, _id) => {
-      this.safeEmit({
+      const jobId = args.jobId;
+      void this.withOptionalJob(queue, jobId, (job) => ({
         queueName,
-        jobId: args.jobId,
+        jobId,
+        jobName: job?.name,
         eventType: 'stalled',
         status: 'stalled',
         environment: this.environment,
         timestamp: nowISO(),
-      });
+        ...spreadPayload(this.includePayload, job),
+      }));
     });
 
     // ----- delayed -----
     queueEvents.on('delayed', (args, _id) => {
-      this.safeEmit({
+      const jobId = args.jobId;
+      void this.withOptionalJob(queue, jobId, (job) => ({
         queueName,
-        jobId: args.jobId,
+        jobId,
+        jobName: job?.name,
         eventType: 'delayed',
         status: 'delayed',
         delayMs: args.delay,
         environment: this.environment,
         timestamp: nowISO(),
-      });
+        ...spreadPayload(this.includePayload, job),
+      }));
     });
 
     // ----- active -----
     queueEvents.on('active', (args, _id) => {
-      this.safeEmit({
+      const jobId = args.jobId;
+      void this.withOptionalJob(queue, jobId, (job) => ({
         queueName,
-        jobId: args.jobId,
+        jobId,
+        jobName: job?.name,
         eventType: 'active',
         status: 'active',
         environment: this.environment,
         timestamp: nowISO(),
-      });
+        ...spreadPayload(this.includePayload, job),
+      }));
     });
 
     // ----- waiting -----
     queueEvents.on('waiting', (args, _id) => {
-      this.safeEmit({
+      const jobId = args.jobId;
+      void this.withOptionalJob(queue, jobId, (job) => ({
         queueName,
-        jobId: args.jobId,
+        jobId,
+        jobName: job?.name,
         eventType: 'waiting',
         status: 'waiting',
         environment: this.environment,
         timestamp: nowISO(),
-      });
+        ...spreadPayload(this.includePayload, job),
+      }));
     });
 
     // ----- drained -----
@@ -238,14 +259,35 @@ export class EventListener {
     });
   }
 
+  /**
+   * Fetches the job when possible so we can enrich name, metrics, and payload.
+   * On failure, emits a best-effort event with whatever we know from the event args alone.
+   */
+  private async withOptionalJob(
+    queue: Queue,
+    jobId: string,
+    build: (job: Job | undefined) => JobEvent,
+  ): Promise<void> {
+    try {
+      const job = await queue.getJob(jobId);
+      this.safeEmit(build(job ?? undefined));
+    } catch {
+      try {
+        this.safeEmit(build(undefined));
+      } catch (error) {
+        this.safeOnError(
+          error instanceof Error
+            ? error
+            : new Error(String(error)),
+        );
+      }
+    }
+  }
+
   // -------------------------------------------------------------------------
   // Safe wrappers — agent rule #1
   // -------------------------------------------------------------------------
 
-  /**
-   * Safely emit a JobEvent to the callback.
-   * If the callback throws, the error is swallowed and reported via onError.
-   */
   private safeEmit(event: JobEvent): void {
     if (this.stopped) return;
 
@@ -260,17 +302,33 @@ export class EventListener {
     }
   }
 
-  /**
-   * Safely call the error handler without ever throwing.
-   */
   private safeOnError(error: unknown): void {
     try {
       const err =
         error instanceof Error ? error : new Error(String(error));
       this.onError(err);
     } catch {
-      // If even the error handler throws, silently swallow.
       // Agent rule #1 is absolute.
     }
   }
+}
+
+function computeDurationMs(job: Job | undefined): number | undefined {
+  if (!job) return undefined;
+  const start = job.processedOn;
+  const end = job.finishedOn;
+  if (typeof start === 'number' && typeof end === 'number') {
+    return Math.max(0, end - start);
+  }
+  return undefined;
+}
+
+function spreadPayload(
+  includePayload: boolean,
+  job: Job | undefined,
+): { payload?: unknown } {
+  if (includePayload && job) {
+    return { payload: job.data };
+  }
+  return {};
 }
