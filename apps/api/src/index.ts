@@ -9,6 +9,7 @@ import { ingestRouter } from './routes/ingest';
 import { projectsRouter } from './routes/projects';
 import { queuesRouter } from './routes/queues';
 import { alertsRouter } from './routes/alerts';
+import { billingRouter } from './routes/billing';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -17,6 +18,7 @@ const PORT = process.env.PORT || 4000;
 app.use(helmet());
 app.use(cors());
 app.use(morgan('short'));
+app.use('/v1/billing', billingRouter);
 app.use(express.json({ limit: '1mb' }));
 
 // ── Health Check ───────────────────────────────────────────
@@ -47,7 +49,6 @@ app.use('/v1/ingest', ingestRouter);
 app.use('/v1/projects', projectsRouter);
 app.use('/v1/projects', queuesRouter);
 app.use('/v1/projects', alertsRouter);
-// app.use('/v1/billing', billingRouter);
 
 // ── 404 handler ────────────────────────────────────────────
 app.use((_req, res) => {

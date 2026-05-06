@@ -3,6 +3,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { ApiKeyInsert, ProjectInsert } from '../types/database';
+import { enforceProjectLimit } from '../middleware/planLimits';
 
 const router = express.Router();
 
@@ -82,7 +83,7 @@ function createPlainApiKey(): { plainKey: string; keyPrefix: string; keyHash: st
   return { plainKey, keyPrefix, keyHash };
 }
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', enforceProjectLimit, async (req: Request, res: Response) => {
   const scopedReq = req as TeamScopedRequest;
   const teamId = requireTeamContext(scopedReq, res);
 

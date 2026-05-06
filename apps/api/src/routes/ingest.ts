@@ -11,6 +11,7 @@ import type { Database, JobEventInsert } from '../types/database';
 import type { AuthenticatedRequest } from '../middleware/auth';
 import { validateApiKey } from '../middleware/auth';
 import { ingestRateLimit } from '../middleware/rateLimit';
+import { enforceDailyEventLimitForProject } from '../middleware/planLimits';
 
 interface IngestEventPayload {
   queueName: string;
@@ -70,6 +71,18 @@ router.post(
     }
 
     const events = parseResult.value.events;
+
+    const planLimit = await enforceDailyEventLimitForProject(projectId, events.length);
+    if (!planLimit.allowed) {
+      res.status(403).json({
+        success: false,
+        error: {
+          code: planLimit.code ?? 'PLAN_LIMIT_EXCEEDED',
+          message: planLimit.message ?? 'Plan limit exceeded',
+        },
+      });
+      return;
+    }
 
     res.status(200).json({
       success: true,
