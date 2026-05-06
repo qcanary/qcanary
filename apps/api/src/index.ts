@@ -7,6 +7,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { ingestRouter } from './routes/ingest';
 import { projectsRouter } from './routes/projects';
+import { queuesRouter } from './routes/queues';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -43,7 +44,7 @@ app.get('/v1/health', (_req, res) => {
 // ── Routes ─────────────────────────────────────────────────
 app.use('/v1/ingest', ingestRouter);
 app.use('/v1/projects', projectsRouter);
-// app.use('/v1/queues', queuesRouter);
+app.use('/v1/projects', queuesRouter);
 // app.use('/v1/alerts', alertsRouter);
 // app.use('/v1/billing', billingRouter);
 
