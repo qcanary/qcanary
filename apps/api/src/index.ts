@@ -10,6 +10,8 @@ import { projectsRouter } from './routes/projects';
 import { queuesRouter } from './routes/queues';
 import { alertsRouter } from './routes/alerts';
 import { billingRouter } from './routes/billing';
+import { clerkMiddleware } from '@clerk/express';
+import { requireDashboardAuth } from './middleware/dashboardAuth';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -20,6 +22,7 @@ app.use(cors());
 app.use(morgan('short'));
 app.use('/v1/billing', billingRouter);
 app.use(express.json({ limit: '1mb' }));
+app.use(clerkMiddleware());
 
 // ── Health Check ───────────────────────────────────────────
 app.get('/health', (_req, res) => {
@@ -46,9 +49,9 @@ app.get('/v1/health', (_req, res) => {
 
 // ── Routes ─────────────────────────────────────────────────
 app.use('/v1/ingest', ingestRouter);
-app.use('/v1/projects', projectsRouter);
-app.use('/v1/projects', queuesRouter);
-app.use('/v1/projects', alertsRouter);
+app.use('/v1/projects', requireDashboardAuth, projectsRouter);
+app.use('/v1/projects', requireDashboardAuth, queuesRouter);
+app.use('/v1/projects', requireDashboardAuth, alertsRouter);
 
 // ── 404 handler ────────────────────────────────────────────
 app.use((_req, res) => {

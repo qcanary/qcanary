@@ -1,14 +1,11 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
+import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
 const router = express.Router();
 
 type Period = '24h' | '7d' | '30d';
-
-interface TeamScopedRequest extends Request {
-  teamId?: string;
-}
 
 interface ProjectOwnershipRecord {
   id: string;
@@ -54,16 +51,12 @@ function errorResponse(
   });
 }
 
-function requireTeamContext(req: TeamScopedRequest, res: Response): string | null {
-  const teamIdHeader = req.header('x-team-id');
-  const teamId = typeof teamIdHeader === 'string' ? teamIdHeader.trim() : '';
-
+function requireTeamContext(req: DashboardAuthedRequest, res: Response): string | null {
+  const teamId = typeof req.teamId === 'string' ? req.teamId : '';
   if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Missing x-team-id header');
+    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
     return null;
   }
-
-  req.teamId = teamId;
   return teamId;
 }
 
@@ -135,8 +128,7 @@ async function ensureProjectOwnership(
 }
 
 router.get('/:id/queues', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -249,8 +241,7 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
 });
 
 router.get('/:id/queues/:name/metrics', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -333,8 +324,7 @@ router.get('/:id/queues/:name/metrics', async (req: Request, res: Response) => {
 });
 
 router.get('/:id/queues/:name/jobs', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -432,8 +422,7 @@ router.get('/:id/queues/:name/jobs', async (req: Request, res: Response) => {
 });
 
 router.get('/:id/queues/:name/jobs/:jobId', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }

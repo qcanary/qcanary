@@ -1,6 +1,6 @@
 /**
  * /v1/projects/:id/alerts — Alert rules CRUD + test delivery
- * Team scoping: x-team-id (Session 10)
+ * Team scoping: Clerk JWT-derived org -> teams.clerk_org_id
  */
 
 import express from 'express';
@@ -8,6 +8,7 @@ import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import { buildTestMessage, deliverEmail, deliverSlack, escapeHtml } from '../lib/alertDelivery';
 import type { AlertRuleInsert, AlertRuleRow, AlertRuleUpdate } from '../types/database';
+import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
 const router = express.Router();
 
@@ -19,10 +20,6 @@ const CONDITION_TYPES = new Set([
 ]);
 
 const CHANNELS = new Set(['slack', 'email']);
-
-interface TeamScopedRequest extends Request {
-  teamId?: string;
-}
 
 interface ProjectOwnershipRecord {
   id: string;
@@ -40,16 +37,12 @@ function errorResponse(
   });
 }
 
-function requireTeamContext(req: TeamScopedRequest, res: Response): string | null {
-  const teamIdHeader = req.header('x-team-id');
-  const teamId = typeof teamIdHeader === 'string' ? teamIdHeader.trim() : '';
-
+function requireTeamContext(req: DashboardAuthedRequest, res: Response): string | null {
+  const teamId = typeof req.teamId === 'string' ? req.teamId : '';
   if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Missing x-team-id header');
+    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
     return null;
   }
-
-  req.teamId = teamId;
   return teamId;
 }
 
@@ -302,8 +295,7 @@ function parsePatchBody(body: unknown): { ok: true; value: AlertRuleUpdate } | {
 }
 
 router.post('/:id/alerts/test', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -378,8 +370,7 @@ router.post('/:id/alerts/test', async (req: Request, res: Response) => {
 });
 
 router.get('/:id/alerts', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -420,8 +411,7 @@ router.get('/:id/alerts', async (req: Request, res: Response) => {
 });
 
 router.post('/:id/alerts', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -473,8 +463,7 @@ router.post('/:id/alerts', async (req: Request, res: Response) => {
 });
 
 router.get('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -522,8 +511,7 @@ router.get('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
 });
 
 router.patch('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -578,8 +566,7 @@ router.patch('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
 });
 
 router.delete('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }

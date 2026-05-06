@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
+import type { DashboardAuthedRequest } from './dashboardAuth';
 
 type PlanName = 'free' | 'starter' | 'pro';
 
@@ -69,11 +70,10 @@ export async function enforceProjectLimit(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const teamIdHeader = req.header('x-team-id');
-  const teamId = typeof teamIdHeader === 'string' ? teamIdHeader.trim() : '';
+  const teamId = typeof (req as DashboardAuthedRequest).teamId === 'string' ? (req as DashboardAuthedRequest).teamId : '';
 
   if (!teamId) {
-    errorResponse(res, 'UNAUTHORIZED', 'Missing x-team-id header', 401);
+    errorResponse(res, 'UNAUTHORIZED', 'Unauthorized', 401);
     return;
   }
 

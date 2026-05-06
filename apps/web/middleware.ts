@@ -1,11 +1,17 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-/**
- * Clerk auth middleware for Next.js
- * Uses clerkMiddleware() from Clerk v7.
- * Will be expanded in Session 12 with public/protected route config.
- */
-export default clerkMiddleware();
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/(marketing)(.*)",
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isPublicRoute(req)) {
+    return;
+  }
+
+  await auth.protect();
+});
 
 export const config = {
   matcher: [

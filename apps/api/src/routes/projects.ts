@@ -4,12 +4,9 @@ import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { ApiKeyInsert, ProjectInsert } from '../types/database';
 import { enforceProjectLimit } from '../middleware/planLimits';
+import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
 const router = express.Router();
-
-interface TeamScopedRequest extends Request {
-  teamId?: string;
-}
 
 interface ProjectRecord {
   id: string;
@@ -41,16 +38,12 @@ function errorResponse(
   });
 }
 
-function requireTeamContext(req: TeamScopedRequest, res: Response): string | null {
-  const teamIdHeader = req.header('x-team-id');
-  const teamId = typeof teamIdHeader === 'string' ? teamIdHeader.trim() : '';
-
+function requireTeamContext(req: DashboardAuthedRequest, res: Response): string | null {
+  const teamId = typeof (req as DashboardAuthedRequest).teamId === 'string' ? (req as DashboardAuthedRequest).teamId : '';
   if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Missing x-team-id header');
+    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
     return null;
   }
-
-  req.teamId = teamId;
   return teamId;
 }
 
@@ -84,8 +77,7 @@ function createPlainApiKey(): { plainKey: string; keyPrefix: string; keyHash: st
 }
 
 router.post('/', enforceProjectLimit, async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
 
   if (!teamId) {
     return;
@@ -131,8 +123,7 @@ router.post('/', enforceProjectLimit, async (req: Request, res: Response) => {
 });
 
 router.get('/', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
 
   if (!teamId) {
     return;
@@ -166,8 +157,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 router.get('/:id', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
 
   if (!teamId) {
     return;
@@ -225,8 +215,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 router.post('/:id/keys', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
 
   if (!teamId) {
     return;
@@ -287,8 +276,7 @@ router.post('/:id/keys', async (req: Request, res: Response) => {
 });
 
 router.delete('/:id/keys/:keyId', async (req: Request, res: Response) => {
-  const scopedReq = req as TeamScopedRequest;
-  const teamId = requireTeamContext(scopedReq, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
 
   if (!teamId) {
     return;
