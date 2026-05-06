@@ -1,10 +1,11 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { ingestRouter } from './routes/ingest';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -38,8 +39,8 @@ app.get('/v1/health', (_req, res) => {
   });
 });
 
-// ── Route stubs (will be implemented in later sessions) ────
-// app.use('/v1/ingest', ingestRouter);
+// ── Routes ─────────────────────────────────────────────────
+app.use('/v1/ingest', ingestRouter);
 // app.use('/v1/projects', projectsRouter);
 // app.use('/v1/queues', queuesRouter);
 // app.use('/v1/alerts', alertsRouter);

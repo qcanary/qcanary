@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { Queue, type ConnectionOptions } from 'bullmq';
 import IORedis from 'ioredis';
 
@@ -44,7 +47,7 @@ export const redisConnectionOptions: ConnectionOptions = {
 
 export const redis = new IORedis(redisConnectionOptions);
 
-export const alertQueue = new Queue('qcanary:alerts', {
+export const alertQueue = new Queue('qcanary-alerts', {
   connection: redisConnectionOptions,
   defaultJobOptions: {
     removeOnComplete: 1000,
