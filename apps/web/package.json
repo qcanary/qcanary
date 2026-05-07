@@ -10,6 +10,7 @@
     "clean": "rimraf .next"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
     "@clerk/nextjs": "^6.39.3",
     "@supabase/supabase-js": "^2.105.3",
     "class-variance-authority": "^0.7.1",

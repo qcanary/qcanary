@@ -115,10 +115,11 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
 
     async function initRealtime() {
       try {
-        const token = await getToken();
+        const token = await getToken().catch(() => null);
         if (!token) return;
 
         const supabase = createAuthedSupabaseClient(token);
+        if (!supabase) return;
 
         const { data, error: fetchError } = await supabase
           .from("job_events")

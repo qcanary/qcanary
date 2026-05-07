@@ -1,0 +1,645 @@
+"use client";
+
+import * as React from "react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+
+type ApiError = { success: false; error: { code: string; message: string } };
+
+type Period = "7d" | "30d";
+
+type MetricsPoint = {
+  hour: string;
+  completed: number;
+  failed: number;
+  stalled: number;
+  totalJobs: number;
+  avgDurationMs: number | null;
+  p95DurationMs: number | null;
+};
+
+type QueueMetricsOk = {
+  success: true;
+  data: {
+    queueName: string;
+    period: "24h" | "7d" | "30d";
+    points: MetricsPoint[];
+    summary: {
+      totalJobs: number;
+      completed: number;
+      failed: number;
+      stalled: number;
+      failureRate: number;
+    };
+  };
+};
+
+type JobListItem = {
+  id: number;
+  jobId: string;
+  jobName: string | null;
+  eventType: string;
+  status: string;
+  durationMs: number | null;
+  attempts: number | null;
+  errorMessage: string | null;
+  environment: string | null;
+  timestamp: string;
+  createdAt: string;
+};
+
+type QueueJobsOk = {
+  success: true;
+  data: {
+    queueName: string;
+    jobs: JobListItem[];
+    pagination: { page: number; limit: number; total: number; totalPages: number };
+    filters: { status: string | null };
+  };
+};
+
+type JobDetailOk = {
+  success: true;
+  data: {
+    job: {
+      id: number;
+      jobId: string;
+      jobName: string | null;
+      queueName: string;
+      eventType: string;
+      status: string;
+      durationMs: number | null;
+      attempts: number | null;
+      errorMessage: string | null;
+      errorStack: string | null;
+      environment: string | null;
+      timestamp: string;
+      createdAt: string;
+    };
+    history: Array<{
+      id: number;
+      eventType: string;
+      status: string;
+      durationMs: number | null;
+      attempts: number | null;
+      errorMessage: string | null;
+      timestamp: string;
+    }>;
+  };
+};
+
+function formatNumber(value: number): string {
+  return Intl.NumberFormat("en-US").format(value);
+}
+
+function formatPercent(value: number): string {
+  return `${value.toFixed(2)}%`;
+}
+
+function formatRelativeOrIso(iso: string | null): string {
+  if (!iso) return "—";
+  const ts = new Date(iso).getTime();
+  if (!Number.isFinite(ts)) return iso;
+  const diffMs = Date.now() - ts;
+  const s = Math.floor(diffMs / 1000);
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 48) return `${h}h ago`;
+  return new Date(ts).toLocaleString();
+}
+
+function statusBadgeVariant(status: string): "success" | "danger" | "muted" {
+  if (status === "failed") return "danger";
+  if (status === "completed") return "success";
+  return "muted";
+}
+
+function axisHourLabel(iso: string): string {
+  const d = new Date(iso);
+  if (!Number.isFinite(d.getTime())) return iso;
+  return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:00`;
+}
+
+function JobDetailDialog({
+  open,
+  onOpenChange,
+  projectId,
+  queueName,
+  jobId,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  projectId: string;
+  queueName: string;
+  jobId: string | null;
+}) {
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [data, setData] = React.useState<JobDetailOk["data"] | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      if (!open || !jobId) return;
+      try {
+        setLoading(true);
+        setError(null);
+        setData(null);
+        const res = await fetch(
+          `/api/v1/projects/${projectId}/queues/${encodeURIComponent(queueName)}/jobs/${encodeURIComponent(jobId)}`,
+          { cache: "no-store" }
+        );
+        const json = (await res.json()) as JobDetailOk | ApiError;
+        if (!json.success) throw new Error(json.error.message);
+        if (!cancelled) setData(json.data);
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Failed to load job details.";
+        if (!cancelled) setError(message);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, jobId, projectId, queueName]);
+
+  const job = data?.job ?? null;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[85vh] overflow-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-3">
+            <span className="truncate">{job?.jobName ?? jobId ?? "Job"}</span>
+            {job?.status && <Badge variant={statusBadgeVariant(job.status)}>{job.status}</Badge>}
+          </DialogTitle>
+          <DialogDescription className="font-mono text-xs">
+            {queueName} · {jobId ?? "—"}
+          </DialogDescription>
+        </DialogHeader>
+
+        {loading && (
+          <div className="space-y-3">
+            <Skeleton className="h-8 w-2/3" />
+            <Skeleton className="h-28 w-full" />
+            <Skeleton className="h-28 w-full" />
+          </div>
+        )}
+
+        {!loading && error && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Couldn’t load job</CardTitle>
+              <CardDescription>{error}</CardDescription>
+            </CardHeader>
+          </Card>
+        )}
+
+        {!loading && !error && job && (
+          <div className="space-y-6">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-md border border-border bg-surface/40 p-3">
+                <div className="text-xs text-text-muted">Attempts</div>
+                <div className="mt-1 font-mono text-sm text-text-primary">
+                  {typeof job.attempts === "number" ? formatNumber(job.attempts) : "—"}
+                </div>
+              </div>
+              <div className="rounded-md border border-border bg-surface/40 p-3">
+                <div className="text-xs text-text-muted">Duration</div>
+                <div className="mt-1 font-mono text-sm text-text-primary">
+                  {typeof job.durationMs === "number" ? `${formatNumber(job.durationMs)}ms` : "—"}
+                </div>
+              </div>
+              <div className="rounded-md border border-border bg-surface/40 p-3">
+                <div className="text-xs text-text-muted">Environment</div>
+                <div className="mt-1 font-mono text-sm text-text-primary">{job.environment ?? "—"}</div>
+              </div>
+              <div className="rounded-md border border-border bg-surface/40 p-3">
+                <div className="text-xs text-text-muted">Last event</div>
+                <div className="mt-1 font-mono text-sm text-text-primary">{formatRelativeOrIso(job.timestamp)}</div>
+              </div>
+            </div>
+
+            {(job.errorMessage || job.errorStack) && (
+              <div className="space-y-3">
+                {job.errorMessage && (
+                  <div>
+                    <div className="mb-2 text-xs text-text-muted">Error message</div>
+                    <pre className="whitespace-pre-wrap rounded-md border border-border bg-code-bg p-3 font-mono text-xs text-text-primary">
+                      {job.errorMessage}
+                    </pre>
+                  </div>
+                )}
+                {job.errorStack && (
+                  <div>
+                    <div className="mb-2 text-xs text-text-muted">Stack trace</div>
+                    <pre className="overflow-auto whitespace-pre-wrap rounded-md border border-border bg-code-bg p-3 font-mono text-xs text-text-primary">
+                      {job.errorStack}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div>
+              <div className="mb-2 text-xs text-text-muted">Event history</div>
+              {!data?.history || data.history.length === 0 ? (
+                <div className="text-sm text-text-muted">No history.</div>
+              ) : (
+                <div className="space-y-2">
+                  {data.history.slice(0, 20).map((h) => (
+                    <div key={h.id} className="flex items-start justify-between gap-3 rounded-md border border-border bg-surface/40 p-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <Badge variant={statusBadgeVariant(h.status)}>{h.status}</Badge>
+                          <span className="truncate font-mono text-xs text-text-muted">{h.eventType}</span>
+                        </div>
+                        {h.errorMessage && <div className="mt-1 line-clamp-2 text-xs text-text-muted">{h.errorMessage}</div>}
+                      </div>
+                      <div className="shrink-0 text-xs text-text-muted">{formatRelativeOrIso(h.timestamp)}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function QueueDetailClient({ projectId, queueName }: { projectId: string; queueName: string }) {
+  const [period, setPeriod] = React.useState<Period>("7d");
+  const [status, setStatus] = React.useState<string | null>(null);
+  const [page, setPage] = React.useState(1);
+  const [limit, setLimit] = React.useState(20);
+
+  const [metrics, setMetrics] = React.useState<QueueMetricsOk["data"] | null>(null);
+  const [jobs, setJobs] = React.useState<QueueJobsOk["data"] | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  const [selectedJobId, setSelectedJobId] = React.useState<string | null>(null);
+  const [jobDialogOpen, setJobDialogOpen] = React.useState(false);
+
+  const refresh = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const [metricsRes, jobsRes] = await Promise.all([
+        fetch(
+          `/api/v1/projects/${projectId}/queues/${encodeURIComponent(queueName)}/metrics?period=${period}`,
+          { cache: "no-store" }
+        ),
+        fetch(
+          `/api/v1/projects/${projectId}/queues/${encodeURIComponent(queueName)}/jobs?page=${page}&limit=${limit}${
+            status ? `&status=${encodeURIComponent(status)}` : ""
+          }`,
+          { cache: "no-store" }
+        ),
+      ]);
+
+      const [metricsJson, jobsJson] = (await Promise.all([
+        metricsRes.json(),
+        jobsRes.json(),
+      ])) as [QueueMetricsOk | ApiError, QueueJobsOk | ApiError];
+
+      if (!metricsJson.success) throw new Error(metricsJson.error.message);
+      if (!jobsJson.success) throw new Error(jobsJson.error.message);
+
+      setMetrics(metricsJson.data);
+      setJobs(jobsJson.data);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Failed to load queue.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [limit, page, period, projectId, queueName, status]);
+
+  React.useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  React.useEffect(() => {
+    setPage(1);
+  }, [status, limit, period]);
+
+  const points = metrics?.points ?? [];
+  const summary = metrics?.summary ?? null;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">Queue</h1>
+          <p className="mt-2 text-text-muted">
+            <span className="font-mono text-text-primary">{queueName}</span>
+            <span className="text-text-muted"> · </span>
+            project <span className="font-mono text-text-primary">{projectId}</span>
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant={period === "7d" ? "default" : "secondary"}
+            size="sm"
+            onClick={() => setPeriod("7d")}
+          >
+            7d
+          </Button>
+          <Button
+            variant={period === "30d" ? "default" : "secondary"}
+            size="sm"
+            onClick={() => setPeriod("30d")}
+          >
+            30d
+          </Button>
+          <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
+          <Button variant={!status ? "default" : "secondary"} size="sm" onClick={() => setStatus(null)}>
+            All
+          </Button>
+          <Button
+            variant={status === "failed" ? "default" : "secondary"}
+            size="sm"
+            onClick={() => setStatus("failed")}
+          >
+            Failed
+          </Button>
+          <Button
+            variant={status === "completed" ? "default" : "secondary"}
+            size="sm"
+            onClick={() => setStatus("completed")}
+          >
+            Completed
+          </Button>
+          <Button
+            variant={status === "active" ? "default" : "secondary"}
+            size="sm"
+            onClick={() => setStatus("active")}
+          >
+            Active
+          </Button>
+          <Button
+            variant={status === "stalled" ? "default" : "secondary"}
+            size="sm"
+            onClick={() => setStatus("stalled")}
+          >
+            Stalled
+          </Button>
+        </div>
+      </div>
+
+      {error && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Couldn’t load queue</CardTitle>
+            <CardDescription>{error}</CardDescription>
+          </CardHeader>
+        </Card>
+      )}
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-text-muted">Total jobs ({period})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.totalJobs) : "—"}</div>
+            <div className="mt-2 text-sm text-text-muted">Completed + failed + stalled</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-text-muted">Failed ({period})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.failed) : "—"}</div>
+            <div className="mt-2 text-sm text-text-muted">Failure rate {summary ? formatPercent(summary.failureRate) : "—"}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-text-muted">Completed ({period})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.completed) : "—"}</div>
+            <div className="mt-2 text-sm text-text-muted">Successful jobs</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-text-muted">Stalled ({period})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.stalled) : "—"}</div>
+            <div className="mt-2 text-sm text-text-muted">Potential issues</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Job volume</CardTitle>
+          <CardDescription>Completed vs failed jobs over time.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading && !metrics ? (
+            <Skeleton className="h-64 w-full" />
+          ) : points.length === 0 ? (
+            <div className="text-sm text-text-muted">No metrics yet.</div>
+          ) : (
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={points} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="completedFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#22C55E" stopOpacity={0.05} />
+                    </linearGradient>
+                    <linearGradient id="failedFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0.05} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
+                  <XAxis
+                    dataKey="hour"
+                    tickFormatter={axisHourLabel}
+                    minTickGap={28}
+                    stroke="rgba(255,255,255,0.25)"
+                    tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 12 }}
+                  />
+                  <YAxis
+                    stroke="rgba(255,255,255,0.25)"
+                    tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 12 }}
+                    width={34}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: "#0F0F0F",
+                      border: "1px solid #1F1F1F",
+                      borderRadius: 8,
+                      color: "#FAFAFA",
+                      fontSize: 12,
+                    }}
+                    labelFormatter={(label) => axisHourLabel(String(label))}
+                    formatter={(value, name) => [formatNumber(Number(value)), name]}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="completed"
+                    name="completed"
+                    stroke="#22C55E"
+                    fill="url(#completedFill)"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="failed"
+                    name="failed"
+                    stroke="#ef4444"
+                    fill="url(#failedFill)"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle>Jobs</CardTitle>
+            <CardDescription>Click a row to see full error + stack trace.</CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" size="sm" onClick={() => setLimit(20)} className={cn(limit === 20 && "border-accent/60")}>
+              20
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setLimit(50)} className={cn(limit === 50 && "border-accent/60")}>
+              50
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setLimit(100)} className={cn(limit === 100 && "border-accent/60")}>
+              100
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading && !jobs ? (
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ) : !jobs || jobs.jobs.length === 0 ? (
+            <div className="text-sm text-text-muted">No jobs yet for this filter.</div>
+          ) : (
+            <div className="space-y-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Job</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Attempts</TableHead>
+                    <TableHead className="text-right">Duration</TableHead>
+                    <TableHead className="text-right">Time</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {jobs.jobs.map((job) => (
+                    <TableRow
+                      key={`${job.id}-${job.jobId}`}
+                      className="cursor-pointer hover:bg-surface/60"
+                      onClick={() => {
+                        setSelectedJobId(job.jobId);
+                        setJobDialogOpen(true);
+                      }}
+                    >
+                      <TableCell className="min-w-0">
+                        <div className="truncate text-sm font-medium text-text-primary">{job.jobName ?? "Unnamed job"}</div>
+                        <div className="mt-1 truncate font-mono text-xs text-text-muted">{job.jobId}</div>
+                        {job.errorMessage && <div className="mt-1 line-clamp-1 text-xs text-text-muted">{job.errorMessage}</div>}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={statusBadgeVariant(job.status)}>{job.status}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-xs text-text-muted">
+                        {typeof job.attempts === "number" ? formatNumber(job.attempts) : "—"}
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-xs text-text-muted">
+                        {typeof job.durationMs === "number" ? `${formatNumber(job.durationMs)}ms` : "—"}
+                      </TableCell>
+                      <TableCell className="text-right text-xs text-text-muted">{formatRelativeOrIso(job.timestamp)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="text-xs text-text-muted">
+                  Page {jobs.pagination.page} of {Math.max(jobs.pagination.totalPages, 1)} ·{" "}
+                  {formatNumber(jobs.pagination.total)} events
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={jobs.pagination.page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  >
+                    Prev
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={jobs.pagination.totalPages === 0 || jobs.pagination.page >= jobs.pagination.totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <JobDetailDialog
+        open={jobDialogOpen}
+        onOpenChange={(next) => {
+          setJobDialogOpen(next);
+          if (!next) setSelectedJobId(null);
+        }}
+        projectId={projectId}
+        queueName={queueName}
+        jobId={selectedJobId}
+      />
+    </div>
+  );
+}
+
