@@ -410,6 +410,65 @@ router.get('/:id/alerts', async (req: Request, res: Response) => {
   });
 });
 
+router.get('/:id/alerts/history', async (req: Request, res: Response) => {
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
+  if (!teamId) {
+    return;
+  }
+
+  const projectId = typeof req.params.id === 'string' ? req.params.id : '';
+  if (!projectId) {
+    errorResponse(res, 400, 'INVALID_PROJECT_ID', 'Invalid project id');
+    return;
+  }
+
+  const projectCheck = await ensureProjectOwnership(projectId, teamId);
+  if (!projectCheck.ok) {
+    errorResponse(res, projectCheck.statusCode, projectCheck.code, projectCheck.message);
+    return;
+  }
+
+  const rawLimit = typeof req.query.limit === 'string' ? Number(req.query.limit) : 20;
+  const limit = Number.isInteger(rawLimit) ? Math.min(Math.max(rawLimit, 1), 100) : 20;
+
+  const { data, error } = await supabase
+    .from('alert_history')
+    .select('id, rule_id, project_id, triggered_at, resolved_at, details')
+    .eq('project_id', projectId)
+    .order('triggered_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    errorResponse(res, 500, 'ALERT_HISTORY_LIST_FAILED', 'Failed to list alert history');
+    return;
+  }
+
+  type AlertHistoryRow = {
+    id: number;
+    rule_id: string;
+    project_id: string;
+    triggered_at: string;
+    resolved_at: string | null;
+    details: Record<string, unknown> | null;
+  };
+
+  const rows = (data ?? []) as AlertHistoryRow[];
+
+  res.status(200).json({
+    success: true,
+    data: {
+      history: rows.map((row) => ({
+        id: row.id,
+        ruleId: row.rule_id,
+        projectId: row.project_id,
+        triggeredAt: row.triggered_at,
+        resolvedAt: row.resolved_at,
+        details: row.details ?? {},
+      })),
+    },
+  });
+});
+
 router.post('/:id/alerts', async (req: Request, res: Response) => {
   const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
