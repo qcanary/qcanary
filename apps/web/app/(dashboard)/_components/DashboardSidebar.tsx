@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import * as React from "react";
-import { Folder, LayoutDashboard, Settings } from "lucide-react";
+import { Bell, Folder, LayoutDashboard, Settings } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -33,7 +33,7 @@ function NavLink({
         active ? "bg-[#0B0B0B] border-border text-text-primary" : "text-text-muted hover:text-text-primary hover:bg-surface/70"
       )}
     >
-      <span className="text-text-muted">{icon}</span>
+      <span className={cn(active ? "text-text-primary" : "text-text-muted")}>{icon}</span>
       <span className="truncate">{label}</span>
     </Link>
   );
@@ -82,7 +82,7 @@ export function DashboardSidebar() {
           <span className="text-accent">Qcanary</span>
         </div>
         <Link
-          href="/onboarding"
+          href={projectId ? `/${projectId}/alerts` : "/onboarding"}
           aria-label="Settings"
           className="inline-flex h-10 w-10 items-center justify-center rounded-md text-text-muted hover:text-text-primary hover:bg-surface/70"
         >
@@ -99,6 +99,12 @@ export function DashboardSidebar() {
           icon={<LayoutDashboard className="h-4 w-4" />}
           label="Overview"
           active={projectId ? pathname === `/${projectId}` : false}
+        />
+        <NavLink
+          href={projectId ? `/${projectId}/alerts` : "/onboarding"}
+          icon={<Bell className="h-4 w-4" />}
+          label="Alerts"
+          active={projectId ? pathname === `/${projectId}/alerts` : false}
         />
       </nav>
 

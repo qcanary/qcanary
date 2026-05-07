@@ -24,15 +24,36 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#0A0A0A] text-[#FAFAFA]`}>
-        {publishableKey ? (
-          <ClerkProvider publishableKey={publishableKey}>{children}</ClerkProvider>
-        ) : (
-          children
-        )}
+        <ClerkProvider
+          appearance={{
+            variables: {
+              colorPrimary: "#22C55E",
+              colorBackground: "#111111",
+              colorText: "#FAFAFA",
+              colorTextSecondary: "#71717A",
+              colorInputBackground: "#0F0F0F",
+              colorInputText: "#FAFAFA",
+              colorDanger: "#F87171",
+              borderRadius: "0.5rem",
+              fontFamily: "var(--font-inter)",
+            },
+            elements: {
+              card: "bg-surface border border-border",
+              headerTitle: "text-text-primary",
+              headerSubtitle: "text-text-muted",
+              formButtonPrimary: "bg-accent text-black hover:bg-accent/90",
+              formFieldLabel: "text-text-primary",
+              formFieldInput: "bg-code-bg text-text-primary border border-border",
+              footerActionText: "text-text-muted",
+              footerActionLink: "text-accent hover:opacity-90",
+            },
+          }}
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
