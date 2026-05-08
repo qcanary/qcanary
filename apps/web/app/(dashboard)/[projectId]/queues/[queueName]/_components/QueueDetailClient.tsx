@@ -5,6 +5,8 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Legend,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -135,6 +137,10 @@ function axisHourLabel(iso: string): string {
   const d = new Date(iso);
   if (!Number.isFinite(d.getTime())) return iso;
   return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:00`;
+}
+
+function safeDuration(value: number | null): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
 function JobDetailDialog({
@@ -491,9 +497,18 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
                     tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 12 }}
                   />
                   <YAxis
+                    yAxisId="count"
                     stroke="rgba(255,255,255,0.25)"
                     tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 12 }}
                     width={34}
+                  />
+                  <YAxis
+                    yAxisId="duration"
+                    orientation="right"
+                    stroke="rgba(255,255,255,0.25)"
+                    tick={{ fill: "rgba(255,255,255,0.55)", fontSize: 12 }}
+                    tickFormatter={(value) => `${formatNumber(Number(value))}ms`}
+                    width={62}
                   />
                   <Tooltip
                     contentStyle={{
@@ -504,9 +519,16 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
                       fontSize: 12,
                     }}
                     labelFormatter={(label) => axisHourLabel(String(label))}
-                    formatter={(value, name) => [formatNumber(Number(value)), name]}
+                    formatter={(value, name) => {
+                      if (name === "avg duration" || name === "p95 duration") {
+                        return [`${formatNumber(Number(value))}ms`, name];
+                      }
+                      return [formatNumber(Number(value)), name];
+                    }}
                   />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
                   <Area
+                    yAxisId="count"
                     type="monotone"
                     dataKey="completed"
                     name="completed"
@@ -516,11 +538,31 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
                     dot={false}
                   />
                   <Area
+                    yAxisId="count"
                     type="monotone"
                     dataKey="failed"
                     name="failed"
                     stroke="#ef4444"
                     fill="url(#failedFill)"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <Line
+                    yAxisId="duration"
+                    type="monotone"
+                    dataKey={(point: MetricsPoint) => safeDuration(point.avgDurationMs)}
+                    name="avg duration"
+                    stroke="#22C55E"
+                    strokeDasharray="5 5"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <Line
+                    yAxisId="duration"
+                    type="monotone"
+                    dataKey={(point: MetricsPoint) => safeDuration(point.p95DurationMs)}
+                    name="p95 duration"
+                    stroke="#f59e0b"
                     strokeWidth={2}
                     dot={false}
                   />

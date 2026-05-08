@@ -62,6 +62,14 @@ type RuleFormState = {
   isActive: boolean;
 };
 
+type FormErrors = {
+  name?: string;
+  destination?: string;
+  thresholdValue?: string;
+  windowMinutes?: string;
+  cooldownMinutes?: string;
+};
+
 const defaultForm: RuleFormState = {
   id: null,
   name: "",
@@ -112,6 +120,37 @@ function formFromRule(rule: AlertRule): RuleFormState {
   };
 }
 
+function validateDestination(channel: AlertRule["channel"], destinationRaw: string): string | null {
+  const destination = destinationRaw.trim();
+  if (!destination) {
+    return "Destination is required.";
+  }
+
+  if (channel === "slack") {
+    if (!destination.startsWith("https://hooks.slack.com/")) {
+      return "Slack destination must start with https://hooks.slack.com/.";
+    }
+    return null;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(destination)) {
+    return "Enter a valid email address.";
+  }
+  return null;
+}
+
+function friendlyTestError(message: string): string {
+  if (
+    message.toLowerCase().includes("invalid url") ||
+    message.toLowerCase().includes("url") ||
+    message.toLowerCase().includes("parse")
+  ) {
+    return "Test alert failed. Please check the destination format for this rule and try again.";
+  }
+  return message;
+}
+
 export function AlertsClient({ projectId }: { projectId: string }) {
   const [rules, setRules] = React.useState<AlertRule[] | null>(null);
   const [history, setHistory] = React.useState<AlertHistory[] | null>(null);
@@ -121,6 +160,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [form, setForm] = React.useState<RuleFormState>(defaultForm);
+  const [formErrors, setFormErrors] = React.useState<FormErrors>({});
   const [submitting, setSubmitting] = React.useState(false);
 
   const load = React.useCallback(async () => {
@@ -151,21 +191,39 @@ export function AlertsClient({ projectId }: { projectId: string }) {
   }, [load]);
 
   async function submitForm() {
-    if (!form.name.trim() || !form.destination.trim()) {
-      setError("Name and destination are required.");
+    const nextErrors: FormErrors = {};
+    if (!form.name.trim()) {
+      nextErrors.name = "Name is required.";
+    }
+
+    const destinationError = validateDestination(form.channel, form.destination);
+    if (destinationError) {
+      nextErrors.destination = destinationError;
+    }
+
+    const thresholdValue = Number(form.thresholdValue);
+    const windowMinutes = Number(form.windowMinutes);
+    const cooldownMinutes = Number(form.cooldownMinutes);
+
+    if (!Number.isFinite(thresholdValue)) {
+      nextErrors.thresholdValue = "Threshold must be a valid number.";
+    }
+    if (!Number.isInteger(windowMinutes) || windowMinutes < 1) {
+      nextErrors.windowMinutes = "Window must be a positive integer.";
+    }
+    if (!Number.isInteger(cooldownMinutes) || cooldownMinutes < 0) {
+      nextErrors.cooldownMinutes = "Cooldown must be zero or a positive integer.";
+    }
+
+    setFormErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
       return;
     }
+
     setSubmitting(true);
     setError(null);
     setMessage(null);
     try {
-      const thresholdValue = Number(form.thresholdValue);
-      const windowMinutes = Number(form.windowMinutes);
-      const cooldownMinutes = Number(form.cooldownMinutes);
-      if (!Number.isFinite(thresholdValue) || !Number.isInteger(windowMinutes) || !Number.isInteger(cooldownMinutes)) {
-        throw new Error("Threshold, window, and cooldown must be valid numbers.");
-      }
-
       const payload = {
         name: form.name.trim(),
         queueName: form.queueName.trim() || null,
@@ -194,6 +252,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
 
       setDialogOpen(false);
       setForm(defaultForm);
+      setFormErrors({});
       setMessage(isEdit ? "Rule updated." : "Rule created.");
       await load();
     } catch (e) {
@@ -240,7 +299,8 @@ export function AlertsClient({ projectId }: { projectId: string }) {
       setMessage("Test alert sent.");
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to send test alert.");
+      const message = e instanceof Error ? friendlyTestError(e.message) : "Failed to send test alert.";
+      setError(message);
     }
   }
 
@@ -263,11 +323,13 @@ export function AlertsClient({ projectId }: { projectId: string }) {
 
   function openCreateDialog() {
     setForm(defaultForm);
+    setFormErrors({});
     setDialogOpen(true);
   }
 
   function openEditDialog(rule: AlertRule) {
     setForm(formFromRule(rule));
+    setFormErrors({});
     setDialogOpen(true);
   }
 
@@ -425,9 +487,15 @@ export function AlertsClient({ projectId }: { projectId: string }) {
               <Input
                 id="rule-name"
                 value={form.name}
-                onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setForm((prev) => ({ ...prev, name: value }));
+                  setFormErrors((prev) => ({ ...prev, name: value.trim() ? undefined : "Name is required." }));
+                }}
                 placeholder="High failure rate"
+                aria-invalid={Boolean(formErrors.name)}
               />
+              {formErrors.name && <p className="text-xs text-red-400">{formErrors.name}</p>}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -465,8 +533,18 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                   id="rule-threshold"
                   type="number"
                   value={form.thresholdValue}
-                  onChange={(e) => setForm((prev) => ({ ...prev, thresholdValue: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const num = Number(value);
+                    setForm((prev) => ({ ...prev, thresholdValue: value }));
+                    setFormErrors((prev) => ({
+                      ...prev,
+                      thresholdValue: Number.isFinite(num) ? undefined : "Threshold must be a valid number.",
+                    }));
+                  }}
+                  aria-invalid={Boolean(formErrors.thresholdValue)}
                 />
+                {formErrors.thresholdValue && <p className="text-xs text-red-400">{formErrors.thresholdValue}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="rule-window">Window (minutes)</Label>
@@ -474,8 +552,19 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                   id="rule-window"
                   type="number"
                   value={form.windowMinutes}
-                  onChange={(e) => setForm((prev) => ({ ...prev, windowMinutes: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const num = Number(value);
+                    setForm((prev) => ({ ...prev, windowMinutes: value }));
+                    setFormErrors((prev) => ({
+                      ...prev,
+                      windowMinutes:
+                        Number.isInteger(num) && num >= 1 ? undefined : "Window must be a positive integer.",
+                    }));
+                  }}
+                  aria-invalid={Boolean(formErrors.windowMinutes)}
                 />
+                {formErrors.windowMinutes && <p className="text-xs text-red-400">{formErrors.windowMinutes}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="rule-cooldown">Cooldown (minutes)</Label>
@@ -483,8 +572,19 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                   id="rule-cooldown"
                   type="number"
                   value={form.cooldownMinutes}
-                  onChange={(e) => setForm((prev) => ({ ...prev, cooldownMinutes: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const num = Number(value);
+                    setForm((prev) => ({ ...prev, cooldownMinutes: value }));
+                    setFormErrors((prev) => ({
+                      ...prev,
+                      cooldownMinutes:
+                        Number.isInteger(num) && num >= 0 ? undefined : "Cooldown must be zero or a positive integer.",
+                    }));
+                  }}
+                  aria-invalid={Boolean(formErrors.cooldownMinutes)}
                 />
+                {formErrors.cooldownMinutes && <p className="text-xs text-red-400">{formErrors.cooldownMinutes}</p>}
               </div>
             </div>
 
@@ -495,7 +595,14 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                   id="rule-channel"
                   className="flex h-10 w-full rounded-md border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                   value={form.channel}
-                  onChange={(e) => setForm((prev) => ({ ...prev, channel: e.target.value as AlertRule["channel"] }))}
+                  onChange={(e) =>
+                    setForm((prev) => {
+                      const channel = e.target.value as AlertRule["channel"];
+                      const destinationError = validateDestination(channel, prev.destination);
+                      setFormErrors((currentErrors) => ({ ...currentErrors, destination: destinationError ?? undefined }));
+                      return { ...prev, channel };
+                    })
+                  }
                 >
                   <option value="slack">slack</option>
                   <option value="email">email</option>
@@ -519,13 +626,20 @@ export function AlertsClient({ projectId }: { projectId: string }) {
               <Input
                 id="rule-destination"
                 value={form.destination}
-                onChange={(e) => setForm((prev) => ({ ...prev, destination: e.target.value }))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setForm((prev) => ({ ...prev, destination: value }));
+                  const destinationError = validateDestination(form.channel, value);
+                  setFormErrors((prev) => ({ ...prev, destination: destinationError ?? undefined }));
+                }}
                 placeholder={form.channel === "slack" ? "https://hooks.slack.com/..." : "alerts@example.com"}
+                aria-invalid={Boolean(formErrors.destination)}
               />
+              {formErrors.destination && <p className="text-xs text-red-400">{formErrors.destination}</p>}
             </div>
           </div>
 
-          <DialogFooter className="flex items-center justify-end gap-2">
+          <DialogFooter className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-0">
             <Button variant="secondary" onClick={() => setDialogOpen(false)} disabled={submitting}>
               Cancel
             </Button>
