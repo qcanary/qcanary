@@ -244,6 +244,23 @@ export function AlertsClient({ projectId }: { projectId: string }) {
     }
   }
 
+  async function deleteRule(ruleId: string) {
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/v1/projects/${projectId}/alerts/${ruleId}`, {
+        method: "DELETE",
+      });
+      const json = (await res.json()) as { success: true; data: { deleted: true; id: string } } | ApiError;
+      if (!json.success) throw new Error(json.error.message);
+      setRules((prev) => (prev ?? []).filter((rule) => rule.id !== ruleId));
+      setMessage("Rule deleted.");
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to delete rule.");
+    }
+  }
+
   function openCreateDialog() {
     setForm(defaultForm);
     setDialogOpen(true);
@@ -335,6 +352,9 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                         </Button>
                         <Button size="sm" variant="secondary" onClick={() => void sendTest(rule.id)}>
                           Send test
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => void deleteRule(rule.id)}>
+                          Delete
                         </Button>
                       </div>
                     </TableCell>
@@ -505,7 +525,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex items-center justify-end gap-2">
             <Button variant="secondary" onClick={() => setDialogOpen(false)} disabled={submitting}>
               Cancel
             </Button>

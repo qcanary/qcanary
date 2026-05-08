@@ -1,15 +1,15 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import Stripe from 'stripe';
-import { createCheckoutSession, stripe } from '../lib/stripe';
+import crypto from 'node:crypto';
+import { createCheckoutSession } from '../lib/razorpay';
 import { supabase } from '../lib/supabase';
 
 const router = express.Router();
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
 if (!webhookSecret) {
-  throw new Error('Missing required environment variable: STRIPE_WEBHOOK_SECRET');
+  throw new Error('Missing required environment variable: RAZORPAY_WEBHOOK_SECRET');
 }
 
 function errorResponse(res: Response, statusCode: number, code: string, message: string): void {
@@ -19,120 +19,119 @@ function errorResponse(res: Response, statusCode: number, code: string, message:
   });
 }
 
-function resolvePlanFromPrice(priceId: string | null | undefined): 'starter' | 'pro' | null {
-  if (!priceId) {
+function resolvePlanFromPlanId(planId: string | null | undefined): 'starter' | 'pro' | null {
+  if (!planId) {
     return null;
   }
 
-  if (priceId === process.env.STRIPE_STARTER_PRICE_ID) {
+  if (planId === process.env.RAZORPAY_STARTER_PLAN_ID) {
     return 'starter';
   }
 
-  if (priceId === process.env.STRIPE_PRO_PRICE_ID) {
+  if (planId === process.env.RAZORPAY_PRO_PLAN_ID) {
     return 'pro';
   }
 
   return null;
 }
 
-async function updateTeamPlanByCustomer(
-  customerId: string,
+async function updateTeamPlanById(
+  teamId: string,
   plan: 'free' | 'starter' | 'pro',
   planExpiresAt: string | null
 ): Promise<void> {
   await supabase
     .from('teams')
     .update({ plan, plan_expires_at: planExpiresAt } as never)
-    .eq('stripe_customer_id', customerId);
-}
-
-async function attachCustomerToTeam(teamId: string, customerId: string): Promise<void> {
-  await supabase
-    .from('teams')
-    .update({ stripe_customer_id: customerId } as never)
     .eq('id', teamId);
 }
 
-async function handleCheckoutSessionCompleted(event: Stripe.CheckoutSessionCompletedEvent): Promise<void> {
-  const session = event.data.object;
-  const customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
-  const teamId = typeof session.metadata?.teamId === 'string' ? session.metadata.teamId : null;
-  const planFromMetadata =
-    session.metadata?.plan === 'starter' || session.metadata?.plan === 'pro'
-      ? session.metadata.plan
+interface RazorpaySubscriptionPayload {
+  id?: string;
+  plan_id?: string;
+  customer_id?: string;
+  current_end?: number;
+  notes?: Record<string, string | undefined>;
+}
+
+function verifyWebhook(rawBody: Buffer, signature: string): boolean {
+  const digest = crypto.createHmac('sha256', webhookSecret as string).update(rawBody).digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
+}
+
+async function handleSubscriptionActivated(subscription: RazorpaySubscriptionPayload): Promise<void> {
+  const teamId = typeof subscription.notes?.teamId === 'string' ? subscription.notes.teamId : '';
+  const planFromNotes =
+    subscription.notes?.plan === 'starter' || subscription.notes?.plan === 'pro' ? subscription.notes.plan : null;
+  const plan = planFromNotes ?? resolvePlanFromPlanId(subscription.plan_id);
+
+  if (!teamId || !plan) {
+    return;
+  }
+
+  const periodEnd =
+    typeof subscription.current_end === 'number'
+      ? new Date(subscription.current_end * 1000).toISOString()
       : null;
-
-  if (!customerId || !teamId || !planFromMetadata) {
-    return;
-  }
-
-  await attachCustomerToTeam(teamId, customerId);
-  await updateTeamPlanByCustomer(customerId, planFromMetadata, null);
+  await updateTeamPlanById(teamId, plan, periodEnd);
 }
 
-async function handleSubscriptionEvent(
-  event: Stripe.CustomerSubscriptionCreatedEvent | Stripe.CustomerSubscriptionUpdatedEvent
-): Promise<void> {
-  const subscription = event.data.object;
-  const customerId =
-    typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id;
-
-  if (!customerId) {
+async function handleSubscriptionCancelled(subscription: RazorpaySubscriptionPayload): Promise<void> {
+  const teamId = typeof subscription.notes?.teamId === 'string' ? subscription.notes.teamId : '';
+  if (!teamId) {
     return;
   }
-
-  const itemPriceId = subscription.items.data[0]?.price?.id ?? null;
-  const plan = resolvePlanFromPrice(itemPriceId);
-
-  if (!plan) {
-    return;
-  }
-
-  const periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
-  await updateTeamPlanByCustomer(customerId, plan, periodEnd);
-}
-
-async function handleSubscriptionDeleted(event: Stripe.CustomerSubscriptionDeletedEvent): Promise<void> {
-  const subscription = event.data.object;
-  const customerId =
-    typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id;
-
-  if (!customerId) {
-    return;
-  }
-
-  await updateTeamPlanByCustomer(customerId, 'free', null);
+  await updateTeamPlanById(teamId, 'free', null);
 }
 
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
-  const signature = req.header('stripe-signature');
+  const signature = req.header('x-razorpay-signature');
   if (!signature) {
-    errorResponse(res, 400, 'MISSING_SIGNATURE', 'Missing stripe-signature header');
+    errorResponse(res, 400, 'MISSING_SIGNATURE', 'Missing x-razorpay-signature header');
     return;
   }
 
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Invalid webhook payload';
-    errorResponse(res, 400, 'INVALID_SIGNATURE', message);
+  const rawBody = req.body as Buffer;
+  if (!verifyWebhook(rawBody, signature)) {
+    errorResponse(res, 400, 'INVALID_SIGNATURE', 'Webhook signature verification failed');
     return;
   }
 
+  type RazorpayEventBody = {
+    event?: string;
+    payload?: {
+      subscription?: {
+        entity?: RazorpaySubscriptionPayload;
+      };
+    };
+  };
+
+  let parsed: RazorpayEventBody;
   try {
-    switch (event.type) {
-      case 'checkout.session.completed':
-        await handleCheckoutSessionCompleted(event as Stripe.CheckoutSessionCompletedEvent);
+    parsed = JSON.parse(rawBody.toString('utf8')) as RazorpayEventBody;
+  } catch {
+    errorResponse(res, 400, 'INVALID_PAYLOAD', 'Invalid webhook payload');
+    return;
+  }
+  const eventName = typeof parsed.event === 'string' ? parsed.event : '';
+  const subscription = parsed.payload?.subscription?.entity;
+
+  try {
+    switch (eventName) {
+      case 'subscription.activated':
+      case 'subscription.charged':
+      case 'subscription.resumed':
+        if (subscription) {
+          await handleSubscriptionActivated(subscription);
+        }
         break;
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-        await handleSubscriptionEvent(
-          event as Stripe.CustomerSubscriptionCreatedEvent | Stripe.CustomerSubscriptionUpdatedEvent
-        );
-        break;
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event as Stripe.CustomerSubscriptionDeletedEvent);
+      case 'subscription.cancelled':
+      case 'subscription.completed':
+      case 'subscription.halted':
+      case 'subscription.paused':
+        if (subscription) {
+          await handleSubscriptionCancelled(subscription);
+        }
         break;
       default:
         break;
@@ -167,8 +166,9 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       data: {
-        checkoutUrl: session.url,
-        sessionId: session.id,
+        checkoutUrl: session.checkoutUrl,
+        sessionId: session.subscriptionId,
+        razorpayKeyId: session.keyId,
       },
     });
   } catch (error) {

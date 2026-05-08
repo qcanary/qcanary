@@ -335,4 +335,44 @@ router.delete('/:id/keys/:keyId', async (req: Request, res: Response) => {
   });
 });
 
+router.delete('/:id', async (req: Request, res: Response) => {
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
+  if (!teamId) {
+    return;
+  }
+
+  const projectId = typeof req.params.id === 'string' ? req.params.id : '';
+  if (!projectId) {
+    errorResponse(res, 400, 'INVALID_PROJECT_ID', 'Invalid project id');
+    return;
+  }
+
+  const { data: deletedRow, error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', projectId)
+    .eq('team_id', teamId)
+    .select('id')
+    .maybeSingle();
+
+  if (error) {
+    errorResponse(res, 500, 'PROJECT_DELETE_FAILED', 'Failed to delete project');
+    return;
+  }
+
+  const deleted = deletedRow as { id: string } | null;
+  if (!deleted) {
+    errorResponse(res, 404, 'PROJECT_NOT_FOUND', 'Project not found');
+    return;
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      deleted: true,
+      id: deleted.id,
+    },
+  });
+});
+
 export { router as projectsRouter };

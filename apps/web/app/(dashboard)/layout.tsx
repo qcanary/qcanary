@@ -8,16 +8,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
-      <DashboardSidebar />
-
-      {/* Main content */}
-      <main className="flex-1">
-        <DashboardTopbar />
-        <TeamProjectProvider>
+    <TeamProjectProvider>
+      <div className="flex min-h-screen">
+        <DashboardSidebar />
+        <main className="flex-1">
+          <DashboardTopbar />
           <div className="mx-auto w-full max-w-6xl px-6 py-8">{children}</div>
-        </TeamProjectProvider>
-      </main>
-    </div>
+        </main>
+      </div>
+    </TeamProjectProvider>
   );
 }

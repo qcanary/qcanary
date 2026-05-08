@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useTeamProjects } from "../_providers/TeamProjectProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 type CreateProjectOk = {
@@ -32,6 +33,7 @@ function CodeBlock({ children }: { children: string }) {
 }
 
 export default function OnboardingPage() {
+  const { projects, loading: projectsLoading, refresh } = useTeamProjects();
   const [projectName, setProjectName] = React.useState("production");
   const [environment, setEnvironment] = React.useState("production");
   const [loading, setLoading] = React.useState(false);
@@ -40,6 +42,7 @@ export default function OnboardingPage() {
   const [createdProjectId, setCreatedProjectId] = React.useState<string | null>(null);
   const [createdProjectName, setCreatedProjectName] = React.useState<string | null>(null);
   const [apiKey, setApiKey] = React.useState<string | null>(null);
+  const [deletingProjectId, setDeletingProjectId] = React.useState<string | null>(null);
 
   async function createProjectAndKey(e: React.FormEvent) {
     e.preventDefault();
@@ -86,10 +89,34 @@ export default function OnboardingPage() {
       }
 
       setApiKey(createKeyJson.data.apiKey);
+      await refresh();
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function deleteProject(projectId: string) {
+    setError(null);
+    setDeletingProjectId(projectId);
+    try {
+      const res = await fetch(`/api/v1/projects/${projectId}`, { method: "DELETE" });
+      const json = (await res.json()) as { success: true } | ApiError;
+      if (!json.success) {
+        setError(json.error.message);
+        return;
+      }
+      if (createdProjectId === projectId) {
+        setCreatedProjectId(null);
+        setCreatedProjectName(null);
+        setApiKey(null);
+      }
+      await refresh();
+    } catch {
+      setError("Failed to delete project.");
+    } finally {
+      setDeletingProjectId(null);
     }
   }
 
@@ -160,6 +187,45 @@ const monitor = new QueueMonitor({
         <CardFooter className="text-sm text-text-muted">
           You’ll only see the plaintext API key once. Store it as an environment variable.
         </CardFooter>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Existing projects</CardTitle>
+          <CardDescription>Delete unused projects and associated API keys, events, and alert rules.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {projectsLoading ? (
+            <div className="text-sm text-text-muted">Loading projects...</div>
+          ) : projects.length === 0 ? (
+            <div className="text-sm text-text-muted">No projects yet.</div>
+          ) : (
+            projects.map((project) => (
+              <div key={project.id} className="flex items-center justify-between rounded-md border border-border bg-surface px-3 py-2">
+                <div>
+                  <div className="text-sm font-medium text-text-primary">{project.name}</div>
+                  <div className="text-xs text-text-muted font-mono">{project.id}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/${project.id}`}
+                    className="inline-flex h-9 items-center justify-center rounded-md border border-border px-3 text-xs text-text-primary hover:bg-surface/80"
+                  >
+                    Open
+                  </Link>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    disabled={deletingProjectId === project.id}
+                    onClick={() => void deleteProject(project.id)}
+                  >
+                    {deletingProjectId === project.id ? "Deleting..." : "Delete"}
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </CardContent>
       </Card>
 
       {createdProjectId && apiKey && (
