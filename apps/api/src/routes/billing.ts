@@ -3,8 +3,10 @@ import type { Request, Response } from 'express';
 import crypto from 'node:crypto';
 import { createCheckoutSession } from '../lib/razorpay';
 import { supabase } from '../lib/supabase';
+import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
 const router = express.Router();
+const publicRouter = express.Router();
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
@@ -84,7 +86,7 @@ async function handleSubscriptionCancelled(subscription: RazorpaySubscriptionPay
   await updateTeamPlanById(teamId, 'free', null);
 }
 
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
+publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
   const signature = req.header('x-razorpay-signature');
   if (!signature) {
     errorResponse(res, 400, 'MISSING_SIGNATURE', 'Missing x-razorpay-signature header');
@@ -148,13 +150,21 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req: R
 
 router.use(express.json({ limit: '1mb' }));
 
-router.post('/checkout-session', async (req: Request, res: Response) => {
-  const { teamId, plan } = req.body as { teamId?: unknown; plan?: unknown };
+function requireTeamId(req: DashboardAuthedRequest, res: Response): string | null {
+  const teamId = typeof req.teamId === 'string' ? req.teamId : '';
+  if (!teamId) {
+    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
+    return null;
+  }
+  return teamId;
+}
 
-  if (typeof teamId !== 'string' || teamId.trim().length === 0) {
-    errorResponse(res, 400, 'INVALID_PAYLOAD', 'teamId is required');
+router.post('/checkout-session', async (req: Request, res: Response) => {
+  const teamId = requireTeamId(req as DashboardAuthedRequest, res);
+  if (!teamId) {
     return;
   }
+  const { plan } = req.body as { plan?: unknown };
 
   if (plan !== 'starter' && plan !== 'pro') {
     errorResponse(res, 400, 'INVALID_PAYLOAD', 'plan must be starter or pro');
@@ -162,7 +172,7 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
   }
 
   try {
-    const session = await createCheckoutSession(teamId.trim(), plan);
+    const session = await createCheckoutSession(teamId, plan);
     res.status(200).json({
       success: true,
       data: {
@@ -177,4 +187,31 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
   }
 });
 
-export { router as billingRouter };
+router.get('/plan', async (req: Request, res: Response) => {
+  const teamId = requireTeamId(req as DashboardAuthedRequest, res);
+  if (!teamId) {
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('teams')
+    .select('plan, plan_expires_at')
+    .eq('id', teamId)
+    .maybeSingle();
+
+  if (error || !data) {
+    errorResponse(res, 500, 'TEAM_PLAN_FETCH_FAILED', 'Failed to fetch team plan');
+    return;
+  }
+
+  const row = data as { plan: 'free' | 'starter' | 'pro'; plan_expires_at: string | null };
+  res.status(200).json({
+    success: true,
+    data: {
+      plan: row.plan,
+      planExpiresAt: row.plan_expires_at,
+    },
+  });
+});
+
+export { router as billingRouter, publicRouter as billingPublicRouter };

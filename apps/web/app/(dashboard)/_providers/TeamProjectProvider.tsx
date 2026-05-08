@@ -76,7 +76,7 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
     }
     const match = pathname.match(/^\/([^/]+)/);
     const projectIdInPath = match?.[1];
-    if (!projectIdInPath || projectIdInPath === "onboarding") {
+    if (!projectIdInPath || projectIdInPath === "onboarding" || projectIdInPath === "settings") {
       return;
     }
     const exists = projects.some((project) => project.id === projectIdInPath);
