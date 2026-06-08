@@ -6,7 +6,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
-import { buildTestMessage, deliverEmail, deliverSlack, escapeHtml } from '../lib/alertDelivery';
+import { buildTestMessage, deliverEmail, deliverSlack, deliverWebhook, escapeHtml } from '../lib/alertDelivery';
 import type { AlertRuleInsert, AlertRuleRow, AlertRuleUpdate } from '../types/database';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
@@ -19,7 +19,7 @@ const CONDITION_TYPES = new Set([
   'job_duration',
 ]);
 
-const CHANNELS = new Set(['slack', 'email']);
+const CHANNELS = new Set(['slack', 'email', 'webhook']);
 
 interface ProjectOwnershipRecord {
   id: string;
@@ -345,6 +345,18 @@ router.post('/:id/alerts/test', async (req: Request, res: Response) => {
 
   if (rule.channel === 'slack') {
     const result = await deliverSlack(rule.destination, text);
+    if (!result.ok) {
+      errorResponse(res, 502, 'DELIVERY_FAILED', result.error);
+      return;
+    }
+  } else if (rule.channel === 'webhook') {
+    const result = await deliverWebhook(rule.destination, {
+      rule_name: rule.name,
+      condition_type: rule.condition_type,
+      threshold_value: numericThreshold(rule.threshold_value),
+      queue_name: rule.queue_name,
+      message: 'Qcanary test alert — no alert history entry was created.',
+    });
     if (!result.ok) {
       errorResponse(res, 502, 'DELIVERY_FAILED', result.error);
       return;

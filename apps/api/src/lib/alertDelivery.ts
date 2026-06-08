@@ -44,6 +44,29 @@ export async function deliverSlack(
   }
 }
 
+export async function deliverWebhook(
+  destination: string,
+  payload: Record<string, unknown>
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    const response = await fetch(destination, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      return { ok: false, error: `Webhook returned ${response.status}: ${body.slice(0, 500)}` };
+    }
+
+    return { ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Webhook delivery failed';
+    return { ok: false, error: message };
+  }
+}
+
 export async function deliverEmail(
   destination: string,
   subject: string,

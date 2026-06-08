@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { trackEvent } from "@/components/PostHogProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 
@@ -28,7 +29,7 @@ type AlertRule = {
   conditionType: "failure_rate" | "no_activity" | "queue_depth" | "job_duration";
   thresholdValue: number;
   windowMinutes: number;
-  channel: "slack" | "email";
+  channel: "slack" | "email" | "webhook";
   destination: string;
   isActive: boolean;
   lastTriggeredAt: string | null;
@@ -131,6 +132,18 @@ function validateDestination(channel: AlertRule["channel"], destinationRaw: stri
       return "Slack destination must start with https://hooks.slack.com/.";
     }
     return null;
+  }
+
+  if (channel === "webhook") {
+    try {
+      const url = new URL(destination);
+      if (url.protocol !== "https:") {
+        return "Webhook URL must use HTTPS.";
+      }
+      return null;
+    } catch {
+      return "Enter a valid URL for the webhook destination.";
+    }
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -253,6 +266,10 @@ export function AlertsClient({ projectId }: { projectId: string }) {
       setDialogOpen(false);
       setForm(defaultForm);
       setFormErrors({});
+      trackEvent(isEdit ? "alert_rule_updated" : "alert_rule_created", {
+        conditionType: form.conditionType,
+        channel: form.channel,
+      });
       setMessage(isEdit ? "Rule updated." : "Rule created.");
       await load();
     } catch (e) {
@@ -606,6 +623,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                 >
                   <option value="slack">slack</option>
                   <option value="email">email</option>
+                  <option value="webhook">webhook (Pro)</option>
                 </select>
               </div>
               <div className="grid gap-2">

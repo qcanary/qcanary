@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useTeamProjects } from "../_providers/TeamProjectProvider";
+import { trackEvent } from "@/components/PostHogProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 type CreateProjectOk = {
@@ -73,6 +74,7 @@ export default function OnboardingPage() {
       }
 
       const projectId = createProjectJson.data.project.id;
+      trackEvent("project_created", { projectId, environment: environment.trim() || "production" });
       setCreatedProjectId(projectId);
       setCreatedProjectName(createProjectJson.data.project.name);
 

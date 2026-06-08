@@ -5,6 +5,7 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { trackEvent } from "@/components/PostHogProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 type PlanName = "free" | "starter" | "pro";
@@ -68,6 +69,7 @@ export default function SettingsPage() {
     }
     setError(null);
     setUpgradingPlan(targetPlan);
+    trackEvent("plan_upgrade_started", { targetPlan });
     try {
       const res = await fetch("/api/v1/billing/checkout-session", {
         method: "POST",

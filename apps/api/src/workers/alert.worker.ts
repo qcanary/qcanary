@@ -8,6 +8,7 @@ import {
   buildAlertMessage,
   deliverEmail,
   deliverSlack,
+  deliverWebhook,
   escapeHtml,
 } from '../lib/alertDelivery';
 import type { AlertChannel, AlertDetails, AlertRuleRow, ConditionType, JobEventRow } from '../types/database';
@@ -169,6 +170,20 @@ async function logAndDeliver(
 
   if (channel === 'slack') {
     const result = await deliverSlack(rule.destination, messageText);
+    delivery_success = result.ok;
+    if (!result.ok) {
+      delivery_error = result.error;
+    }
+  } else if (channel === 'webhook') {
+    const result = await deliverWebhook(rule.destination, {
+      rule_name: rule.name,
+      condition_type: rule.condition_type,
+      threshold_value: threshold,
+      actual_value: actualValue,
+      queue_name: rule.queue_name,
+      window_minutes: rule.window_minutes,
+      triggered_at: new Date().toISOString(),
+    });
     delivery_success = result.ok;
     if (!result.ok) {
       delivery_error = result.error;

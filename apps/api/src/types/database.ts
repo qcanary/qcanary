@@ -75,7 +75,7 @@ export type Plan = 'free' | 'starter' | 'pro';
 export type ConditionType = 'failure_rate' | 'no_activity' | 'queue_depth' | 'job_duration';
 
 // ── Alert channel ──────────────────────────────────────────
-export type AlertChannel = 'slack' | 'email';
+export type AlertChannel = 'slack' | 'email' | 'webhook';
 
 // ── Job event type (from BullMQ) ───────────────────────────
 export type JobEventType =
