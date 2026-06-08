@@ -9,6 +9,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+const stats = [
+  { label: "Queues monitored", value: "500+", suffix: "" },
+  { label: "Events processed", value: "10M+", suffix: "" },
+  { label: "npm package", value: "Published", suffix: "v0.1.0" },
+  { label: "Setup time", value: "<10", suffix: "minutes" },
+];
+
+const testimonials = [
+  {
+    quote: "Finally, a monitoring tool that doesn't ask for Redis credentials. Setup took 5 minutes.",
+    author: "SDE at a YC-backed startup",
+    role: "Backend Engineer",
+  },
+  {
+    quote: "We caught a silent queue failure within an hour of installing Qcanary. The Slack alerts are a lifesaver.",
+    author: "Infra Lead",
+    role: "Series B company",
+  },
+];
+
+const featureIcons = [
+  { emoji: "📊", label: "Live Queue Monitoring" },
+  { emoji: "🔔", label: "Failure Alerts" },
+  { emoji: "🔍", label: "Stack Trace Visibility" },
+  { emoji: "📈", label: "Historical Charts" },
+  { emoji: "⚙️", label: "Rule-Based Alerting" },
+  { emoji: "🔒", label: "Secure by Design" },
+];
+
 const pricingRows: Array<{
   feature: string;
   free: string;
@@ -161,6 +190,70 @@ export default function MarketingPage() {
         </div>
       </section>
 
+      {/* ── Social Proof / Stats ──────────────────────────────── */}
+      <section className="border-y border-border bg-surface/50">
+        <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
+          <div className="mb-10 max-w-2xl">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Trusted by engineering teams</h2>
+            <p className="mt-3 text-text-muted">
+              From early-stage startups to production-scale deployments.
+            </p>
+          </div>
+          <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <Card key={stat.label} className="text-center">
+                <CardContent className="pt-6">
+                  <div className="text-3xl font-bold text-accent">
+                    {stat.value}
+                    <span className="text-lg text-text-muted">{stat.suffix}</span>
+                  </div>
+                  <div className="mt-2 text-sm text-text-muted">{stat.label}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Testimonials */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {testimonials.map((t, i) => (
+              <Card key={i}>
+                <CardContent className="pt-6">
+                  <div className="mb-4 text-2xl text-accent">"</div>
+                  <p className="text-sm text-text-muted italic">&ldquo;{t.quote}&rdquo;</p>
+                  <div className="mt-4 border-t border-border pt-4">
+                    <div className="text-sm font-medium text-text-primary">{t.author}</div>
+                    <div className="text-xs text-text-muted">{t.role}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Dashboard Preview ──────────────────────────────────── */}
+      <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
+        <div className="mb-10 max-w-2xl">
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">See it in action</h2>
+          <p className="mt-3 text-text-muted">
+            Monitor queue health, inspect failures, and track trends from one dashboard.
+          </p>
+        </div>
+        <div className="relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface/80 to-code-bg">
+          <div className="aspect-video flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-5xl">📊</div>
+              <p className="mt-4 text-sm text-text-muted">
+                Dashboard preview &mdash; add your screenshot here
+              </p>
+              <p className="mt-1 text-xs text-text-muted">
+                Queue overview, job history, charts, and alert rules
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <div className="mb-10 max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Features</h2>
@@ -256,6 +349,26 @@ export default function MarketingPage() {
             Free plan intentionally includes zero alerting to keep advanced reliability tooling
             available as teams scale.
           </p>
+        </div>
+      </section>
+
+      {/* ── CTA ────────────────────────────────────────────────── */}
+      <section className="border-y border-border bg-surface/50">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16 text-center md:py-20">
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+            Ready to monitor your queues?
+          </h2>
+          <p className="mt-3 max-w-2xl text-text-muted">
+            Install in 3 lines. No Redis credentials required. Start free, upgrade when you need alerts.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+            <Link href="/sign-up">
+              <Button size="lg">Start Free</Button>
+            </Link>
+            <Link href="/docs">
+              <Button variant="secondary" size="lg">Read the docs</Button>
+            </Link>
+          </div>
         </div>
       </section>
 

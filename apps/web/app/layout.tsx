@@ -13,10 +13,47 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
+const siteUrl = "https://qcanary.dev";
+const siteName = "Qcanary — BullMQ Monitoring Dashboard";
+
 export const metadata: Metadata = {
-  title: "Qcanary — BullMQ Monitoring Dashboard",
+  title: {
+    default: siteName,
+    template: `%s — Qcanary`,
+  },
   description:
-    "Monitor your BullMQ job queues in real-time. Get alerts on failures, track queue health, and debug issues — without exposing your Redis credentials.",
+    "Monitor your BullMQ job queues in real-time. Get Slack alerts on failures, track queue health, and debug issues — without exposing your Redis credentials.",
+  keywords: [
+    "bullmq",
+    "queue monitoring",
+    "job queue",
+    "node.js monitoring",
+    "redis monitoring",
+    "bullmq alerts",
+    "background jobs",
+    "queue observability",
+  ],
+  authors: [{ name: "Qcanary" }],
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    title: siteName,
+    description:
+      "Know when your BullMQ jobs fail. Before your users do. Slack alerts, job history, and queue health — no Redis credentials required.",
+    url: siteUrl,
+    siteName,
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description:
+      "BullMQ monitoring with Slack alerts and job history. Install in 3 lines.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
