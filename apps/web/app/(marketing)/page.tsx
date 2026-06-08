@@ -31,6 +31,25 @@ const pricingRows: Array<{
 export default function MarketingPage() {
   return (
     <main className="min-h-screen bg-bg text-text-primary">
+      <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
+          <Link href="/" className="text-lg font-semibold tracking-tight text-text-primary">
+            Qcanary
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/docs" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+              Docs
+            </Link>
+            <Link href="/sign-in" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+              Sign In
+            </Link>
+            <Link href="/sign-up">
+              <Button size="sm">Start Free</Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
       <section className="relative overflow-hidden border-b border-border">
         <div className="pointer-events-none absolute inset-x-0 top-[-320px] mx-auto h-[520px] w-[900px] rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.2)_0%,_rgba(34,197,94,0.08)_30%,_rgba(10,10,10,0)_70%)]" />
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-20 pt-24 text-center md:pt-28">
@@ -285,6 +304,10 @@ export default function MarketingPage() {
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-text-muted md:flex-row">
           <p>Qcanary - BullMQ monitoring for production teams.</p>
           <div className="flex items-center gap-3">
+            <Link href="/docs" className="hover:text-text-primary">
+              Docs
+            </Link>
+            <span className="text-border">|</span>
             <Link href="/sign-in" className="hover:text-text-primary">
               Dashboard
             </Link>
