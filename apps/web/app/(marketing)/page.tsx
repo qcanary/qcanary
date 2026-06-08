@@ -231,17 +231,12 @@ export default function MarketingPage() {
           </p>
         </div>
         <div className="relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface/80 to-code-bg">
-          <div className="aspect-video flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-5xl">📊</div>
-              <p className="mt-4 text-sm text-text-muted">
-                Dashboard preview &mdash; add your screenshot here
-              </p>
-              <p className="mt-1 text-xs text-text-muted">
-                Queue overview, job history, charts, and alert rules
-              </p>
-            </div>
-          </div>
+          <img
+            src="/screenshots/dashboard-overview.png"
+            alt="Qcanary dashboard showing queue overview, job history, and health metrics"
+            className="w-full h-auto"
+            loading="lazy"
+          />
         </div>
       </section>
 
