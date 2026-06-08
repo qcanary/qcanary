@@ -13,7 +13,9 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
-const siteUrl = "https://qcanary.dev";
+const siteUrl = process.env.RAILWAY_STATIC_URL
+  ? `https://${process.env.RAILWAY_STATIC_URL}`
+  : "https://qcanary.dev";
 const siteName = "Qcanary — BullMQ Monitoring Dashboard";
 
 export const metadata: Metadata = {

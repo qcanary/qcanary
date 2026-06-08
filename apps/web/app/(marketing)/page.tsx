@@ -18,7 +18,7 @@ const stats = [
 
 const testimonials = [
   {
-    quote: "Finally, a monitoring tool that doesn't ask for Redis credentials. Setup took 5 minutes.",
+    quote: "Finally, a monitoring tool that doesn&rsquo;t ask for Redis credentials. Setup took 5 minutes.",
     author: "SDE at a YC-backed startup",
     role: "Backend Engineer",
   },
@@ -27,15 +27,6 @@ const testimonials = [
     author: "Infra Lead",
     role: "Series B company",
   },
-];
-
-const featureIcons = [
-  { emoji: "📊", label: "Live Queue Monitoring" },
-  { emoji: "🔔", label: "Failure Alerts" },
-  { emoji: "🔍", label: "Stack Trace Visibility" },
-  { emoji: "📈", label: "Historical Charts" },
-  { emoji: "⚙️", label: "Rule-Based Alerting" },
-  { emoji: "🔒", label: "Secure by Design" },
 ];
 
 const pricingRows: Array<{
@@ -218,7 +209,7 @@ export default function MarketingPage() {
             {testimonials.map((t, i) => (
               <Card key={i}>
                 <CardContent className="pt-6">
-                  <div className="mb-4 text-2xl text-accent">"</div>
+                  <div className="mb-4 text-2xl text-accent">&ldquo;</div>
                   <p className="text-sm text-text-muted italic">&ldquo;{t.quote}&rdquo;</p>
                   <div className="mt-4 border-t border-border pt-4">
                     <div className="text-sm font-medium text-text-primary">{t.author}</div>
