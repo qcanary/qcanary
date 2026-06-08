@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { PostHogProvider } from "@/components/PostHogProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -65,6 +67,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-K86LMK6NE6"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-K86LMK6NE6');
+          `}
+        </Script>
+      </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#0A0A0A] text-[#FAFAFA]`}>
         <ClerkProvider
           appearance={{
@@ -91,7 +108,7 @@ export default function RootLayout({
             },
           }}
         >
-          {children}
+          <PostHogProvider>{children}</PostHogProvider>
         </ClerkProvider>
       </body>
     </html>
