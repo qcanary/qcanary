@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#16A34A"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer circle -->
+  <circle cx="256" cy="256" r="248" fill="#0A0A0A" stroke="url(#g)" stroke-width="16"/>
+  
+  <!-- Stylized Q mark - letterform + canary hint -->
+  <g transform="translate(256,256)">
+    <!-- Letter Q circle -->
+    <circle cx="0" cy="-8" r="120" fill="none" stroke="#22C55E" stroke-width="36"/>
+    
+    <!-- Q tail -->
+    <path d="M 75 60 L 130 115" stroke="#22C55E" stroke-width="36" stroke-linecap="round"/>
+    
+    <!-- Minimal canary silhouette inside the negative space -->
+    <g transform="translate(-25, -55)">
+      <!-- Body -->
+      <ellipse cx="0" cy="0" rx="28" ry="20" fill="#22C55E" opacity="0.9"/>
+      <!-- Head -->
+      <circle cx="26" cy="-14" r="14" fill="#22C55E" opacity="0.9"/>
+      <!-- Eye -->
+      <circle cx="30" cy="-16" r="3.5" fill="#0A0A0A"/>
+      <!-- Beak -->
+      <path d="M 38 -14 L 48 -11 L 38 -8" fill="#0A0A0A"/>
+      <!-- Wing detail -->
+      <path d="M -8 -4 Q 8 -24 22 -4" fill="#16A34A" opacity="0.7"/>
+    </g>
+  </g>
+</svg>
