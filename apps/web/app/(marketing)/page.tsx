@@ -54,7 +54,7 @@ export default function MarketingPage() {
       <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <Link href="/" className="text-lg font-semibold tracking-tight text-text-primary">
-            <img src="/logo.svg" alt="Qcanary" className="h-7 w-auto" />
+            <img src="/logo.png" alt="Qcanary" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/docs" className="text-sm text-text-muted transition-colors hover:text-text-primary">
