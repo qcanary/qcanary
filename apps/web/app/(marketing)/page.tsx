@@ -53,8 +53,11 @@ export default function MarketingPage() {
     <main className="min-h-screen bg-bg text-text-primary">
       <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-          <Link href="/" className="text-lg font-semibold tracking-tight text-text-primary">
-            <img src="/logo.png" alt="Qcanary" className="h-8 w-auto" />
+          <Link href="/" className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-md bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="Qcanary" className="h-full w-full object-cover" />
+            </div>
+            <span className="text-lg font-semibold tracking-tight text-text-primary">Qcanary</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/docs" className="text-sm text-text-muted transition-colors hover:text-text-primary">

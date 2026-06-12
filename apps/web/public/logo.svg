@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
-  <!-- Q circle -->
-  <circle cx="170" cy="170" r="140" fill="none" stroke="#22C55E" stroke-width="42"/>
-  
-  <!-- Q tail = upward chart trend line -->
-  <path d="M 268 268 L 320 220 L 350 180" stroke="#22C55E" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
