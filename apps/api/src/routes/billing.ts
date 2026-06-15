@@ -10,10 +10,6 @@ const publicRouter = express.Router();
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
-if (!webhookSecret) {
-  throw new Error('Missing required environment variable: RAZORPAY_WEBHOOK_SECRET');
-}
-
 function errorResponse(res: Response, statusCode: number, code: string, message: string): void {
   res.status(statusCode).json({
     success: false,
@@ -57,6 +53,9 @@ interface RazorpaySubscriptionPayload {
 }
 
 function verifyWebhook(rawBody: Buffer, signature: string): boolean {
+  if (!webhookSecret) {
+    return false;
+  }
   const digest = crypto.createHmac('sha256', webhookSecret as string).update(rawBody).digest('hex');
   return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
 }
@@ -87,6 +86,11 @@ async function handleSubscriptionCancelled(subscription: RazorpaySubscriptionPay
 }
 
 publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
+  if (!webhookSecret) {
+    errorResponse(res, 503, 'BILLING_UNAVAILABLE', 'Billing webhook is not configured');
+    return;
+  }
+
   const signature = req.header('x-razorpay-signature');
   if (!signature) {
     errorResponse(res, 400, 'MISSING_SIGNATURE', 'Missing x-razorpay-signature header');

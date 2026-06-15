@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import { BrandLockup, BrandMark } from "@/components/Brand";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,12 +55,7 @@ export default function MarketingPage() {
     <main className="min-h-screen bg-bg text-text-primary">
       <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-md bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
-              <img src="/logo.png" alt="Qcanary" className="h-full w-full object-cover" />
-            </div>
-            <span className="text-lg font-semibold tracking-tight text-text-primary">Qcanary</span>
-          </Link>
+          <BrandLockup href="/" size="md" />
           <div className="flex items-center gap-4">
             <Link href="/docs" className="text-sm text-text-muted transition-colors hover:text-text-primary">
               Docs
@@ -234,11 +231,13 @@ export default function MarketingPage() {
           </p>
         </div>
         <div className="relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface/80 to-code-bg">
-          <img
+          <Image
             src="/screenshots/dashboard-overview.png"
             alt="Qcanary dashboard showing queue overview, job history, and health metrics"
-            className="w-full h-auto"
-            loading="lazy"
+            width={1918}
+            height={1058}
+            className="h-auto w-full"
+            sizes="(max-width: 768px) 100vw, 1152px"
           />
         </div>
       </section>
@@ -404,7 +403,10 @@ export default function MarketingPage() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-text-muted md:flex-row">
-          <p>Qcanary - BullMQ monitoring for production teams.</p>
+          <div className="flex items-center gap-3">
+            <BrandMark size="sm" />
+            <p>Qcanary - BullMQ monitoring for production teams.</p>
+          </div>
           <div className="flex items-center gap-3">
             <Link href="/docs" className="hover:text-text-primary">
               Docs

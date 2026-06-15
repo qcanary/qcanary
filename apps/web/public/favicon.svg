@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- Q circle -->
-  <circle cx="16" cy="15" r="12" fill="none" stroke="#22C55E" stroke-width="3"/>
-  <!-- Q tail / arrow graph -->
-  <path d="M 25 23 L 28 19" stroke="#22C55E" stroke-width="3" stroke-linecap="round"/>
-  <path d="M 26 14 L 28 12 L 30 14" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#0A100C"/>
+  <rect x="4.5" y="4.5" width="55" height="55" rx="13.5" stroke="#2B3E31"/>
+  <path d="M42.6 46.5a20.4 20.4 0 1 1 0-28.8" stroke="#22C55E" stroke-width="6" stroke-linecap="square"/>
+  <path d="M19.5 36.2 30 25.8l6.3 6.2 13.6-13.7" stroke="#22C55E" stroke-width="6" stroke-linejoin="miter" stroke-linecap="square"/>
+  <path d="M45.7 18.2h9.3v9.3" stroke="#22C55E" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
 </svg>

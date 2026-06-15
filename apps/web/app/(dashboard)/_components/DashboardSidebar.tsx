@@ -5,6 +5,7 @@ import { useParams, usePathname } from "next/navigation";
 import * as React from "react";
 import { Bell, Folder, LayoutDashboard, Settings } from "lucide-react";
 
+import { BrandLockup } from "@/components/Brand";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { useTeamProjects } from "../_providers/TeamProjectProvider";
@@ -61,9 +62,7 @@ export function DashboardSidebar() {
   return (
     <aside className="w-64 border-r border-border bg-surface p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <div className="text-lg font-semibold tracking-tight">
-          <span className="text-accent">Qcanary</span>
-        </div>
+        <BrandLockup href="/onboarding" size="sm" labelClassName="text-text-primary" />
         <Link
           href="/settings"
           aria-label="Settings"
@@ -125,4 +124,3 @@ export function DashboardSidebar() {
     </aside>
   );
 }
-

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { BrandLockup } from "@/components/Brand";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -58,6 +59,12 @@ export default function DocsPage() {
     <div className="mx-auto w-full max-w-5xl space-y-8 px-6 py-10">
       {/* ── Header ───────────────────────────────────────────── */}
       <div className="space-y-3">
+        <BrandLockup
+          href="/"
+          size="sm"
+          className="w-fit"
+          labelClassName="text-sm uppercase tracking-[0.22em] text-text-muted"
+        />
         <h1 className="text-4xl font-semibold tracking-tight">Qcanary Docs</h1>
         <p className="text-text-muted">
           Monitor BullMQ queues with alerts and historical health data — without sharing Redis credentials.

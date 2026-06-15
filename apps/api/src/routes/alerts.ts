@@ -143,7 +143,7 @@ function parseCreateBody(
 
   const channel = typeof b.channel === 'string' ? b.channel : '';
   if (!CHANNELS.has(channel)) {
-    return { ok: false, message: 'channel must be one of: slack, email' };
+    return { ok: false, message: 'channel must be one of: slack, email, webhook' };
   }
 
   const destination = typeof b.destination === 'string' ? b.destination.trim() : '';
@@ -261,7 +261,7 @@ function parsePatchBody(body: unknown): { ok: true; value: AlertRuleUpdate } | {
 
   if (b.channel !== undefined) {
     if (typeof b.channel !== 'string' || !CHANNELS.has(b.channel)) {
-      return { ok: false, message: 'channel must be one of: slack, email' };
+      return { ok: false, message: 'channel must be one of: slack, email, webhook' };
     }
     update.channel = b.channel;
   }

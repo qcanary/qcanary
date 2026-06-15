@@ -356,7 +356,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Alerts</h1>
           <p className="mt-2 text-text-muted">
-            Configure rules for Slack and email notifications for <span className="font-mono text-text-primary">{projectId}</span>.
+            Configure Slack, email, and webhook notifications for <span className="font-mono text-text-primary">{projectId}</span>.
           </p>
         </div>
         <Button onClick={openCreateDialog}>Create rule</Button>
@@ -495,7 +495,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{form.id ? "Edit alert rule" : "Create alert rule"}</DialogTitle>
-            <DialogDescription>Use Slack webhook URL or destination email for delivery.</DialogDescription>
+            <DialogDescription>Use a Slack webhook URL, destination email, or HTTPS webhook for delivery.</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4">
@@ -650,7 +650,13 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                   const destinationError = validateDestination(form.channel, value);
                   setFormErrors((prev) => ({ ...prev, destination: destinationError ?? undefined }));
                 }}
-                placeholder={form.channel === "slack" ? "https://hooks.slack.com/..." : "alerts@example.com"}
+                placeholder={
+                  form.channel === "slack"
+                    ? "https://hooks.slack.com/..."
+                    : form.channel === "webhook"
+                      ? "https://example.com/hooks/qcanary"
+                      : "alerts@example.com"
+                }
                 aria-invalid={Boolean(formErrors.destination)}
               />
               {formErrors.destination && <p className="text-xs text-red-400">{formErrors.destination}</p>}
