@@ -8,6 +8,10 @@ if (!secretKey) {
   throw new Error('DODO_SECRET_KEY is not set');
 }
 
+if (!process.env.APP_URL) {
+  throw new Error('APP_URL is not set');
+}
+
 const environment = process.env.NODE_ENV === 'production' ? 'live_mode' : 'test_mode';
 
 export const dodo = new DodoPayments({

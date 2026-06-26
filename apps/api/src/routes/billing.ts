@@ -198,8 +198,8 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
           quantity: 1,
         },
       ],
-      return_url: `${appBaseUrl}/dashboard/settings?payment=success`,
-      cancel_url: `${appBaseUrl}/dashboard/settings?payment=cancelled`,
+      return_url: `${process.env.APP_URL}/dashboard?payment=success`,
+      cancel_url: `${process.env.APP_URL}/settings/billing?payment=cancelled`,
       metadata: {
         teamId,
         plan,
