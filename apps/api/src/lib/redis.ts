@@ -40,7 +40,7 @@ export const redisConnectionOptions: ConnectionOptions = {
   port: upstashConfig.redisPort,
   password: upstashConfig.restToken,
   username: 'default',
-  tls: {},
+  tls: { rejectUnauthorized: true },
   maxRetriesPerRequest: null,
   enableReadyCheck: false,
 };

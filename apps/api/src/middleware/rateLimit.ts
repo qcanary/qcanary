@@ -75,6 +75,7 @@ export async function ingestRateLimit(
 
     next();
   } catch {
+    console.warn('[rateLimit] Upstash unreachable — failing open. All requests allowed.');
     // Fail open to avoid dropping customer traffic due to transient Upstash issues.
     next();
   }

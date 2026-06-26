@@ -13,6 +13,8 @@ import { validateApiKey } from '../middleware/auth';
 import { ingestRateLimit } from '../middleware/rateLimit';
 import { enforceDailyEventLimitForProject } from '../middleware/planLimits';
 
+const MAX_BATCH_SIZE = 500;
+
 interface IngestEventPayload {
   queueName: string;
   jobId: string;
@@ -72,6 +74,17 @@ router.post(
 
     const events = parseResult.value.events;
 
+    if (events.length > MAX_BATCH_SIZE) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'BATCH_SIZE_EXCEEDED',
+          message: `Batch size limit exceeded: max ${MAX_BATCH_SIZE} events per request`,
+        },
+      });
+      return;
+    }
+
     const planLimit = await enforceDailyEventLimitForProject(projectId, events.length);
     if (!planLimit.allowed) {
       res.status(403).json({
@@ -91,7 +104,11 @@ router.post(
       },
     });
 
-    void processEvents(projectId, events);
+    try {
+      await processEvents(projectId, events);
+    } catch (err) {
+      console.error('[ingest] event processing failed:', err);
+    }
   }
 );
 

@@ -30,6 +30,21 @@ export default function SettingsPage() {
   const [loadingPlan, setLoadingPlan] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [upgradingPlan, setUpgradingPlan] = React.useState<PlanName | null>(null);
+  const [paymentMessage, setPaymentMessage] = React.useState<string | null>(null);
+
+  // Handle redirect-from-Dodo payment status
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get('payment');
+    if (payment === 'success') {
+      setPaymentMessage('Payment successful! Your plan has been upgraded.');
+      // Clean the URL
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (payment === 'cancelled') {
+      setPaymentMessage('Upgrade cancelled. You can try again anytime.');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -96,6 +111,14 @@ export default function SettingsPage() {
         <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
         <p className="mt-2 text-text-muted">Manage plan and billing upgrades.</p>
       </div>
+
+      {paymentMessage && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{paymentMessage}</CardTitle>
+          </CardHeader>
+        </Card>
+      )}
 
       {error && (
         <Card>
