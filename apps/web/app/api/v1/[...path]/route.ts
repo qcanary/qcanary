@@ -7,12 +7,22 @@ function apiBaseUrl(): string | null {
   return raw.replace(/\/+$/, "");
 }
 
+const EXCLUDED_SEGMENTS = new Set(["sign-up", "sign-in"]);
+
 async function handler(req: NextRequest, context: { params: { path: string[] } }) {
   const base = apiBaseUrl();
   if (!base) {
     return NextResponse.json(
       { success: false, error: { code: "CONFIG_ERROR", message: "Missing API_BASE_URL" } },
       { status: 500 }
+    );
+  }
+
+  // Defense-in-depth: reject requests containing Clerk auth route segments
+  if (Array.isArray(context.params.path) && context.params.path.some((segment) => EXCLUDED_SEGMENTS.has(segment))) {
+    return NextResponse.json(
+      { success: false, error: { code: "NOT_FOUND", message: "Not found" } },
+      { status: 404 }
     );
   }
 

@@ -3,6 +3,7 @@ dotenv.config();
 
 import { Queue, type ConnectionOptions } from 'bullmq';
 import IORedis from 'ioredis';
+import { logger } from './logger';
 
 interface UpstashRedisConfig {
   restUrl: string;
@@ -46,6 +47,9 @@ export const redisConnectionOptions: ConnectionOptions = {
 };
 
 export const redis = new IORedis(redisConnectionOptions);
+redis.on('error', (err) => {
+  logger.error({ err }, 'Redis connection error');
+});
 
 export const alertQueue = new Queue('qcanary-alerts', {
   connection: redisConnectionOptions,

@@ -18,16 +18,82 @@ type PlanResponse = {
   };
 };
 
+type UsageResponse = {
+  success: true;
+  data: {
+    plan: PlanName;
+    usage: {
+      projectsUsed: number;
+      projectsLimit: number | null;
+      eventsUsedToday: number;
+      eventsLimit: number | null;
+    };
+  };
+};
+
 const planRank: Record<PlanName, number> = {
   free: 0,
   starter: 1,
   pro: 2,
 };
 
+function formatLimit(limit: number | null): string {
+  return limit === null ? "Unlimited" : limit.toLocaleString();
+}
+
+function progressTone(used: number, limit: number | null): string {
+  if (limit === null || limit <= 0) {
+    return "bg-accent";
+  }
+  const percent = (used / limit) * 100;
+  if (percent >= 100) {
+    return "bg-red-500";
+  }
+  if (percent > 80) {
+    return "bg-yellow-400";
+  }
+  return "bg-accent";
+}
+
+function UsageMeter({
+  label,
+  used,
+  limit,
+}: {
+  label: string;
+  used: number;
+  limit: number | null;
+}) {
+  const percent = limit === null || limit <= 0 ? 100 : Math.min((used / limit) * 100, 100);
+  const atLimit = limit !== null && used >= limit;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-4">
+        <div className="text-sm font-medium text-text-primary">{label}</div>
+        <div className="text-sm text-text-muted">
+          {used.toLocaleString()} / {formatLimit(limit)}
+        </div>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-border">
+        <div
+          className={`h-full rounded-full transition-all ${progressTone(used, limit)}`}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      {atLimit && (
+        <div className="text-xs font-medium text-red-300">Limit reached. Upgrade to keep scaling.</div>
+      )}
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const [plan, setPlan] = React.useState<PlanName | null>(null);
   const [planExpiresAt, setPlanExpiresAt] = React.useState<string | null>(null);
+  const [usage, setUsage] = React.useState<UsageResponse["data"]["usage"] | null>(null);
   const [loadingPlan, setLoadingPlan] = React.useState(true);
+  const [loadingUsage, setLoadingUsage] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [upgradingPlan, setUpgradingPlan] = React.useState<PlanName | null>(null);
   const [paymentMessage, setPaymentMessage] = React.useState<string | null>(null);
@@ -40,26 +106,42 @@ export default function SettingsPage() {
       setPaymentMessage('Payment successful! Your plan has been upgraded.');
       // Clean the URL
       window.history.replaceState({}, '', window.location.pathname);
-    } else if (payment === 'cancelled') {
-      setPaymentMessage('Upgrade cancelled. You can try again anytime.');
+    }
+  }, []);
+
+  // Handle billing cancellation query param
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const billing = params.get('billing');
+    if (billing === 'cancelled') {
+      setPaymentMessage('Billing upgrade was cancelled. You can try again anytime.');
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
 
   React.useEffect(() => {
     let cancelled = false;
-    async function loadPlan() {
+    async function loadBillingSettings() {
       try {
         setLoadingPlan(true);
+        setLoadingUsage(true);
         setError(null);
-        const res = await fetch("/api/v1/billing/plan", { cache: "no-store" });
-        const json = (await res.json()) as PlanResponse | ApiError;
-        if (!json.success) {
-          throw new Error(json.error.message);
+        const [planRes, usageRes] = await Promise.all([
+          fetch("/api/v1/billing/plan", { cache: "no-store" }),
+          fetch("/api/v1/usage", { cache: "no-store" }),
+        ]);
+        const planJson = (await planRes.json()) as PlanResponse | ApiError;
+        const usageJson = (await usageRes.json()) as UsageResponse | ApiError;
+        if (!planJson.success) {
+          throw new Error(planJson.error.message);
+        }
+        if (!usageJson.success) {
+          throw new Error(usageJson.error.message);
         }
         if (!cancelled) {
-          setPlan(json.data.plan);
-          setPlanExpiresAt(json.data.planExpiresAt);
+          setPlan(planJson.data.plan);
+          setPlanExpiresAt(planJson.data.planExpiresAt);
+          setUsage(usageJson.data.usage);
         }
       } catch (e) {
         if (!cancelled) {
@@ -68,11 +150,12 @@ export default function SettingsPage() {
       } finally {
         if (!cancelled) {
           setLoadingPlan(false);
+          setLoadingUsage(false);
         }
       }
     }
 
-    void loadPlan();
+    void loadBillingSettings();
     return () => {
       cancelled = true;
     };
@@ -141,6 +224,29 @@ export default function SettingsPage() {
             <>
               <Badge variant={currentPlan === "free" ? "outline" : "success"}>{currentPlan}</Badge>
               {expiresText && <span className="text-sm text-text-muted">Renews/ends: {expiresText}</span>}
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Usage</CardTitle>
+          <CardDescription>Current plan consumption for your organization.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {loadingUsage || !usage ? (
+            <span className="text-sm text-text-muted">Loading usage...</span>
+          ) : (
+            <>
+              <UsageMeter label="Projects" used={usage.projectsUsed} limit={usage.projectsLimit} />
+              <UsageMeter label="Daily events" used={usage.eventsUsedToday} limit={usage.eventsLimit} />
+              {((usage.projectsLimit !== null && usage.projectsUsed >= usage.projectsLimit) ||
+                (usage.eventsLimit !== null && usage.eventsUsedToday >= usage.eventsLimit)) && (
+                <div className="rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+                  Your current plan is at capacity. Upgrade to raise these limits.
+                </div>
+              )}
             </>
           )}
         </CardContent>

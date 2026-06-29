@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import { buildTestMessage, deliverEmail, deliverSlack, deliverWebhook, escapeHtml } from '../lib/alertDelivery';
 import type { AlertRuleInsert, AlertRuleRow, AlertRuleUpdate } from '../types/database';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
+import { insertRow, updateRows } from '../lib/typedSupabase';
 
 const router = express.Router();
 
@@ -510,9 +511,7 @@ router.post('/:id/alerts', async (req: Request, res: Response) => {
     project_id: projectId,
   };
 
-  const { data, error } = await supabase
-    .from('alert_rules')
-    .insert(insertPayload as never)
+  const { data, error } = await insertRow('alert_rules', insertPayload)
     .select(
       'id, project_id, queue_name, name, condition_type, threshold_value, window_minutes, channel, destination, is_active, last_triggered_at, cooldown_minutes, created_at'
     )
@@ -606,9 +605,7 @@ router.patch('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
     return;
   }
 
-  const { data, error } = await supabase
-    .from('alert_rules')
-    .update(parsed.value as never)
+  const { data, error } = await updateRows('alert_rules', parsed.value)
     .eq('id', ruleId)
     .eq('project_id', projectId)
     .select(

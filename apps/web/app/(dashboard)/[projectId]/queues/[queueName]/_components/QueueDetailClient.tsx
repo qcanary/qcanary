@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useAuth } from "@clerk/nextjs";
 import {
   Area,
   AreaChart,
@@ -19,6 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { createAuthedSupabaseClient } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
 
 type ApiError = { success: false; error: { code: string; message: string } };
@@ -63,6 +65,22 @@ type JobListItem = {
   environment: string | null;
   timestamp: string;
   createdAt: string;
+};
+
+type JobEventRealtimeRow = {
+  id: number;
+  project_id: string;
+  queue_name: string;
+  job_id: string;
+  job_name: string | null;
+  event_type: string;
+  status: string;
+  duration_ms: number | null;
+  attempts: number | null;
+  error_message: string | null;
+  environment: string | null;
+  timestamp: string;
+  created_at: string;
 };
 
 type QueueJobsOk = {
@@ -141,6 +159,22 @@ function axisHourLabel(iso: string): string {
 
 function safeDuration(value: number | null): number {
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function toJobListItem(row: JobEventRealtimeRow): JobListItem {
+  return {
+    id: row.id,
+    jobId: row.job_id,
+    jobName: row.job_name,
+    eventType: row.event_type,
+    status: row.status,
+    durationMs: row.duration_ms,
+    attempts: row.attempts,
+    errorMessage: row.error_message,
+    environment: row.environment,
+    timestamp: row.timestamp,
+    createdAt: row.created_at,
+  };
 }
 
 function JobDetailDialog({
@@ -295,6 +329,8 @@ function JobDetailDialog({
 }
 
 export function QueueDetailClient({ projectId, queueName }: { projectId: string; queueName: string }) {
+  const { getToken } = useAuth();
+
   const [period, setPeriod] = React.useState<Period>("7d");
   const [status, setStatus] = React.useState<string | null>(null);
   const [page, setPage] = React.useState(1);
@@ -347,6 +383,88 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
   React.useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    let cleanup: (() => void) | undefined;
+
+    async function initRealtime() {
+      const token = await getToken().catch(() => null);
+      if (!token || cancelled) return;
+
+      const supabase = createAuthedSupabaseClient(token);
+      if (!supabase || cancelled) return;
+
+      const channel = supabase
+        .channel(`queue-events-${projectId}-${queueName}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "job_events", filter: `project_id=eq.${projectId}` },
+          (payload) => {
+            const row = payload.new as Partial<JobEventRealtimeRow>;
+            if (
+              row.project_id !== projectId ||
+              row.queue_name !== queueName ||
+              typeof row.id !== "number" ||
+              typeof row.job_id !== "string" ||
+              typeof row.event_type !== "string" ||
+              typeof row.status !== "string" ||
+              typeof row.timestamp !== "string" ||
+              typeof row.created_at !== "string"
+            ) {
+              return;
+            }
+
+            const item = toJobListItem(row as JobEventRealtimeRow);
+            setJobs((prev) => {
+              if (!prev || (status && item.status !== status)) return prev;
+              const nextJobs = [item, ...prev.jobs.filter((existing) => existing.id !== item.id)].slice(0, prev.pagination.limit);
+              return {
+                ...prev,
+                jobs: nextJobs,
+                pagination: {
+                  ...prev.pagination,
+                  total: prev.pagination.total + 1,
+                },
+              };
+            });
+
+            setMetrics((prev) => {
+              if (!prev) return prev;
+              const nextSummary = { ...prev.summary };
+              if (item.status === "completed") {
+                nextSummary.completed += 1;
+                nextSummary.totalJobs += 1;
+              } else if (item.status === "failed") {
+                nextSummary.failed += 1;
+                nextSummary.totalJobs += 1;
+              } else if (item.status === "stalled") {
+                nextSummary.stalled += 1;
+                nextSummary.totalJobs += 1;
+              }
+              nextSummary.failureRate = nextSummary.totalJobs > 0
+                ? (nextSummary.failed / nextSummary.totalJobs) * 100
+                : 0;
+              return {
+                ...prev,
+                summary: nextSummary,
+              };
+            });
+          }
+        )
+        .subscribe();
+
+      cleanup = () => {
+        void channel.unsubscribe();
+      };
+    }
+
+    void initRealtime();
+    return () => {
+      cancelled = true;
+      if (cleanup) cleanup();
+    };
+  }, [getToken, projectId, queueName, status]);
 
   React.useEffect(() => {
     setPage(1);
@@ -684,4 +802,3 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
     </div>
   );
 }
-

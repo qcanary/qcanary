@@ -10,6 +10,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "BullMQ Monitoring Without Redis Credentials",
+  description:
+    "QCanary monitors BullMQ queues with a lightweight agent, real-time dashboards, and alerts without exposing Redis credentials.",
+  keywords: [
+    "BullMQ monitoring",
+    "Redis queue monitoring",
+    "Node.js background jobs",
+    "BullMQ alerts",
+  ],
+};
 
 const stats = [
   { label: "Queues monitored", value: "500+", suffix: "" },
@@ -57,6 +70,9 @@ export default function MarketingPage() {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <BrandLockup href="/" size="md" />
           <div className="flex items-center gap-4">
+            <Link href="/blog" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+              Blog
+            </Link>
             <Link href="/docs" className="text-sm text-text-muted transition-colors hover:text-text-primary">
               Docs
             </Link>
@@ -77,11 +93,11 @@ export default function MarketingPage() {
             Built for BullMQ in production
           </Badge>
           <h1 className="max-w-4xl text-4xl font-semibold tracking-tight md:text-6xl">
-            Know when your jobs fail. Before your users do.
+            Monitor BullMQ Queues Without Sharing Redis Credentials.
           </h1>
           <p className="mt-5 max-w-3xl text-base text-text-muted md:text-xl">
-            BullMQ monitoring with Slack alerts and job history. Install in 3 lines. No
-            Redis credentials required.
+            A lightweight agent streams job metadata to QCanary. No Redis exposure, no firewall
+            changes, just real-time visibility.
           </p>
           <div className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
             <Link href="/sign-up" className="w-full sm:w-auto">
@@ -89,9 +105,9 @@ export default function MarketingPage() {
                 Start Free
               </Button>
             </Link>
-            <Link href="/sign-in" className="w-full sm:w-auto">
+            <Link href="/docs" className="w-full sm:w-auto">
               <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                Open Dashboard
+                View Docs
               </Button>
             </Link>
           </div>
@@ -105,34 +121,34 @@ export default function MarketingPage() {
 
       <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <div className="mb-10 max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">The Problem</h2>
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">The Redis Access Problem</h2>
           <p className="mt-3 text-text-muted">
-            Background jobs fail quietly until a user reports missing emails, stale reports, or
-            broken automations. Existing monitoring tools ask for direct Redis access, which
-            creates avoidable security and compliance risk.
+            Most queue dashboards want your Redis URL before they show a single metric. That means
+            opening network paths, storing sensitive credentials in another vendor, and explaining
+            the exposure during security reviews.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>What teams deal with today</CardTitle>
-              <CardDescription>Failures are discovered after customer impact.</CardDescription>
+              <CardTitle>What teams are asked to accept</CardTitle>
+              <CardDescription>Operational visibility at the cost of infrastructure access.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-text-muted">
-              <p>- No default visibility into job failures across queues.</p>
-              <p>- Alerts are missing, delayed, or too noisy to trust.</p>
-              <p>- On-call engineers debug from logs without queue context.</p>
+              <p>- Share production Redis credentials with a third-party service.</p>
+              <p>- Change firewall rules or expose private network resources.</p>
+              <p>- Justify a new compliance surface for a monitoring dashboard.</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>How Qcanary changes it</CardTitle>
-              <CardDescription>Monitoring without sharing Redis credentials.</CardDescription>
+              <CardTitle>How QCanary changes it</CardTitle>
+              <CardDescription>BullMQ-native telemetry without Redis credential transfer.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-text-muted">
-              <p>- Native BullMQ `QueueEvents` capture with lightweight metadata.</p>
-              <p>- Slack and email notifications when rules are breached.</p>
-              <p>- Historical queue health and full failure details in one dashboard.</p>
+              <p>- The agent runs inside your app and listens to BullMQ QueueEvents.</p>
+              <p>- Only lightweight job metadata is streamed to QCanary over HTTPS.</p>
+              <p>- Zero Redis credentials leave your infrastructure.</p>
             </CardContent>
           </Card>
         </div>
@@ -145,13 +161,13 @@ export default function MarketingPage() {
               <Badge variant="success" className="w-fit">
                 Step 1
               </Badge>
-              <CardTitle className="mt-3">Install the agent</CardTitle>
+              <CardTitle className="mt-3">Install @qcanary/agent</CardTitle>
               <CardDescription>
-                Add Qcanary to your Node.js codebase in minutes.
+                Add the monitoring package to your Node.js worker process.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-text-muted">
-              Use your existing BullMQ queues and initialize `QueueMonitor`.
+              Use your existing BullMQ queues and initialize QueueMonitor with your API key.
             </CardContent>
           </Card>
           <Card className="md:col-span-1">
@@ -159,11 +175,11 @@ export default function MarketingPage() {
               <Badge variant="success" className="w-fit">
                 Step 2
               </Badge>
-              <CardTitle className="mt-3">Stream job metadata</CardTitle>
-              <CardDescription>No payloads and no direct Redis access.</CardDescription>
+              <CardTitle className="mt-3">Attach to BullMQ QueueEvents</CardTitle>
+              <CardDescription>Listen to job lifecycle events from inside your app.</CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-text-muted">
-              Events are buffered and sent to Qcanary over HTTP with retries.
+              The agent uses BullMQ&rsquo;s event emitter and sends buffered metadata over HTTP.
             </CardContent>
           </Card>
           <Card className="md:col-span-1">
@@ -171,11 +187,11 @@ export default function MarketingPage() {
               <Badge variant="success" className="w-fit">
                 Step 3
               </Badge>
-              <CardTitle className="mt-3">Act before users notice</CardTitle>
-              <CardDescription>Track queue health and get real alerts.</CardDescription>
+              <CardTitle className="mt-3">View dashboards &amp; alerts</CardTitle>
+              <CardDescription>Track queue health and alert on failures in real time.</CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-text-muted">
-              See failures, stack traces, and trends in a live dashboard.
+              See failures, stack traces, trends, and alert history without opening Redis.
             </CardContent>
           </Card>
         </div>
@@ -252,42 +268,18 @@ export default function MarketingPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Live Queue Monitoring</CardTitle>
+              <CardTitle>Real-time Dashboards</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-text-muted">
-              Monitor queues, statuses, throughput, and failure rates in real time.
+              Monitor queue status, throughput, failures, job history, and trends as events arrive.
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Failure Alerts</CardTitle>
+              <CardTitle>Alert Rules</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-text-muted">
-              Trigger Slack and email notifications based on configurable thresholds.
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Stack Trace Visibility</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-text-muted">
-              Inspect complete error messages and stack traces for each failed job.
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Historical Health Charts</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-text-muted">
-              Analyze queue behavior over time to detect regressions and spikes.
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Rule-Based Alerting</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-text-muted">
-              Define rules for failure rate, inactivity, queue depth, and job duration.
+              Trigger Slack, email, or webhook notifications for failure rate, inactivity, queue depth, and job duration.
             </CardContent>
           </Card>
           <Card>
@@ -295,7 +287,31 @@ export default function MarketingPage() {
               <CardTitle>Secure by Design</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-text-muted">
-              Qcanary never requires your Redis credentials to deliver observability.
+              QCanary never asks for Redis credentials and does not require inbound firewall changes.
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Multi-tenancy</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-text-muted">
+              Keep organizations, projects, environments, queues, and API keys cleanly separated.
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Auto-Resolution</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-text-muted">
+              Resolve active incidents automatically when the alert condition recovers.
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Usage Limits</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-text-muted">
+              Track project and daily event usage against your plan before limits surprise your team.
             </CardContent>
           </Card>
         </div>
@@ -408,6 +424,10 @@ export default function MarketingPage() {
             <p>Qcanary - BullMQ monitoring for production teams.</p>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/blog" className="hover:text-text-primary">
+              Blog
+            </Link>
+            <span className="text-border">|</span>
             <Link href="/docs" className="hover:text-text-primary">
               Docs
             </Link>

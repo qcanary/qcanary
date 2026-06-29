@@ -3,6 +3,9 @@ import type { Request, Response } from 'express';
 import { dodo, verifyDodoWebhook } from '../lib/dodo';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
+import { updateRows } from '../lib/typedSupabase';
+import { deliverEmail, escapeHtml } from '../lib/alertDelivery';
+import { logger } from '../lib/logger';
 
 const router = express.Router();
 const publicRouter = express.Router();
@@ -22,24 +25,20 @@ async function updateTeamPlanById(
   planExpiresAt: string | null,
   dodoSubscriptionId?: string | null
 ): Promise<void> {
-  const updateData: Record<string, unknown> = { plan, plan_expires_at: planExpiresAt };
-  if (dodoSubscriptionId !== undefined) {
-    updateData.dodo_subscription_id = dodoSubscriptionId;
-  }
-  const { error } = await supabase
-    .from('teams')
-    .update(updateData as never)
+  type TeamPlanUpdate = Parameters<typeof updateRows<'teams'>>[1];
+  const updateData: TeamPlanUpdate = { plan, plan_expires_at: planExpiresAt, dodo_subscription_id: dodoSubscriptionId ?? null };
+  const { error } = await updateRows('teams', updateData)
     .eq('id', teamId);
 
   if (error) {
-    console.error('[billing] failed to update team plan:', error);
+    logger.error({ err: error, teamId }, 'Failed to update team plan');
     throw error;
   }
 }
 
 // ── Public Webhook Endpoint ────────────────────────────────
 
-publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
+publicRouter.post('/webhook', express.raw({ type: 'application/json', limit: '500kb' }), async (req: Request, res: Response) => {
   const webhookSecret = process.env.DODO_WEBHOOK_SECRET;
   if (!webhookSecret) {
     errorResponse(res, 503, 'BILLING_UNAVAILABLE', 'Billing webhook is not configured');
@@ -63,7 +62,7 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (
     });
     parsed = verified as { type: string; data: Record<string, unknown> };
   } catch (err) {
-    console.error('[billing webhook] signature verification failed:', err);
+    logger.error({ err }, 'Billing webhook signature verification failed');
     errorResponse(res, 400, 'INVALID_SIGNATURE', 'Webhook signature verification failed');
     return;
   }
@@ -92,7 +91,7 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (
             ? new Date(subscription.next_billing_date).toISOString()
             : null;
           await updateTeamPlanById(teamId, plan, periodEnd, subscription.subscription_id);
-          console.log(`[billing webhook] subscription.active: team=${teamId} plan=${plan} sub=${subscription.subscription_id}`);
+          logger.info({ teamId, plan, subscriptionId: subscription.subscription_id }, 'Subscription activated');
         }
         break;
       }
@@ -108,7 +107,7 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (
         const cancelTeamId = typeof cancelledSub.metadata?.teamId === 'string' ? cancelledSub.metadata.teamId : '';
         if (cancelTeamId) {
           await updateTeamPlanById(cancelTeamId, 'free', null);
-          console.log(`[billing webhook] ${eventName}: team=${cancelTeamId} downgraded to free`);
+          logger.info({ teamId: cancelTeamId, event: eventName }, 'Subscription downgraded to free');
         }
         break;
       }
@@ -121,7 +120,7 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (
           subscription_id?: string;
           [key: string]: unknown;
         };
-        console.log(`[billing webhook] payment.succeeded: id=${payment.id} amount=${payment.amount} ${payment.currency}`);
+        logger.info({ paymentId: payment.id, amount: payment.amount, currency: payment.currency }, 'Payment succeeded');
         break;
       }
 
@@ -129,19 +128,30 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json' }), async (
         const failedPayment = data as {
           id?: string;
           subscription_id?: string;
+          customer_email?: string;
           [key: string]: unknown;
         };
-        console.error(`[billing webhook] payment.failed: id=${failedPayment.id} subscription=${failedPayment.subscription_id}`);
-        // Optionally notify the user via Resend here
+        logger.error({ paymentId: failedPayment.id, subscriptionId: failedPayment.subscription_id }, 'Payment failed');
+        if (typeof failedPayment.customer_email === 'string' && failedPayment.customer_email.length > 0) {
+          try {
+            const subject = '[Qcanary] Payment failed';
+            const plainText = 'Unfortunately, your most recent payment to Qcanary has failed. ' +
+                'Please check your payment method and update it in your billing settings to avoid service interruption.';
+            await deliverEmail(failedPayment.customer_email, subject, `<p>${escapeHtml(plainText)}</p>`);
+            logger.info({ email: failedPayment.customer_email }, 'Payment failure notification sent');
+          } catch (emailError) {
+            logger.error({ err: emailError, email: failedPayment.customer_email }, 'Failed to send payment failure email');
+          }
+        }
         break;
       }
 
       default:
-        console.log(`[billing webhook] unhandled event: ${eventName}`);
+        logger.warn({ eventName }, 'Unhandled billing webhook event');
         break;
     }
   } catch (error) {
-    console.error(`[billing webhook] handler error for event ${eventName}:`, error);
+    logger.error({ err: error, eventName }, 'Billing webhook handler error');
     res.status(500).json({
       success: false,
       error: { code: 'WEBHOOK_HANDLER_ERROR', message: 'Internal error processing webhook' },
@@ -198,8 +208,8 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
           quantity: 1,
         },
       ],
-      return_url: `${process.env.APP_URL}/dashboard?payment=success`,
-      cancel_url: `${process.env.APP_URL}/settings/billing?payment=cancelled`,
+      return_url: `${process.env.APP_URL}/settings?payment=success`,
+      cancel_url: `${process.env.APP_URL}/settings?billing=cancelled`,
       metadata: {
         teamId,
         plan,
@@ -215,7 +225,7 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to create checkout session';
-    console.error('[billing] checkout session creation failed:', error);
+    logger.error({ err: error }, 'Checkout session creation failed');
     errorResponse(res, 500, 'CHECKOUT_SESSION_FAILED', message);
   }
 });
@@ -254,7 +264,7 @@ router.post('/cancel', async (req: Request, res: Response) => {
       cancel_reason: 'cancelled_by_customer',
     });
 
-    console.log(`[billing] subscription cancelled: team=${teamId} subscription=${subscriptionId}`);
+    logger.info({ teamId, subscriptionId }, 'Subscription cancelled');
 
     res.status(200).json({
       success: true,
@@ -262,7 +272,7 @@ router.post('/cancel', async (req: Request, res: Response) => {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to cancel subscription';
-    console.error('[billing] cancel subscription failed:', error);
+    logger.error({ err: error, teamId }, 'Cancel subscription failed');
     errorResponse(res, 500, 'CANCEL_FAILED', message);
   }
 });

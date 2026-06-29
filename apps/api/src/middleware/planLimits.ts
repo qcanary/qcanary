@@ -2,16 +2,16 @@ import type { NextFunction, Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from './dashboardAuth';
 
-type PlanName = 'free' | 'starter' | 'pro';
+export type PlanName = 'free' | 'starter' | 'pro';
 
-interface PlanLimits {
+export interface PlanLimits {
   maxProjects: number | null;
   maxQueuesPerProject: number | null;
   maxEventsPerDay: number | null;
   historyDays: number;
 }
 
-const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
+export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
   free: {
     maxProjects: 1,
     maxQueuesPerProject: 3,
@@ -37,7 +37,7 @@ interface TeamPlanRow {
   plan: string;
 }
 
-function getPlanLimits(plan: string | null): PlanLimits {
+export function getPlanLimits(plan: string | null): PlanLimits {
   if (plan === 'starter' || plan === 'pro') {
     return PLAN_LIMITS[plan];
   }

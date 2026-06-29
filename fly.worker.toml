@@ -1,0 +1,15 @@
+# ── QCanary Alert Worker — fly.worker.toml ────────────────────────
+# Deploy: fly launch --dockerfile Dockerfile.worker --name qcanary-worker
+#         fly deploy --config fly.worker.toml
+
+app = "qcanary-worker"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile.worker"
+
+[env]
+  NODE_ENV = "production"
+
+# No [http_service] — this is a background worker, not an HTTP server.
+# Fly will keep the machine running as a "worker" process.

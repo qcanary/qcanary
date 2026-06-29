@@ -12,6 +12,8 @@ import {
   escapeHtml,
 } from '../lib/alertDelivery';
 import type { AlertChannel, AlertDetails, AlertRuleRow, ConditionType, JobEventRow } from '../types/database';
+import { insertRows, updateRows } from '../lib/typedSupabase';
+import { logger } from '../lib/logger';
 
 interface EvaluateAlertsJobData {
   projectId: string;
@@ -211,26 +213,87 @@ async function logAndDeliver(
     ...(delivery_error ? { delivery_error } : {}),
   };
 
-  const { error: historyError } = await supabase.from('alert_history').insert({
+  const { error: historyError } = await insertRows('alert_history', [{
     rule_id: rule.id,
     project_id: projectId,
     details: details as unknown as Record<string, unknown>,
-  } as never);
+  }]);
 
   if (historyError) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to insert alert_history', historyError);
+    logger.error({ err: historyError }, 'Failed to insert alert_history');
   }
 
-  const { error: updateError } = await supabase
-    .from('alert_rules')
-    .update({ last_triggered_at: new Date().toISOString() } as never)
+  const { error: updateError } = await updateRows('alert_rules', {
+    last_triggered_at: new Date().toISOString(),
+  })
     .eq('id', rule.id);
 
   if (updateError) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to update last_triggered_at', updateError);
+    logger.error({ err: updateError }, 'Failed to update last_triggered_at');
   }
+}
+
+async function deliverResolvedNotification(rule: RuleRow): Promise<void> {
+  const channel = rule.channel as AlertChannel;
+  const queueLabel = rule.queue_name && rule.queue_name.trim().length > 0 ? rule.queue_name : 'all queues';
+  const messageText = `Alert Resolved: ${rule.name} on ${queueLabel}`;
+  const subject = `[Qcanary] Alert resolved: ${rule.name}`;
+
+  let result: { ok: true } | { ok: false; error: string };
+  if (channel === 'slack') {
+    result = await deliverSlack(rule.destination, messageText);
+  } else if (channel === 'webhook') {
+    result = await deliverWebhook(rule.destination, {
+      type: 'alert.resolved',
+      rule_id: rule.id,
+      rule_name: rule.name,
+      queue_name: rule.queue_name,
+      resolved_at: new Date().toISOString(),
+    });
+  } else if (channel === 'email') {
+    result = await deliverEmail(rule.destination, subject, `<p>${escapeHtml(messageText)}</p>`);
+  } else {
+    result = { ok: false, error: `Unsupported channel: ${rule.channel}` };
+  }
+
+  if (!result.ok) {
+    logger.error({ ruleId: rule.id, channel: rule.channel, error: result.error }, 'Failed to deliver alert resolved notification');
+  }
+}
+
+async function resolveActiveAlert(projectId: string, rule: RuleRow): Promise<void> {
+  const { data: activeAlerts, error: activeAlertError } = await supabase
+    .from('alert_history')
+    .select('id')
+    .eq('rule_id', rule.id)
+    .eq('project_id', projectId)
+    .is('resolved_at', null)
+    .limit(1);
+
+  if (activeAlertError) {
+    logger.error({ err: activeAlertError, ruleId: rule.id }, 'Failed to check active alert for resolution');
+    return;
+  }
+
+  if (!activeAlerts || activeAlerts.length === 0) {
+    return;
+  }
+
+  const resolvedAt = new Date().toISOString();
+  const { error: resolveError } = await updateRows('alert_history', {
+    resolved_at: resolvedAt,
+  })
+    .eq('rule_id', rule.id)
+    .eq('project_id', projectId)
+    .is('resolved_at', null);
+
+  if (resolveError) {
+    logger.error({ err: resolveError, ruleId: rule.id }, 'Failed to resolve active alert');
+    return;
+  }
+
+  logger.info({ ruleId: rule.id, projectId, resolvedAt }, 'Alert auto-resolved');
+  await deliverResolvedNotification(rule);
 }
 
 async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promise<void> {
@@ -260,16 +323,17 @@ async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promis
       continue;
     }
 
-    if (isInCooldown(rule, now)) {
-      continue;
-    }
-
     const threshold = numericThreshold(rule.threshold_value);
 
     const events = await fetchEventsInWindow(projectId, rule.queue_name, rule.window_minutes);
     const { shouldFire, actualValue } = evaluateCondition(rule.condition_type, threshold, events);
 
     if (!shouldFire) {
+      await resolveActiveAlert(projectId, rule);
+      continue;
+    }
+
+    if (isInCooldown(rule, now)) {
       continue;
     }
 
@@ -291,8 +355,7 @@ const worker = new Worker<EvaluateAlertsJobData>(
 );
 
 worker.on('failed', (job, err) => {
-  // eslint-disable-next-line no-console
-  console.error('Alert worker job failed', job?.id, err);
+  logger.error({ jobId: job?.id, err }, 'Alert worker job failed');
 });
 
 worker.on('completed', () => {
@@ -308,5 +371,4 @@ function shutdown(): void {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-// eslint-disable-next-line no-console
-console.log('Qcanary alert worker listening on queue "qcanary-alerts"');
+logger.info('Alert worker listening on queue "qcanary-alerts"');

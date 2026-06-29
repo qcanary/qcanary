@@ -4,16 +4,25 @@ import { BrandLockup } from "@/components/Brand";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-const installSnippet = `npm install @qcanary/agent bullmq ioredis`;
+const installSnippet = `npm install @qcanary/agent`;
 
-const setupSnippet = `import { QueueMonitor } from "@qcanary/agent"
+const setupSnippet = `import express from "express";
+import { Queue } from "bullmq";
+import { QueueMonitor } from "@qcanary/agent";
+
+const app = express();
+const emailQueue = new Queue("email", {
+  connection: { host: "127.0.0.1", port: 6379 },
+});
 
 const monitor = new QueueMonitor({
-  apiKey: process.env.QCANARY_API_KEY,
-  queues: [emailQueue, reportQueue],
-})
+  apiKey: process.env.QCANARY_KEY,
+  queues: [emailQueue],
+});
 
 await monitor.start();
+
+app.listen(3000);
 `;
 
 const envSnippet = `const monitor = new QueueMonitor({
@@ -24,7 +33,7 @@ const envSnippet = `const monitor = new QueueMonitor({
 })`;
 
 const configRows = [
-  { key: "apiKey", required: "yes", type: "string", defaultValue: "—", description: "Project API key from the Qcanary dashboard. Starts with `qca_`." },
+  { key: "apiKey", required: "yes", type: "string", defaultValue: "—", description: "Project API key from the Qcanary dashboard. Production keys start with qca_live_." },
   { key: "queues", required: "yes", type: "Queue[]", defaultValue: "—", description: "BullMQ Queue instances to monitor. Pass all queues whose events you want to capture." },
   { key: "apiBaseUrl", required: "no", type: "string", defaultValue: "https://api.qcanary.dev", description: "Override for self-hosted deployments. Must point to your Qcanary API instance." },
   { key: "includePayload", required: "no", type: "boolean", defaultValue: "false", description: "Include job `.data` payload in events. ⚠️ May contain sensitive information — keep disabled unless necessary." },
@@ -49,7 +58,7 @@ const eventRows = [
 function CodeBlock({ children }: { children: string }) {
   return (
     <pre className="overflow-auto rounded-md border border-border bg-code-bg p-4 font-mono text-xs text-text-primary">
-      {children}
+      <code>{children}</code>
     </pre>
   );
 }
@@ -78,26 +87,31 @@ export default function DocsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Quick start</CardTitle>
-          <CardDescription>Install and start monitoring in under 5 minutes.</CardDescription>
+          <CardDescription>Create a project, install the agent, and stream events in minutes.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <h3 className="mb-2 text-sm font-medium text-text-primary">1. Install the package</h3>
+            <h3 className="mb-2 text-sm font-medium text-text-primary">1. Create a project and copy your API key</h3>
+            <p className="mb-2 text-sm text-text-muted">
+              Create a project in the Qcanary dashboard and copy the generated API key. Production keys
+              start with <code className="text-accent">qca_live_</code>. Store it as an environment variable:
+            </p>
+            <CodeBlock>{`QCANARY_KEY=qca_live_<your-project-key>`}</CodeBlock>
+          </div>
+
+          <div>
+            <h3 className="mb-2 text-sm font-medium text-text-primary">2. Install the agent</h3>
+            <p className="mb-2 text-sm text-text-muted">
+              Install the lightweight package in the same service that creates your BullMQ queues.
+            </p>
             <CodeBlock>{installSnippet}</CodeBlock>
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-medium text-text-primary">2. Set your API key</h3>
+            <h3 className="mb-2 text-sm font-medium text-text-primary">3. Initialize in your app</h3>
             <p className="mb-2 text-sm text-text-muted">
-              Create a project in the Qcanary dashboard and copy the API key. Set it as an environment variable:
-            </p>
-            <CodeBlock>{`QCANARY_API_KEY=qca_live_<your-project-key>`}</CodeBlock>
-          </div>
-
-          <div>
-            <h3 className="mb-2 text-sm font-medium text-text-primary">3. Add the monitor</h3>
-            <p className="mb-2 text-sm text-text-muted">
-              Initialize QueueMonitor with your BullMQ queues and call <code className="text-accent">start()</code>:
+              Pass your BullMQ queues to <code className="text-accent">QueueMonitor</code>. The agent attaches
+              to QueueEvents and sends metadata to QCanary asynchronously:
             </p>
             <CodeBlock>{setupSnippet}</CodeBlock>
           </div>
@@ -286,7 +300,7 @@ export default function DocsPage() {
             <div className="rounded-md border border-border bg-surface/40 p-3">
               <div className="text-sm font-medium text-text-primary">Settings</div>
               <div className="mt-1 text-xs text-text-muted">
-                View your current plan, upgrade to Starter or Pro via Razorpay, and manage billing.
+                View your current plan, upgrade to Starter or Pro via Dodo Payments, and manage billing.
               </div>
             </div>
           </div>
@@ -405,10 +419,11 @@ export default function DocsPage() {
           <div className="rounded-md border border-border bg-surface/40 p-4">
             <h3 className="text-sm font-medium text-text-primary">How it works</h3>
             <p className="mt-1 text-sm text-text-muted">
-              The Qcanary agent connects to your Redis instance using <strong className="text-text-primary">BullMQ QueueEvents</strong> —
-              a lightweight event emitter that streams job lifecycle events. QueueEvents requires a
-              read-only Redis connection and never exposes your Redis credentials to Qcanary servers.
-              Events are sent over HTTPS to the Qcanary API with short-lived metadata.
+              The Qcanary agent runs in your own worker process and creates BullMQ QueueEvents listeners
+              for the queues you pass to QueueMonitor. QueueEvents emits job lifecycle notifications such
+              as completed, failed, active, waiting, stalled, and delayed. QCanary never connects to Redis
+              from its servers, never receives your Redis URL, and never reads Redis data directly. The
+              agent sends only job metadata over HTTPS to the QCanary API.
             </p>
           </div>
 

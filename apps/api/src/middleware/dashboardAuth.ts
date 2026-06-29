@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { getAuth } from '@clerk/express';
 import { supabase } from '../lib/supabase';
+import { insertRow } from '../lib/typedSupabase';
 
 export interface DashboardAuthedRequest extends Request {
   clerkUserId?: string;
@@ -32,9 +33,10 @@ async function getOrCreateTeamIdForOrg(orgId: string): Promise<string | null> {
   }
 
   const fallbackName = `Clerk org ${orgId.slice(0, 8)}`;
-  const { data: created, error: createError } = await supabase
-    .from('teams')
-    .insert({ name: fallbackName, clerk_org_id: orgId } as never)
+  const { data: created, error: createError } = await insertRow('teams', {
+    name: fallbackName,
+    clerk_org_id: orgId,
+  })
     .select('id')
     .single();
 
@@ -79,4 +81,3 @@ export async function requireDashboardAuth(
     errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
   }
 }
-

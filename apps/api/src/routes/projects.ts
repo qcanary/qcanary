@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import type { ApiKeyInsert, ProjectInsert } from '../types/database';
 import { enforceProjectLimit } from '../middleware/planLimits';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
+import { insertRow, updateRows } from '../lib/typedSupabase';
 
 const router = express.Router();
 
@@ -96,9 +97,7 @@ router.post('/', enforceProjectLimit, async (req: Request, res: Response) => {
     environment: typeof environment === 'string' && environment.trim().length > 0 ? environment.trim() : 'production',
   };
 
-  const { data, error } = await supabase
-    .from('projects')
-    .insert(insertPayload as never)
+  const { data, error } = await insertRow('projects', insertPayload)
     .select('id, team_id, name, environment, created_at')
     .single();
   const project = data as ProjectRecord | null;
@@ -254,9 +253,7 @@ router.post('/:id/keys', async (req: Request, res: Response) => {
     label: typeof label === 'string' && label.trim().length > 0 ? label.trim() : null,
   };
 
-  const { data: apiKeyRow, error } = await supabase
-    .from('api_keys')
-    .insert(insertPayload as never)
+  const { data: apiKeyRow, error } = await insertRow('api_keys', insertPayload)
     .select('id, project_id, key_prefix, label, last_used_at, created_at, revoked_at')
     .single();
   const createdKey = apiKeyRow as ApiKeyRecord | null;
@@ -306,9 +303,7 @@ router.delete('/:id/keys/:keyId', async (req: Request, res: Response) => {
     return;
   }
 
-  const { data: revokedRow, error } = await supabase
-    .from('api_keys')
-    .update({ revoked_at: new Date().toISOString() } as never)
+  const { data: revokedRow, error } = await updateRows('api_keys', { revoked_at: new Date().toISOString() })
     .eq('id', keyId)
     .eq('project_id', projectId)
     .is('revoked_at', null)

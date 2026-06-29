@@ -1,0 +1,19 @@
+# ── QCanary API — fly.toml ────────────────────────────────────────
+# Deploy: fly launch --dockerfile Dockerfile   (first time)
+#         fly deploy                            (subsequent deploys)
+
+app = "qcanary-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  HTTP_SERVICE = "true"
+
+[http_service]
+  internal_port = 4000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1

@@ -18,6 +18,9 @@ const jetbrainsMono = JetBrains_Mono({
 const siteUrl = process.env.RAILWAY_STATIC_URL
   ? `https://${process.env.RAILWAY_STATIC_URL}`
   : "https://qcanary.dev";
+const siteDescription =
+  "Monitor BullMQ queues without sharing Redis credentials. QCanary streams job metadata through a lightweight agent for real-time dashboards, alerts, and history.";
+const ogImage = "/opengraph-image";
 const siteName = "Qcanary — BullMQ Monitoring Dashboard";
 
 export const metadata: Metadata = {
@@ -25,8 +28,7 @@ export const metadata: Metadata = {
     default: siteName,
     template: `%s — Qcanary`,
   },
-  description:
-    "Monitor your BullMQ job queues in real-time. Get Slack alerts on failures, track queue health, and debug issues — without exposing your Redis credentials.",
+  description: siteDescription,
   keywords: [
     "bullmq",
     "queue monitoring",
@@ -39,20 +41,30 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Qcanary" }],
   metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
     title: siteName,
-    description:
-      "Know when your BullMQ jobs fail. Before your users do. Slack alerts, job history, and queue health — no Redis credentials required.",
+    description: siteDescription,
     url: siteUrl,
     siteName,
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: "QCanary - Monitor BullMQ queues without sharing Redis credentials",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteName,
-    description:
-      "BullMQ monitoring with Slack alerts and job history. Install in 3 lines.",
+    description: siteDescription,
+    images: [ogImage],
   },
   robots: {
     index: true,

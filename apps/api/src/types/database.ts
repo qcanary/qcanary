@@ -12,41 +12,13 @@
 export interface Database {
   public: {
     Tables: {
-      teams: {
-        Row: TeamRow;
-        Insert: TeamInsert;
-        Update: TeamUpdate;
-      };
-      projects: {
-        Row: ProjectRow;
-        Insert: ProjectInsert;
-        Update: ProjectUpdate;
-      };
-      api_keys: {
-        Row: ApiKeyRow;
-        Insert: ApiKeyInsert;
-        Update: ApiKeyUpdate;
-      };
-      job_events: {
-        Row: JobEventRow;
-        Insert: JobEventInsert;
-        Update: JobEventUpdate;
-      };
-      queue_metrics_hourly: {
-        Row: QueueMetricsHourlyRow;
-        Insert: QueueMetricsHourlyInsert;
-        Update: QueueMetricsHourlyUpdate;
-      };
-      alert_rules: {
-        Row: AlertRuleRow;
-        Insert: AlertRuleInsert;
-        Update: AlertRuleUpdate;
-      };
-      alert_history: {
-        Row: AlertHistoryRow;
-        Insert: AlertHistoryInsert;
-        Update: AlertHistoryUpdate;
-      };
+      teams:      { Row: TeamRow;         Insert: TeamInsert;         Update: TeamUpdate;         Relationships: [] };
+      projects:   { Row: ProjectRow;       Insert: ProjectInsert;      Update: ProjectUpdate;      Relationships: [] };
+      api_keys:   { Row: ApiKeyRow;        Insert: ApiKeyInsert;       Update: ApiKeyUpdate;        Relationships: [] };
+      job_events: { Row: JobEventRow;      Insert: JobEventInsert;     Update: JobEventUpdate;      Relationships: [] };
+      queue_metrics_hourly: { Row: QueueMetricsHourlyRow; Insert: QueueMetricsHourlyInsert; Update: QueueMetricsHourlyUpdate; Relationships: [] };
+      alert_rules:         { Row: AlertRuleRow;    Insert: AlertRuleInsert;    Update: AlertRuleUpdate;         Relationships: [] };
+      alert_history:       { Row: AlertHistoryRow;  Insert: AlertHistoryInsert;  Update: AlertHistoryUpdate;       Relationships: [] };
     };
     Views: Record<string, never>;
     Functions: {
@@ -107,6 +79,7 @@ export interface TeamRow {
   stripe_customer_id: string | null;
   plan: string;
   plan_expires_at: string | null;
+  dodo_subscription_id: string | null;
   created_at: string;
 }
 
@@ -195,6 +168,7 @@ export interface TeamInsert {
   stripe_customer_id?: string | null;
   plan?: string;
   plan_expires_at?: string | null;
+  dodo_subscription_id?: string | null;
   created_at?: string;
 }
 
@@ -283,6 +257,7 @@ export interface TeamUpdate {
   stripe_customer_id?: string | null;
   plan?: string;
   plan_expires_at?: string | null;
+  dodo_subscription_id?: string | null;
   created_at?: string;
 }
 

@@ -1,6 +1,5 @@
 /**
  * POST /v1/ingest — Job event ingestion endpoint
- * Session 7 implementation
  */
 
 import express from 'express';
@@ -12,6 +11,8 @@ import type { AuthenticatedRequest } from '../middleware/auth';
 import { validateApiKey } from '../middleware/auth';
 import { ingestRateLimit } from '../middleware/rateLimit';
 import { enforceDailyEventLimitForProject } from '../middleware/planLimits';
+import { insertRows, callRpc } from '../lib/typedSupabase';
+import { logger } from '../lib/logger';
 
 const MAX_BATCH_SIZE = 500;
 
@@ -107,7 +108,7 @@ router.post(
     try {
       await processEvents(projectId, events);
     } catch (err) {
-      console.error('[ingest] event processing failed:', err);
+      logger.error({ err }, 'Event processing failed');
     }
   }
 );
@@ -139,17 +140,29 @@ function parseIngestBody(body: unknown): { ok: true; value: IngestRequestBody } 
     if (typeof evt.queueName !== 'string' || evt.queueName.length === 0) {
       return { ok: false, error: `Event at index ${i} has invalid "queueName"` };
     }
+    if (evt.queueName.length > 100) {
+      return { ok: false, error: `Event at index ${i}: "queueName" exceeds max length of 100 chars` };
+    }
 
     if (typeof evt.jobId !== 'string') {
       return { ok: false, error: `Event at index ${i} has invalid "jobId"` };
+    }
+    if (evt.jobId.length > 100) {
+      return { ok: false, error: `Event at index ${i}: "jobId" exceeds max length of 100 chars` };
     }
 
     if (typeof evt.eventType !== 'string' || evt.eventType.length === 0) {
       return { ok: false, error: `Event at index ${i} has invalid "eventType"` };
     }
+    if (evt.eventType.length > 50) {
+      return { ok: false, error: `Event at index ${i}: "eventType" exceeds max length of 50 chars` };
+    }
 
     if (typeof evt.status !== 'string' || evt.status.length === 0) {
       return { ok: false, error: `Event at index ${i} has invalid "status"` };
+    }
+    if (evt.status.length > 50) {
+      return { ok: false, error: `Event at index ${i}: "status" exceeds max length of 50 chars` };
     }
 
     if (typeof evt.environment !== 'string' || evt.environment.length === 0) {
@@ -168,10 +181,14 @@ function parseIngestBody(body: unknown): { ok: true; value: IngestRequestBody } 
       return { ok: false, error: `Event at index ${i} has invalid "attempts"` };
     }
 
+    const jobName = typeof evt.jobName === 'string' && evt.jobName.length > 255
+      ? evt.jobName.slice(0, 255)
+      : evt.jobName;
+
     normalizedEvents.push({
       queueName: evt.queueName,
       jobId: evt.jobId,
-      jobName: evt.jobName,
+      jobName,
       eventType: evt.eventType,
       status: evt.status,
       durationMs: evt.durationMs,
@@ -206,21 +223,17 @@ async function processEvents(projectId: string, events: IngestEventPayload[]): P
     }));
 
     if (jobInserts.length > 0) {
-      const { error: insertError } = await supabase
-        .from('job_events')
-        .insert(jobInserts as any);
+      const { error: insertError } = await insertRows('job_events', jobInserts);
 
       if (insertError) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to insert job_events batch', insertError);
+        logger.error({ err: insertError }, 'Failed to insert job_events batch');
       }
     }
 
     await updateQueueMetrics(projectId, events);
     await enqueueAlertEvaluation(projectId, events);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Unexpected error while processing ingest events', error);
+    logger.error({ err: error }, 'Unexpected error processing ingest events');
   }
 }
 
@@ -245,16 +258,15 @@ async function updateQueueMetrics(projectId: string, events: IngestEventPayload[
       p_total: 1,
     };
 
-    const call = (supabase.rpc as any)('upsert_queue_metrics_hourly', args) as Promise<unknown>;
-    metricsCalls.push(call);
+    const rpcPromise = Promise.resolve(callRpc('upsert_queue_metrics_hourly', args));
+    metricsCalls.push(rpcPromise);
   }
 
   const results = await Promise.allSettled(metricsCalls);
 
   for (const result of results) {
     if (result.status === 'rejected') {
-      // eslint-disable-next-line no-console
-      console.error('Failed to update queue metrics', result.reason);
+      logger.error({ err: result.reason }, 'Failed to update queue metrics');
     }
   }
 }
@@ -273,8 +285,7 @@ async function enqueueAlertEvaluation(projectId: string, events: IngestEventPayl
       triggeredAt: new Date().toISOString(),
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to enqueue alert evaluation job', error);
+    logger.error({ err: error }, 'Failed to enqueue alert evaluation job');
   }
 }
 
@@ -289,4 +300,3 @@ function getHourBucket(timestamp: string): string {
 }
 
 export { router as ingestRouter };
-
