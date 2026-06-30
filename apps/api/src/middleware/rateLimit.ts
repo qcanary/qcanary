@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { upstashRestConfig } from '../lib/redis';
 import type { AuthenticatedRequest } from './auth';
+import { logger } from '../lib/logger';
 
 const INGEST_LIMIT_PER_MINUTE = 1000;
 const WINDOW_MS = 60_000;
@@ -75,7 +76,7 @@ export async function ingestRateLimit(
 
     next();
   } catch {
-    console.warn('[rateLimit] Upstash unreachable — failing open. All requests allowed.');
+    logger.warn('[rateLimit] Upstash unreachable — failing open. All requests allowed.');
     // Fail open to avoid dropping customer traffic due to transient Upstash issues.
     next();
   }

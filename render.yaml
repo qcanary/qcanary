@@ -1,0 +1,97 @@
+# ── Render Blueprint ─────────────────────────────────────────
+# Deploy the Qcanary API as a Docker service.
+#
+# Usage:
+#   1. Push this repo to GitHub
+#   2. In Render Dashboard → Blueprint → Connect repo
+#   3. Render reads this file and creates both services
+#   4. Add the env vars below in the Render dashboard
+# ─────────────────────────────────────────────────────────────
+
+services:
+  # ─── API HTTP Server ───────────────────────────────────────
+  - type: web
+    name: qcanary-api
+    runtime: docker
+    repo: https://github.com/YOUR_USERNAME/qcanary  # ← Replace
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: LOG_LEVEL
+        value: info
+      - key: ALLOWED_ORIGINS
+        value: https://qcanary.dev
+      - key: APP_URL
+        value: https://qcanary.dev
+      - key: API_BASE_URL
+        value: https://api.qcanary.dev
+      - key: NEXT_PUBLIC_APP_URL
+        value: https://qcanary.dev
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://qcanary.dev
+      - key: SUPABASE_URL
+        sync: false   # set manually from Supabase dashboard
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: DODO_SECRET_KEY
+        sync: false
+      - key: DODO_WEBHOOK_SECRET
+        sync: false
+      - key: DODO_STARTER_PRODUCT_ID
+        sync: false
+      - key: DODO_PRO_PRODUCT_ID
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        value: Qcanary <onboarding@resend.dev>
+      - key: SENTRY_DSN
+        sync: false
+      - key: CRON_SECRET
+        sync: false
+      - key: SLACK_TEST_WEBHOOK_URL
+        sync: false
+
+  # ─── Alert Worker ──────────────────────────────────────────
+  - type: worker
+    name: qcanary-worker
+    runtime: docker
+    repo: https://github.com/YOUR_USERNAME/qcanary  # ← Replace
+    branch: main
+    dockerfilePath: ./Dockerfile.worker
+    dockerContext: .
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        value: Qcanary <onboarding@resend.dev>
+      - key: DODO_SECRET_KEY
+        sync: false
+      - key: SENTRY_DSN
+        sync: false

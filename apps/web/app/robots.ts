@@ -1,8 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = process.env.RAILWAY_STATIC_URL
-  ? `https://${process.env.RAILWAY_STATIC_URL}`
-  : "https://qcanary.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 export default function robots(): MetadataRoute.Robots {
   return {

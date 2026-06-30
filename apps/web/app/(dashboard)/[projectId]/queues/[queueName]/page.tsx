@@ -1,9 +1,8 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { QueueDetailClient } from "./_components/QueueDetailClient";
+import { isExcludedProjectId } from "@/lib/auth-constants";
 
 export const dynamic = "force-dynamic";
-
-const EXCLUDED_PROJECT_IDS = new Set(["sign-up", "sign-in"]);
 
 function decodeQueueName(rawQueueName: string): string {
   try {
@@ -14,8 +13,8 @@ function decodeQueueName(rawQueueName: string): string {
 }
 
 export default function QueueDetailPage({ params }: { params: { projectId: string; queueName: string } }) {
-  if (EXCLUDED_PROJECT_IDS.has(params.projectId)) {
-    notFound();
+  if (isExcludedProjectId(params.projectId)) {
+    redirect(`/${params.projectId}`);
   }
   return <QueueDetailClient projectId={params.projectId} queueName={decodeQueueName(params.queueName)} />;
 }

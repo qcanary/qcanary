@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { Resend } from 'resend';
 
 let client: Resend | null | undefined;

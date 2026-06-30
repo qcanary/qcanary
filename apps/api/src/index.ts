@@ -117,11 +117,6 @@ app.use('/v1/projects', requireDashboardAuth, alertsRouter);
 app.use('/v1/billing', requireDashboardAuth, billingRouter);
 app.use('/v1/usage', requireDashboardAuth, usageRouter);
 
-// ── Sentry debug route (for testing) ──────────────────────
-app.get('/debug-sentry', () => {
-  throw new Error('My first Sentry error!');
-});
-
 // ── Sentry Error Handler ───────────────────────────────────
 if (process.env.SENTRY_DSN) {
   Sentry.setupExpressErrorHandler(app);

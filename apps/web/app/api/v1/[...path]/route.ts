@@ -1,13 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse, type NextRequest } from "next/server";
+import { EXCLUDED_PROJECT_IDS } from "@/lib/auth-constants";
 
 function apiBaseUrl(): string | null {
   const raw = process.env.API_BASE_URL;
   if (!raw) return null;
   return raw.replace(/\/+$/, "");
 }
-
-const EXCLUDED_SEGMENTS = new Set(["sign-up", "sign-in"]);
 
 async function handler(req: NextRequest, context: { params: { path: string[] } }) {
   const base = apiBaseUrl();
@@ -19,7 +18,7 @@ async function handler(req: NextRequest, context: { params: { path: string[] } }
   }
 
   // Defense-in-depth: reject requests containing Clerk auth route segments
-  if (Array.isArray(context.params.path) && context.params.path.some((segment) => EXCLUDED_SEGMENTS.has(segment))) {
+  if (Array.isArray(context.params.path) && context.params.path.some((segment) => EXCLUDED_PROJECT_IDS.has(segment))) {
     return NextResponse.json(
       { success: false, error: { code: "NOT_FOUND", message: "Not found" } },
       { status: 404 }

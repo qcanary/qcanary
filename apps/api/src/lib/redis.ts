@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { Queue, type ConnectionOptions } from 'bullmq';
 import IORedis from 'ioredis';
 import { logger } from './logger';

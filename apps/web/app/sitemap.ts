@@ -1,8 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = process.env.RAILWAY_STATIC_URL
-  ? `https://${process.env.RAILWAY_STATIC_URL}`
-  : "https://qcanary.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -34,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteUrl}/sign-in`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${siteUrl}/sign-up`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.4,

@@ -15,9 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
-const siteUrl = process.env.RAILWAY_STATIC_URL
-  ? `https://${process.env.RAILWAY_STATIC_URL}`
-  : "https://qcanary.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 const siteDescription =
   "Monitor BullMQ queues without sharing Redis credentials. QCanary streams job metadata through a lightweight agent for real-time dashboards, alerts, and history.";
 const ogImage = "/opengraph-image";
