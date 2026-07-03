@@ -1,40 +1,55 @@
-# QCanary
+# Product Hunt Launch Assets
 
 ## Tagline
 
-BullMQ monitoring without sharing Redis credentials.
+Monitor BullMQ Without Exposing Redis.
 
-## Short Description
+## Subtitle
 
-QCanary gives Node.js teams real-time BullMQ dashboards, job history, and alerts through a lightweight agent. No Redis exposure, no firewall changes, and a free tier to start monitoring production queues in minutes.
+An agent-based monitoring tool for BullMQ that attaches to QueueEvents inside your worker process. No Redis URL sharing. No port 6379 exposure. No VPC changes.
 
 ## Maker Comment
 
-Hey Product Hunt,
+I've been running BullMQ in production for the past three years. The one thing that consistently bothered me was every monitoring tool asking for a `REDIS_URL`.
 
-We built QCanary because background jobs are usually invisible until something breaks.
+Redis has no row-level security. Once you hand over the URL, the vendor has full access to your queue state, job data, and any other keys in that instance. For teams with SOC 2 requirements or zero-trust policies, this turns a 5-minute setup into a week-long security review.
 
-If you run BullMQ in production, you probably rely on queues for important workflows: emails, reports, webhooks, billing syncs, notifications, imports, exports, and retries. When those jobs fail silently or start backing up, customers notice before the team does.
+So I built QCanary differently.
 
-Most queue monitoring tools solve this by asking for direct Redis access. That creates an uncomfortable tradeoff: get visibility, but share infrastructure credentials and potentially open private network access.
+Instead of connecting to Redis remotely, QCanary runs a tiny agent inside your Worker process that subscribes to BullMQ's built-in QueueEvents emitter. The agent streams only job lifecycle metadata (status, duration, errors) over HTTPS. No payloads. No credentials. Just events.
 
-QCanary takes a different approach.
+The result is a monitoring dashboard with real-time queue visibility, Slack/email/webhook alerts, and job history — all without ever sharing your Redis URL.
 
-Install `@qcanary/agent` in your Node.js worker, attach it to your BullMQ queues, and the agent streams lightweight job metadata to QCanary using BullMQ `QueueEvents`. Redis credentials stay inside your infrastructure.
+The agent is MIT-licensed on GitHub. I'd love to hear what you think, especially if you've dealt with the Redis sharing problem in your own infrastructure.
 
-What you get:
+https://qcanary.dev
 
-- Real-time BullMQ dashboards
-- Failed job details and history
-- Alert rules for failures, no activity, queue depth, and job duration
-- Slack, email, and webhook notifications
-- Auto-resolution when queues recover
-- Usage and plan limits visible in Settings
+## Launch Tweets
 
-The free tier is designed so teams can try QCanary on a real project before upgrading. You can create a project, send events, inspect failures, and validate the monitoring model without committing to a paid plan.
+### Tweet 1 (Announcement)
 
-We would love feedback from teams running BullMQ, Bee-Queue, Sidekiq-style workflows, or any Redis-backed job system. The big question we are exploring is how much observability teams can get from event metadata without requiring direct access to the backing datastore.
+Every BullMQ monitoring tool asks for your REDIS_URL.
 
-Try it free: https://qcanary.dev
+That means credential sharing, port exposure, and a compliance review — for a dashboard.
 
-Docs: https://qcanary.dev/docs
+We built an agent-based alternative. It attaches to QueueEvents inside your process. Redis stays behind your firewall.
+
+https://qcanary.dev
+
+### Tweet 2 (Technical)
+
+The architecture is straightforward:
+
+1. @qcanary/agent subscribes to BullMQ QueueEvents in your Worker process
+2. It buffers events and ships job metadata (status, duration, errors) over HTTPS
+3. Your Redis URL never leaves your VPC
+
+No credential sharing. No firewall changes. Just events.
+
+### Tweet 3 (Community)
+
+Built this because I was tired of explaining to security teams why a monitoring tool needed our Redis URL.
+
+Agent is MIT-licensed. API runs on Postgres + Upstash. Full stack TypeScript.
+
+Would love feedback from the BullMQ community on the approach.

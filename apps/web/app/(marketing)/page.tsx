@@ -13,14 +13,16 @@ import {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BullMQ Monitoring Without Redis Credentials",
+  title: "Monitor BullMQ Without Exposing Redis",
   description:
-    "QCanary monitors BullMQ queues with a lightweight agent, real-time dashboards, and alerts without exposing Redis credentials.",
+    "QCanary runs an agent inside your worker process. It streams job metadata over HTTPS. Your Redis instance stays private, no firewall changes required.",
   keywords: [
     "BullMQ monitoring",
     "Redis queue monitoring",
     "Node.js background jobs",
     "BullMQ alerts",
+    "zero-trust queue monitoring",
+    "VPC-friendly BullMQ",
   ],
 };
 
@@ -90,14 +92,14 @@ export default function MarketingPage() {
         <div className="pointer-events-none absolute inset-x-0 top-[-320px] mx-auto h-[520px] w-[900px] rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.2)_0%,_rgba(34,197,94,0.08)_30%,_rgba(10,10,10,0)_70%)]" />
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-20 pt-24 text-center md:pt-28">
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent">
-            Built for BullMQ in production
+            Zero-Trust BullMQ Monitoring
           </Badge>
           <h1 className="max-w-4xl text-4xl font-semibold tracking-tight md:text-6xl">
-            Monitor BullMQ Queues Without Sharing Redis Credentials.
+            Monitor BullMQ Without Exposing Redis.
           </h1>
           <p className="mt-5 max-w-3xl text-base text-text-muted md:text-xl">
-            A lightweight agent streams job metadata to QCanary. No Redis exposure, no firewall
-            changes, just real-time visibility.
+            QCanary runs an agent inside your worker process. It streams job metadata over
+            HTTPS. Your Redis instance stays private, no firewall changes required.
           </p>
           <div className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
             <Link href="/sign-up" className="w-full sm:w-auto">
@@ -121,34 +123,36 @@ export default function MarketingPage() {
 
       <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <div className="mb-10 max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">The Redis Access Problem</h2>
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Sharing Redis is a Security Risk</h2>
           <p className="mt-3 text-text-muted">
-            Most queue dashboards want your Redis URL before they show a single metric. That means
-            opening network paths, storing sensitive credentials in another vendor, and explaining
-            the exposure during security reviews.
+            Every queue monitoring dashboard that asks for your Redis URL creates the same attack
+            surface: credential storage in a third-party system, firewall holes for inbound
+            connections, and a compliance review for a tool your team needs just to see job status.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>What teams are asked to accept</CardTitle>
-              <CardDescription>Operational visibility at the cost of infrastructure access.</CardDescription>
+              <CardTitle>The danger of exposing Redis</CardTitle>
+              <CardDescription>Redis has no built-in access control beyond a plaintext password. Leaking a URL means full database access.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-text-muted">
-              <p>- Share production Redis credentials with a third-party service.</p>
-              <p>- Change firewall rules or expose private network resources.</p>
-              <p>- Justify a new compliance surface for a monitoring dashboard.</p>
+              <p>- Handing over your Redis URL grants read and write access to everything in the database.</p>
+              <p>- Opening port 6379 to a vendor&#39;s IP requires VPC peering or public exposure — another blast radius.</p>
+              <p>- Storing production Redis credentials in a third-party system violates SOC 2 and zero-trust policies.</p>
+              <p>- BullMQ&#39;s internal data (job payloads, worker metadata) lives in Redis — sharing it leaks context about your workload internals.</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>How QCanary changes it</CardTitle>
-              <CardDescription>BullMQ-native telemetry without Redis credential transfer.</CardDescription>
+              <CardTitle>QueueEvents: monitor without access</CardTitle>
+              <CardDescription>BullMQ emits lifecycle events from inside your own process. No Redis URL ever needs to leave.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-text-muted">
-              <p>- The agent runs inside your app and listens to BullMQ QueueEvents.</p>
-              <p>- Only lightweight job metadata is streamed to QCanary over HTTPS.</p>
-              <p>- Zero Redis credentials leave your infrastructure.</p>
+              <p>- BullMQ&#39;s built-in QueueEvents emitter dispatches <code>completed</code>, <code>failed</code>, <code>stalled</code>, <code>active</code>, and <code>waiting</code> events inside your Node.js process.</p>
+              <p>- @qcanary/agent attaches to this emitter as a local subscriber — no network hop, no credential exchange.</p>
+              <p>- The agent buffers events and streams only lightweight metadata over HTTPS: job ID, queue name, status, duration, and error message. No payload data.</p>
+              <p>- Redis stays behind your firewall. QCanary never sees your REDIS_URL, never connects to your instance, and never needs VPC access.</p>
             </CardContent>
           </Card>
         </div>
@@ -175,11 +179,11 @@ export default function MarketingPage() {
               <Badge variant="success" className="w-fit">
                 Step 2
               </Badge>
-              <CardTitle className="mt-3">Attach to BullMQ QueueEvents</CardTitle>
-              <CardDescription>Listen to job lifecycle events from inside your app.</CardDescription>
+              <CardTitle className="mt-3">Attach via QueueEvents (Zero-Trust)</CardTitle>
+              <CardDescription>The agent subscribes to BullMQ events inside your process — no credential handoff.</CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-text-muted">
-              The agent uses BullMQ&rsquo;s event emitter and sends buffered metadata over HTTP.
+              The agent attaches to BullMQ&rsquo;s built-in QueueEvents emitter as a local subscriber. It buffers job lifecycle events and streams only lightweight metadata over HTTPS. Redis stays behind your firewall.
             </CardContent>
           </Card>
           <Card className="md:col-span-1">
