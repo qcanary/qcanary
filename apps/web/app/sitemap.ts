@@ -2,10 +2,18 @@ import type { MetadataRoute } from "next";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
+// Dynamic blog post slugs — add new posts here or fetch from a source
+const blogPostSlugs = [
+  "monitor-bullmq-without-exposing-redis",
+  "bull-board-vs-hosted-monitoring",
+  "how-to-monitor-bullmq-without-exposing-redis",
+  "how-to-monitor-bullmq-in-production",
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  return [
+  const entries: MetadataRoute.Sitemap = [
     {
       url: siteUrl,
       lastModified: now,
@@ -22,14 +30,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${siteUrl}/blog`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.7,
+      priority: 0.8,
     },
-    {
-      url: `${siteUrl}/blog/monitor-bullmq-without-exposing-redis`,
+    ...blogPostSlugs.map((slug) => ({
+      url: `${siteUrl}/blog/${slug}`,
       lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
+      changeFrequency: "monthly" as const,
+      priority: 0.7 as const,
+    })),
     {
       url: `${siteUrl}/sign-in`,
       lastModified: now,
@@ -43,4 +51,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
   ];
+
+  return entries;
 }

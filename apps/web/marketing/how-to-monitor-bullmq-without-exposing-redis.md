@@ -1,3 +1,10 @@
+---
+title: "How to Monitor BullMQ Queues Without Exposing Redis Credentials"
+description: "A technical deep-dive into using BullMQ's QueueEvents emitter to monitor queues over HTTPS — no Redis URL sharing, no firewall changes, no VPC peering."
+date: "2026-07-02"
+slug: "how-to-monitor-bullmq-without-exposing-redis"
+---
+
 # How to Monitor BullMQ Queues Without Exposing Redis Credentials
 
 > **TL;DR:** Every BullMQ queue dashboard that asks for your `REDIS_URL` creates a security boundary you have to defend. BullMQ's built-in `QueueEvents` emitter already fires lifecycle events inside your own Node.js process — you can collect those events over HTTPS without ever sharing a Redis credential. This article walks through the architecture, the security trade-offs, and the one-liner agent pattern that keeps Redis behind your firewall.

@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getAllBlogPosts, type BlogPostMeta } from "./blog/posts";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -65,7 +66,51 @@ const pricingRows: Array<{
   { feature: "Historical charts", free: "No", starter: "Yes", pro: "Yes" },
 ];
 
-export default function MarketingPage() {
+async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
+  if (posts.length === 0) return null;
+  return (
+    <section className="border-y border-border bg-surface/50">
+      <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
+        <div className="mb-10 max-w-2xl">
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Latest from the Blog</h2>
+          <p className="mt-3 text-text-muted">
+            Technical writing about BullMQ monitoring, Redis queue observability, and production background jobs.
+          </p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {posts.slice(0, 3).map((post) => (
+            <Link key={post.slug} href={`/blog/${post.slug}`}>
+              <Card className="h-full transition-colors hover:border-accent/50">
+                <CardHeader>
+                  <CardTitle className="text-lg">{post.title}</CardTitle>
+                  <CardDescription>{post.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <time className="text-xs text-text-muted" dateTime={post.date}>
+                    {new Date(post.date).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </time>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link href="/blog">
+            <Button variant="secondary" size="sm">View all posts →</Button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default async function MarketingPage() {
+  const posts = await getAllBlogPosts();
+
   return (
     <main className="min-h-screen bg-bg text-text-primary">
       <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
@@ -359,6 +404,9 @@ export default function MarketingPage() {
           </p>
         </div>
       </section>
+
+      {/* ── Latest from the Blog ───────────────────────────────── */}
+      <LatestBlogSection posts={posts} />
 
       {/* ── CTA ────────────────────────────────────────────────── */}
       <section className="border-y border-border bg-surface/50">

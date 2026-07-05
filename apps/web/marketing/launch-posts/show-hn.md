@@ -1,6 +1,8 @@
 # Show HN: QCanary – Monitor BullMQ Queues Without Sharing Redis Credentials
 
-We built an agent-based monitoring tool for BullMQ that never asks for your `REDIS_URL`. Thought I'd share the architecture and ask for feedback on a specific design choice around event listener memory management.
+We built an agent-based monitoring tool for BullMQ that never asks for your `REDIS_URL`. The site is at **[qcanary.dev](https://qcanary.dev/?ref=hn)** (docs, dashboard, free signup).
+
+Thought I'd share the architecture and ask for feedback on a specific design choice around event listener memory management.
 
 ## The Problem
 

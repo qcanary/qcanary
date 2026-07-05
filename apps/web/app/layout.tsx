@@ -82,6 +82,35 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        {/* JSON-LD Structured Data */}
+        <Script
+          id="json-ld-structured-data"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "QCanary",
+              applicationCategory: "DeveloperApplication",
+              operatingSystem: "Linux, macOS, Windows",
+              description:
+                "Monitor BullMQ queues without sharing Redis credentials. An agent-based monitoring tool that attaches to QueueEvents inside your worker process.",
+              url: siteUrl,
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+                description: "Free tier available. Starter $9/mo, Pro $24/mo.",
+              },
+              author: {
+                "@type": "Organization",
+                name: "QCanary",
+                url: siteUrl,
+              },
+            }),
+          }}
+        />
+
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-K86LMK6NE6"
