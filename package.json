@@ -16,7 +16,9 @@
   "devDependencies": {
     "turbo": "^2.5.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17"
   },
   "engines": {
     "node": ">=22.0.0"

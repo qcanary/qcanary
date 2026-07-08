@@ -67,14 +67,15 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 app.use(helmet());
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',').map(s => s.trim());
-app.use(cors({
+const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (server-to-server, curl, etc.)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     callback(null, false);
   },
-}));
+};
+app.use(cors(corsOptions));
 app.use(httpLogger);
 app.use('/v1/billing', billingPublicRouter);
 app.use(express.json({ limit: '1mb' }));
@@ -131,7 +132,7 @@ if (process.env.SENTRY_DSN) {
 }
 
 // ── 404 handler ────────────────────────────────────────────
-app.use((_req, res) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
     error: { code: 'NOT_FOUND', message: 'Endpoint not found' },

@@ -29,7 +29,7 @@ export async function validateApiKey(
 ): Promise<void> {
   try {
     const apiKeysTable = 'api_keys' as const satisfies keyof Database['public']['Tables'];
-    const rawApiKey = req.header('x-api-key');
+    const rawApiKey = req.get('x-api-key');
 
     if (!rawApiKey) {
       unauthorized(res);
