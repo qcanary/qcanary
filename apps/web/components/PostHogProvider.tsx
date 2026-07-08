@@ -4,8 +4,8 @@ import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { useEffect } from "react";
 
-const POSTHOG_KEY = "phc_yzuza9Hw2ki4yat6boATVbF9PrSqhgWnxpe7gHKjtPge";
-const POSTHOG_HOST = "https://app.posthog.com";
+const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "";
+const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://app.posthog.com";
 
 /**
  * Track a custom event with optional properties.
@@ -23,7 +23,7 @@ export function trackEvent(event: string, properties?: Record<string, unknown>) 
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (typeof window !== "undefined" && !posthog.__loaded) {
+    if (typeof window !== "undefined" && !posthog.__loaded && POSTHOG_KEY) {
       posthog.init(POSTHOG_KEY, {
         api_host: POSTHOG_HOST,
         capture_pageview: true,

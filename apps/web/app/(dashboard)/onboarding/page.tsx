@@ -25,11 +25,34 @@ type CreateKeyOk = {
   data: { apiKey: string; key: { id: string; keyPrefix: string } };
 };
 
-function CodeBlock({ children }: { children: string }) {
+function CodeBlock({ children, apiKey }: { children: string; apiKey?: string }) {
+  const [copied, setCopied] = React.useState(false);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(apiKey ?? children);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard not supported
+    }
+  }
+
   return (
-    <pre className="mt-3 overflow-auto rounded-md border border-border bg-code-bg p-4 text-xs text-text-primary font-mono">
-      {children}
-    </pre>
+    <div className="relative mt-3">
+      <pre className="overflow-auto rounded-md border border-border bg-code-bg p-4 text-xs text-text-primary font-mono">
+        {children}
+      </pre>
+      {apiKey && (
+        <button
+          onClick={() => void handleCopy()}
+          className="absolute right-2 top-2 rounded-md bg-accent px-2 py-1 text-xs font-medium text-black transition-all hover:bg-accent/90"
+          aria-label={copied ? "Copied" : "Copy API key to clipboard"}
+        >
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -219,7 +242,11 @@ const monitor = new QueueMonitor({
                     variant="destructive"
                     size="sm"
                     disabled={deletingProjectId === project.id}
-                    onClick={() => void deleteProject(project.id)}
+                    onClick={() => {
+                      if (window.confirm(`Delete "${project.name}"? This will permanently remove the project, all API keys, events, and alert rules. This cannot be undone.`)) {
+                        void deleteProject(project.id);
+                      }
+                    }}
                   >
                     {deletingProjectId === project.id ? "Deleting..." : "Delete"}
                   </Button>
@@ -240,7 +267,7 @@ const monitor = new QueueMonitor({
           </CardHeader>
           <CardContent>
             <div className="text-sm text-text-muted">1) Set your API key</div>
-            <CodeBlock>{`QCANARY_API_KEY=${apiKey}`}</CodeBlock>
+            <CodeBlock apiKey={apiKey}>{`QCANARY_API_KEY=${apiKey}`}</CodeBlock>
 
             <Separator className="my-6" />
 

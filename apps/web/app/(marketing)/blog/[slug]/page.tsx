@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import type { Metadata } from "next";
 
 import { BrandLockup } from "@/components/Brand";
 import { getAllBlogPosts, getBlogPost } from "../posts";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 type BlogPostPageProps = {
   params: {
@@ -23,8 +26,23 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 
   return {
-    title: post.title,
+    title: `${post.title} — QCanary Blog`,
     description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      type: "article",
+      publishedTime: post.date,
+      url: `${siteUrl}/blog/${post.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+    },
+    alternates: {
+      canonical: `${siteUrl}/blog/${post.slug}`,
+    },
   };
 }
 
@@ -60,6 +78,66 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <h1 className="mt-3 text-4xl font-semibold tracking-tight">{post.title}</h1>
           <p className="mt-4 text-lg text-text-muted">{post.description}</p>
         </header>
+
+        {/* JSON-LD Article + Breadcrumb Structured Data */}
+        <Script
+          id="json-ld-blog-article"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Article",
+              headline: post.title,
+              description: post.description,
+              datePublished: post.date,
+              author: {
+                "@type": "Organization",
+                name: "QCanary",
+                url: siteUrl,
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "QCanary",
+                url: siteUrl,
+              },
+              mainEntityOfPage: {
+                "@type": "WebPage",
+                "@id": `${siteUrl}/blog/${post.slug}`,
+              },
+            }),
+          }}
+        />
+        {/* JSON-LD BreadcrumbList */}
+        <Script
+          id="json-ld-breadcrumb"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "QCanary",
+                  item: siteUrl,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: "Blog",
+                  item: `${siteUrl}/blog`,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: post.title,
+                  item: `${siteUrl}/blog/${post.slug}`,
+                },
+              ],
+            }),
+          }}
+        />
 
         <div
           className="prose prose-invert prose-green mt-8 max-w-none"

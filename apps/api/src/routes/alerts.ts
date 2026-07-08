@@ -444,10 +444,17 @@ router.get('/:id/alerts/history', async (req: Request, res: Response) => {
   const rawLimit = typeof req.query.limit === 'string' ? Number(req.query.limit) : 20;
   const limit = Number.isInteger(rawLimit) ? Math.min(Math.max(rawLimit, 1), 100) : 20;
 
+  // Default time window: last 7 days. Override via ?window= query param (in days, capped at 90)
+  const DEFAULT_HISTORY_WINDOW_DAYS = 7;
+  const rawWindow = typeof req.query.window === 'string' ? Number(req.query.window) : DEFAULT_HISTORY_WINDOW_DAYS;
+  const windowDays = Number.isFinite(rawWindow) && rawWindow > 0 ? Math.min(rawWindow, 90) : DEFAULT_HISTORY_WINDOW_DAYS;
+  const cutoffIso = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
+
   const { data, error } = await supabase
     .from('alert_history')
     .select('id, rule_id, project_id, triggered_at, resolved_at, details')
     .eq('project_id', projectId)
+    .gte('triggered_at', cutoffIso)
     .order('triggered_at', { ascending: false })
     .limit(limit);
 

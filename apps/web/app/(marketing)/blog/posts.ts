@@ -66,7 +66,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     }
 
     const processedContent = await remark()
-      .use(html, { sanitize: true })
+      .use(html, { sanitize: false })
       .process(post.content);
 
     return {

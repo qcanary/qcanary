@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import { useAuth } from "@clerk/nextjs";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -218,7 +219,7 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
             Project: <span className="font-mono text-text-primary">{projectId}</span>
           </p>
         </div>
-        <div className="text-xs text-text-muted">{loading ? "Loading…" : "Live"}</div>
+        <div className="text-xs text-text-muted" aria-live="polite">{loading ? "Loading…" : "Live"}</div>
       </div>
 
       {error && (
@@ -227,6 +228,18 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
             <CardTitle>Couldn’t load dashboard</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
+          <CardContent>
+            <Button variant="secondary" size="sm" onClick={async () => {
+              setError(null);
+              try {
+                await refreshQueues();
+              } catch (e) {
+                setError(e instanceof Error ? e.message : "Failed to load project data.");
+              }
+            }}>
+              Retry
+            </Button>
+          </CardContent>
         </Card>
       )}
 

@@ -1,6 +1,6 @@
 ---
-title: "How to Monitor BullMQ in Production Without Exposing Redis"
-description: "A developer-focused guide to monitoring BullMQ queues in production without sharing Redis credentials."
+title: "Introducing QCanary: Monitor BullMQ Without Sharing Redis Credentials"
+description: "Introducing QCanary — an agent-based BullMQ monitoring platform that streams queue events over HTTPS. No Redis credentials required."
 date: "2026-06-27"
 slug: "monitor-bullmq-without-exposing-redis"
 ---

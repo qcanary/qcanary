@@ -1,6 +1,6 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { dodo, verifyDodoWebhook } from '../lib/dodo';
+import { getDodo, verifyDodoWebhook } from '../lib/dodo';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { updateRows } from '../lib/typedSupabase';
@@ -201,7 +201,7 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
   }
 
   try {
-    const session = await dodo.checkoutSessions.create({
+    const session = await getDodo().checkoutSessions.create({
       product_cart: [
         {
           product_id: dodoProductId,
@@ -259,7 +259,7 @@ router.post('/cancel', async (req: Request, res: Response) => {
       return;
     }
 
-    await dodo.subscriptions.update(subscriptionId, {
+    await getDodo().subscriptions.update(subscriptionId, {
       cancel_at_next_billing_date: true,
       cancel_reason: 'cancelled_by_customer',
     });

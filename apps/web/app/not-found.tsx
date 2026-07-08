@@ -1,12 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import type { Metadata } from "next";
 
 import { BrandLockup } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
-
-export const metadata: Metadata = {
-  title: "404 — Page Not Found",
-};
 
 export default function NotFoundPage() {
   return (
@@ -21,6 +18,12 @@ export default function NotFoundPage() {
           </p>
         </div>
         <div className="flex gap-3">
+          <button
+            onClick={() => window.history.back()}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-surface px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface/80 transition-colors"
+          >
+            Go back
+          </button>
           <Link href="/">
             <Button>Go home</Button>
           </Link>

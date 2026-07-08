@@ -8,6 +8,7 @@
  * Use the standalone `logger` export in workers and non-request contexts.
  */
 
+import crypto from 'node:crypto';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 
@@ -39,9 +40,12 @@ export const logger = pino({
 /**
  * Express middleware that attaches `req.log` to every incoming request.
  * Logs each request on completion with method, url, status code, and duration.
+ * Uses the x-request-id header set by the request ID middleware for log correlation.
  */
 export const httpLogger = pinoHttp({
   logger,
+  // Use the x-request-id header set by our request ID middleware for correlation
+  genReqId: (req) => (req.headers['x-request-id'] ?? crypto.randomUUID()) as string,
   autoLogging: {
     ignore: (req) => {
       // Don't log health check spam

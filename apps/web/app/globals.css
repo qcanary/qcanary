@@ -20,3 +20,103 @@ body {
 * {
   box-sizing: border-box;
 }
+
+/* ── Micro-interactions ─────────────────────────────── */
+
+/* Fade-in on scroll helper — applied via className */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
+}
+
+.animate-fade-in-up-delay-1 {
+  animation: fade-in-up 0.5s ease-out 0.1s both;
+}
+
+.animate-fade-in-up-delay-2 {
+  animation: fade-in-up 0.5s ease-out 0.2s both;
+}
+
+/* ── Reduced motion ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Smooth card hover lift */
+.card-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 8px 30px rgba(34, 197, 94, 0.08);
+}
+
+/* Subtle dot-grid pattern overlay */
+.bg-dot-grid {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Section divider glow line */
+.section-glow {
+  position: relative;
+}
+
+.section-glow::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.3;
+}
+
+/* Icon container with subtle glow */
+.icon-glow {
+  position: relative;
+  isolation: isolate;
+}
+
+.icon-glow::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, var(--accent), transparent 70%);
+  opacity: 0.15;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.group:hover .icon-glow::before {
+  opacity: 0.3;
+}
+
+/* Screenshot container glow — using box-shadow avoids z-index/overflow issues */
+.screenshot-glow {
+  box-shadow: 0 0 30px -8px rgba(34, 197, 94, 0.2);
+}
+
+

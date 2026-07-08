@@ -39,8 +39,8 @@ export default function WelcomeEmail() {
 }
 
 const body = {
-  backgroundColor: "#0A0A0A",
-  color: "#FAFAFA",
+  backgroundColor: "#FFFFFF",
+  color: "#1A1A1A",
   fontFamily: "Inter, Arial, sans-serif",
 };
 
@@ -54,23 +54,24 @@ const heading = {
   fontSize: "28px",
   lineHeight: "36px",
   margin: "0 0 16px",
+  color: "#111111",
 };
 
 const text = {
-  color: "#D4D4D8",
+  color: "#52525B",
   fontSize: "15px",
   lineHeight: "24px",
 };
 
 const codeBlock = {
-  backgroundColor: "#111111",
-  border: "1px solid #1F1F1F",
+  backgroundColor: "#F4F4F5",
+  border: "1px solid #E4E4E7",
   borderRadius: "8px",
   padding: "12px 16px",
 };
 
 const code = {
-  color: "#22C55E",
+  color: "#16A34A",
   fontFamily: "Menlo, Consolas, monospace",
   fontSize: "14px",
 };

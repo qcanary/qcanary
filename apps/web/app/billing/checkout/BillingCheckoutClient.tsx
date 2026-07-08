@@ -10,11 +10,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export function BillingCheckoutClient() {
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan") === "pro" ? "Pro" : "Starter";
+  const status = searchParams.get("status");
 
   return (
     <main className="min-h-screen bg-bg px-6 py-16 text-text-primary">
       <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
         <BrandLockup href="/" size="md" className="w-fit" />
+
+        {status === "complete" && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-accent">Payment complete!</CardTitle>
+              <CardDescription>
+                Your {plan} subscription is now active. You can manage billing from the settings page.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>
@@ -24,9 +36,18 @@ export function BillingCheckoutClient() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-text-muted">
-              Start checkout from Settings and QCanary will redirect you to the secure Dodo Payments page.
-            </p>
+            <div className="rounded-xl border border-accent/20 bg-accent/5 p-4 text-sm text-text-muted">
+              <div className="mb-2 flex items-center gap-2 text-accent">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span className="font-medium">Secure payment</span>
+              </div>
+              <p>
+                Your payment is processed securely through Dodo Payments. We never store your payment details.
+                After checkout, you&apos;ll be redirected back to the settings page where your plan will be updated automatically.
+              </p>
+            </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link href="/settings">

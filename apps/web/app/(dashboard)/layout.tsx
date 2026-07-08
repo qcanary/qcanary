@@ -11,9 +11,9 @@ export default function DashboardLayout({
     <TeamProjectProvider>
       <div className="flex min-h-screen">
         <DashboardSidebar />
-        <main className="flex-1">
+        <main id="main-content" className="flex-1">
           <DashboardTopbar />
-          <div className="mx-auto w-full max-w-6xl px-6 py-8">{children}</div>
+          <div className="mx-auto w-full max-w-6xl px-6 py-10">{children}</div>
         </main>
       </div>
     </TeamProjectProvider>

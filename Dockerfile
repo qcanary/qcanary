@@ -1,5 +1,6 @@
 # ── QCanary API — Dockerfile ──────────────────────────────────────
 # Multi-stage build for minimal production image.
+# Uses tini as init process to prevent zombie processes and handle signals properly.
 
 # ── Stage 1: Install dependencies ─────────────────────────────────
 FROM node:22-alpine AS deps
@@ -33,6 +34,9 @@ FROM node:22-alpine AS runner
 
 WORKDIR /app
 
+# Install tini init process for proper signal handling and zombie reaping
+RUN apk add --no-cache tini
+
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 qcanary
 
@@ -51,4 +55,7 @@ USER qcanary
 ENV NODE_ENV=production
 EXPOSE 4000
 
+# tini handles SIGTERM/SIGINT from Docker and forwards them to the Node process
+# Reaps zombie child processes automatically
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["npm", "run", "start", "--workspace", "@qcanary/api"]

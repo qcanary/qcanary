@@ -22,8 +22,9 @@ process.on('uncaughtException', (err) => {
   setImmediate(() => process.exit(1));
 });
 
+import crypto from 'node:crypto';
 import express from 'express';
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cron from 'node-cron';
@@ -57,6 +58,13 @@ cron.schedule('0 0 * * *', () => {
 });
 
 // ── Middleware ──────────────────────────────────────────────
+// Request ID tracing — generates a unique ID per request for log correlation
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  const requestId = crypto.randomUUID();
+  req.headers['x-request-id'] = requestId;
+  next();
+});
+
 app.use(helmet());
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',').map(s => s.trim());
 app.use(cors({
@@ -162,12 +170,13 @@ async function gracefulShutdown(signal: string): Promise<void> {
   });
 
   // Force exit after 10-second timeout if server.close() hangs
+  // Not unref()-ed: if server.close() never fires its callback (e.g., stuck connections),
+  // the timeout keeps the event loop alive and forces the exit
   const forceExit = setTimeout(() => {
     logger.error('Shutdown timed out — forcing exit');
     process.exit(1);
   }, 10_000);
 
-  forceExit.unref();
 }
 
 process.on('SIGTERM', () => { void gracefulShutdown('SIGTERM'); });
@@ -177,5 +186,9 @@ process.on('SIGINT', () => { void gracefulShutdown('SIGINT'); });
 server = app.listen(PORT, () => {
   logger.info({ port: PORT }, 'Qcanary API started');
 });
+
+// Set server timeout to 30 seconds to prevent hanging connections
+server.timeout = 30_000;
+server.keepAliveTimeout = 65_000; // Slightly above ALB/nginx idle timeout
 
 export default app;

@@ -35,8 +35,8 @@ export default function UpgradeEmail() {
 }
 
 const body = {
-  backgroundColor: "#0A0A0A",
-  color: "#FAFAFA",
+  backgroundColor: "#FFFFFF",
+  color: "#1A1A1A",
   fontFamily: "Inter, Arial, sans-serif",
 };
 
@@ -50,10 +50,11 @@ const heading = {
   fontSize: "28px",
   lineHeight: "36px",
   margin: "0 0 16px",
+  color: "#111111",
 };
 
 const text = {
-  color: "#D4D4D8",
+  color: "#52525B",
   fontSize: "15px",
   lineHeight: "24px",
 };

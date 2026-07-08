@@ -33,15 +33,27 @@ function getUpstashConfig(): UpstashRedisConfig {
 
 const upstashConfig = getUpstashConfig();
 
-export const redisConnectionOptions: ConnectionOptions = {
-  host: upstashConfig.redisHost,
-  port: upstashConfig.redisPort,
-  password: upstashConfig.restToken,
-  username: 'default',
-  tls: { rejectUnauthorized: true },
-  maxRetriesPerRequest: null,
-  enableReadyCheck: false,
-};
+const isLocalRedis =
+  upstashConfig.redisHost === 'localhost' ||
+  upstashConfig.redisHost === '127.0.0.1' ||
+  upstashConfig.redisHost === '::1';
+
+export const redisConnectionOptions: ConnectionOptions = isLocalRedis
+  ? {
+      host: upstashConfig.redisHost,
+      port: upstashConfig.redisPort,
+      maxRetriesPerRequest: null,
+      enableReadyCheck: false,
+    }
+  : {
+      host: upstashConfig.redisHost,
+      port: upstashConfig.redisPort,
+      password: upstashConfig.restToken,
+      username: 'default',
+      tls: { rejectUnauthorized: true },
+      maxRetriesPerRequest: null,
+      enableReadyCheck: false,
+    };
 
 export const redis = new IORedis(redisConnectionOptions);
 redis.on('error', (err) => {

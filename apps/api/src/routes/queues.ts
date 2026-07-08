@@ -145,12 +145,18 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
     return;
   }
 
+  const DEFAULT_QUEUE_WINDOW_DAYS = 7;
+  const windowParam = typeof req.query.window === 'string' ? Number(req.query.window) : DEFAULT_QUEUE_WINDOW_DAYS;
+  const windowDays = Number.isFinite(windowParam) && windowParam > 0 ? Math.min(windowParam, 90) : DEFAULT_QUEUE_WINDOW_DAYS;
+  const cutoffIso = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
+
   const { data, error } = await supabase
     .from('job_events')
     .select(
       'queue_name, status, duration_ms, timestamp'
     )
     .eq('project_id', projectId)
+    .gte('timestamp', cutoffIso)
     .order('timestamp', { ascending: false });
 
   const events = (data ?? []) as Pick<JobEventRecord, 'queue_name' | 'status' | 'duration_ms' | 'timestamp'>[];

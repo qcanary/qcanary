@@ -1,31 +1,60 @@
 import DodoPayments from 'dodopayments';
 import { Webhook } from 'standardwebhooks';
 
-const secretKey = process.env.DODO_SECRET_KEY;
-const webhookSecret = process.env.DODO_WEBHOOK_SECRET;
+let dodoClient: DodoPayments | null | undefined;
+let webhookClient: Webhook | null | undefined;
 
-if (!secretKey) {
-  throw new Error('DODO_SECRET_KEY is not set');
+export function getDodo(): DodoPayments {
+  if (dodoClient !== undefined) {
+    if (!dodoClient) {
+      throw new Error('DODO_SECRET_KEY is not set');
+    }
+    return dodoClient;
+  }
+
+  const secretKey = process.env.DODO_SECRET_KEY;
+  if (!secretKey || secretKey.trim().length === 0) {
+    dodoClient = null;
+    throw new Error('DODO_SECRET_KEY is not set');
+  }
+
+  if (!process.env.APP_URL) {
+    throw new Error('APP_URL is not set');
+  }
+
+  const environment = process.env.NODE_ENV === 'production' ? 'live_mode' : 'test_mode';
+
+  dodoClient = new DodoPayments({
+    bearerToken: secretKey,
+    environment,
+  });
+
+  return dodoClient;
 }
 
-if (!process.env.APP_URL) {
-  throw new Error('APP_URL is not set');
+function getOrCreateWebhook(): Webhook {
+  if (webhookClient) {
+    return webhookClient;
+  }
+
+  if (webhookClient === null) {
+    throw new Error('DODO_WEBHOOK_SECRET is not set');
+  }
+
+  const webhookSecret = process.env.DODO_WEBHOOK_SECRET;
+  if (!webhookSecret || webhookSecret.trim().length === 0) {
+    webhookClient = null;
+    throw new Error('DODO_WEBHOOK_SECRET is not set');
+  }
+
+  webhookClient = new Webhook(webhookSecret);
+  return webhookClient;
 }
-
-const environment = process.env.NODE_ENV === 'production' ? 'live_mode' : 'test_mode';
-
-export const dodo = new DodoPayments({
-  bearerToken: secretKey,
-  environment,
-});
 
 export function verifyDodoWebhook(
   rawBody: Buffer,
   headers: Record<string, string>
 ): unknown {
-  if (!webhookSecret) {
-    throw new Error('DODO_WEBHOOK_SECRET is not set');
-  }
-  const wh = new Webhook(webhookSecret);
+  const wh = getOrCreateWebhook();
   return wh.verify(rawBody, headers);
 }

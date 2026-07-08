@@ -49,6 +49,8 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
       }
       setProjects(json.data.projects ?? []);
     } catch {
+      // Silently fail — projects list will be empty, user sees "No projects yet"
+      // and is prompted to create one.
       setProjects([]);
     } finally {
       setLoading(false);

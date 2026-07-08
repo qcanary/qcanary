@@ -13,7 +13,7 @@ services:
   - type: web
     name: qcanary-api
     runtime: docker
-    repo: https://github.com/YOUR_USERNAME/qcanary  # ← Replace
+    repo: https://github.com/qcanary/qcanary
     branch: main
     dockerfilePath: ./Dockerfile
     dockerContext: .
@@ -67,10 +67,13 @@ services:
         sync: false
 
   # ─── Alert Worker ──────────────────────────────────────────
+  # The alert worker only needs Supabase (for reading alert rules and writing alert history),
+  # Redis (for BullMQ job queue), and Resend (for email delivery).
+  # Note: DODO_SECRET_KEY is intentionally NOT included — the worker never handles billing.
   - type: worker
     name: qcanary-worker
     runtime: docker
-    repo: https://github.com/YOUR_USERNAME/qcanary  # ← Replace
+    repo: https://github.com/qcanary/qcanary
     branch: main
     dockerfilePath: ./Dockerfile.worker
     dockerContext: .
@@ -91,7 +94,5 @@ services:
         sync: false
       - key: RESEND_FROM_EMAIL
         value: Qcanary <onboarding@resend.dev>
-      - key: DODO_SECRET_KEY
-        sync: false
       - key: SENTRY_DSN
         sync: false

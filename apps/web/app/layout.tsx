@@ -82,6 +82,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
+        {/* Preconnect hints */}
+        <link rel="preconnect" href="https://clerk.accounts.dev" />
+        <link rel="preconnect" href="https://app.posthog.com" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" />
+
         {/* JSON-LD Structured Data */}
         <Script
           id="json-ld-structured-data"
@@ -96,6 +102,10 @@ export default function RootLayout({
               description:
                 "Monitor BullMQ queues without sharing Redis credentials. An agent-based monitoring tool that attaches to QueueEvents inside your worker process.",
               url: siteUrl,
+              sameAs: [
+                "https://github.com/qcanary/qcanary",
+                "https://x.com/qcanary",
+              ],
               offers: {
                 "@type": "Offer",
                 price: "0",
@@ -111,21 +121,36 @@ export default function RootLayout({
           }}
         />
 
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-K86LMK6NE6"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-K86LMK6NE6');
-          `}
-        </Script>
+{/* Google Analytics — only loaded when NEXT_PUBLIC_GA_ID is set */}
+{process.env.NEXT_PUBLIC_GA_ID && (
+  <>
+    <Script
+      src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+      strategy="afterInteractive"
+    />
+    <Script
+      id="google-analytics"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{
+        __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+        `,
+      }}
+    />
+  </>
+)}
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#0A0A0A] text-[#FAFAFA]`}>
+        {/* Skip-to-content link for keyboard users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-black focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         <ClerkProvider
           appearance={{
             variables: {

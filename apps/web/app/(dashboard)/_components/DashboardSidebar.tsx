@@ -41,12 +41,15 @@ function NavLink({
   return (
     <Link
       href={href}
+      aria-current={active ? "page" : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-md px-3 py-2 text-sm border border-transparent",
-        active ? "bg-[#0B0B0B] border-border text-text-primary" : "text-text-muted hover:text-text-primary hover:bg-surface/70"
+        "flex items-center gap-2 rounded-md px-3 py-2 text-sm border",
+        active
+          ? "border-l-2 border-l-accent bg-[#0D0D0D] border-border/80 text-text-primary"
+          : "border-transparent text-text-muted hover:bg-surface/70 hover:text-text-primary"
       )}
     >
-      <span className={cn(active ? "text-text-primary" : "text-text-muted")}>{icon}</span>
+      <span className={cn(active ? "text-accent" : "text-text-muted")}>{icon}</span>
       <span className="truncate">{label}</span>
     </Link>
   );
@@ -60,7 +63,7 @@ export function DashboardSidebar() {
   const hasProjects = projects.length > 0;
 
   return (
-    <aside className="w-64 border-r border-border bg-surface p-4 flex flex-col gap-4">
+    <aside className="w-64 border-r border-border bg-surface p-5 flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <BrandLockup href="/onboarding" size="sm" labelClassName="text-text-primary" />
         <Link
@@ -97,8 +100,8 @@ export function DashboardSidebar() {
 
       <Separator />
 
-      <div className="flex-1">
-        <div className="text-xs uppercase tracking-wider text-text-muted mb-2">Projects</div>
+      <div className="flex-1 overflow-y-auto">
+        <div className="text-xs uppercase tracking-wider text-text-muted mb-3">Projects</div>
         {loading && <div className="text-sm text-text-muted">Loading...</div>}
         {!loading && projects.length === 0 && (
           <div className="text-sm text-text-muted">No projects yet</div>

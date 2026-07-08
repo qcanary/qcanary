@@ -96,11 +96,11 @@ export function extractErrorInfo(failedReason: string): {
 
 /**
  * Validate that a string looks like a Qcanary API key.
- * Keys are expected to start with "qc_" prefix.
+ * Keys are created with the "qca_live_" prefix by the API.
  * This is a fast client-side check, not a security measure.
  */
 export function isValidApiKeyFormat(key: string): boolean {
-  return typeof key === 'string' && key.startsWith('qc_') && key.length >= 10;
+  return typeof key === 'string' && key.startsWith('qca_live_') && key.length >= 10;
 }
 
 /**

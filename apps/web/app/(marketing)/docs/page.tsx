@@ -1,8 +1,12 @@
 import Link from "next/link";
+import Script from "next/script";
+import type { Metadata } from "next";
 
 import { BrandLockup } from "@/components/Brand";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 const installSnippet = `npm install @qcanary/agent`;
 
@@ -54,6 +58,17 @@ const eventRows = [
   { event: "waiting", status: "waiting", fields: "queueName, jobName, jobId, environment" },
   { event: "drained", status: "drained", fields: "queueName, environment" },
 ];
+
+export const metadata: Metadata = {
+  title: "QCanary Docs — BullMQ Monitoring Agent",
+  description:
+    "Install @qcanary/agent in your worker process to stream BullMQ queue events over HTTPS. No Redis credentials required. Quick start, configuration, alert rules, and API key management.",
+  openGraph: {
+    title: "QCanary Docs",
+    description:
+      "Install @qcanary/agent in your worker process to stream BullMQ queue events over HTTPS. No Redis credentials required.",
+  },
+};
 
 function CodeBlock({ children }: { children: string }) {
   return (
@@ -500,6 +515,32 @@ export default function DocsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* JSON-LD BreadcrumbList */}
+      <Script
+        id="json-ld-breadcrumb"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "QCanary",
+                item: siteUrl,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Docs",
+                item: `${siteUrl}/docs`,
+              },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }

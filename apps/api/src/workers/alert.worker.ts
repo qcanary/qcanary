@@ -351,6 +351,8 @@ const worker = new Worker<EvaluateAlertsJobData>(
   {
     connection: redisConnectionOptions,
     concurrency: 5,
+    // Remove jobs that exceed max attempts to prevent infinite retry loops
+    removeOnFail: { age: 24 * 3600 },
   }
 );
 
@@ -363,8 +365,18 @@ worker.on('completed', () => {
 });
 
 function shutdown(): void {
+  const forceExit = setTimeout(() => {
+    logger.error('Alert worker shutdown timed out — forcing exit');
+    process.exit(1);
+  }, 10_000);
+
   void worker.close().then(() => {
+    clearTimeout(forceExit);
     process.exit(0);
+  }).catch((err) => {
+    clearTimeout(forceExit);
+    logger.error({ err }, 'Error closing worker during shutdown');
+    process.exit(1);
   });
 }
 

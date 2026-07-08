@@ -339,14 +339,25 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
   const [metrics, setMetrics] = React.useState<QueueMetricsOk["data"] | null>(null);
   const [jobs, setJobs] = React.useState<QueueJobsOk["data"] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+  const [metricsError, setMetricsError] = React.useState<string | null>(null);
+  const [jobsError, setJobsError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [periodLoading, setPeriodLoading] = React.useState(false);
 
   const [selectedJobId, setSelectedJobId] = React.useState<string | null>(null);
   const [jobDialogOpen, setJobDialogOpen] = React.useState(false);
 
   const refresh = React.useCallback(async () => {
-    setLoading(true);
+    // Track if this is a period switch (metrics already loaded)
+    const isPeriodSwitch = metrics !== null;
+    if (isPeriodSwitch) {
+      setPeriodLoading(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
+    setMetricsError(null);
+    setJobsError(null);
 
     try {
       const [metricsRes, jobsRes] = await Promise.all([
@@ -367,22 +378,40 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
         jobsRes.json(),
       ])) as [QueueMetricsOk | ApiError, QueueJobsOk | ApiError];
 
-      if (!metricsJson.success) throw new Error(metricsJson.error.message);
-      if (!jobsJson.success) throw new Error(jobsJson.error.message);
+      if (!metricsJson.success) {
+        setMetricsError(metricsJson.error.message);
+      } else {
+        setMetrics(metricsJson.data);
+      }
+      if (!jobsJson.success) {
+        setJobsError(jobsJson.error.message);
+      } else {
+        setJobs(jobsJson.data);
+      }
 
-      setMetrics(metricsJson.data);
-      setJobs(jobsJson.data);
+      // If both failed, set a general error
+      if (!metricsJson.success && !jobsJson.success) {
+        setError("Failed to load queue data.");
+      }
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to load queue.";
       setError(message);
+      setMetricsError(message);
+      setJobsError(message);
     } finally {
       setLoading(false);
+      setPeriodLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit, page, period, projectId, queueName, status]);
 
   React.useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  // Stable ref for status to avoid channel thrashing on filter change
+  const statusRef = React.useRef(status);
+  statusRef.current = status;
 
   React.useEffect(() => {
     let cancelled = false;
@@ -416,9 +445,12 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
             }
 
             const item = toJobListItem(row as JobEventRealtimeRow);
+            const currentStatus = statusRef.current;
             setJobs((prev) => {
-              if (!prev || (status && item.status !== status)) return prev;
-              const nextJobs = [item, ...prev.jobs.filter((existing) => existing.id !== item.id)].slice(0, prev.pagination.limit);
+              if (!prev || (currentStatus && item.status !== currentStatus)) return prev;
+              // Deduplicate by jobId: keep only the latest event per jobId
+              const existing = prev.jobs.filter((existing) => existing.jobId !== item.jobId);
+              const nextJobs = [item, ...existing].slice(0, prev.pagination.limit);
               return {
                 ...prev,
                 jobs: nextJobs,
@@ -464,7 +496,8 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
       cancelled = true;
       if (cleanup) cleanup();
     };
-  }, [getToken, projectId, queueName, status]);
+  // Remove `status` from deps — it's read from a ref to avoid channel thrashing
+  }, [getToken, projectId, queueName]);
 
   React.useEffect(() => {
     setPage(1);
@@ -540,6 +573,37 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
             <CardTitle>Couldn’t load queue</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
+          <CardContent>
+            <Button variant="secondary" size="sm" onClick={() => void refresh()}>
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {metricsError && !error && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-red-200">Metrics: {metricsError}</span>
+              <Button variant="secondary" size="sm" onClick={() => void refresh()}>
+                Retry
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {jobsError && !error && (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-red-200">Jobs: {jobsError}</span>
+              <Button variant="secondary" size="sm" onClick={() => void refresh()}>
+                Retry
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       )}
 
@@ -593,7 +657,15 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
           ) : points.length === 0 ? (
             <div className="text-sm text-text-muted">No metrics yet.</div>
           ) : (
-            <div className="h-64 w-full">
+            <div className="relative h-64 w-full">
+              {periodLoading && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-surface/40 backdrop-blur-[1px]">
+                  <div className="flex items-center gap-2 text-xs text-text-muted">
+                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent" />
+                    Loading…
+                  </div>
+                </div>
+              )}
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={points} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <defs>
@@ -731,10 +803,19 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {jobs.jobs.map((job) => (
-                    <TableRow
+                  {jobs.jobs.map((job) => (                        <TableRow
                       key={`${job.id}-${job.jobId}`}
                       className="cursor-pointer hover:bg-surface/60"
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`View details for job ${job.jobName ?? job.jobId}`}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedJobId(job.jobId);
+                          setJobDialogOpen(true);
+                        }
+                      }}
                       onClick={() => {
                         setSelectedJobId(job.jobId);
                         setJobDialogOpen(true);

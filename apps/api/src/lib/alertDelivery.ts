@@ -1,6 +1,45 @@
 import { getResend, getResendFromAddress } from './resend';
 import type { AlertRuleRow } from '../types/database';
 
+// ── SSRF Protection ─────────────────────────────────────────
+// Blocklist of internal/reserved IP ranges to prevent SSRF attacks
+// via user-configured webhook/Slack URLs.
+const PRIVATE_IP_PATTERNS = [
+  /^127\./,
+  /^10\./,
+  /^172\.(1[6-9]|2\d|3[01])\./,
+  /^192\.168\./,
+  /^0\./,
+  /^169\.254\./,
+  /^::1$/,
+  /^fc00:/i,
+  /^fe80:/i,
+  /^localhost$/i,
+];
+
+function isPrivateHost(hostname: string): boolean {
+  return PRIVATE_IP_PATTERNS.some((pattern) => pattern.test(hostname));
+}
+
+function validateDestination(url: string): { ok: true; hostname: string } | { ok: false; error: string } {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return { ok: false, error: 'Invalid URL' };
+  }
+
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    return { ok: false, error: 'Only http and https URLs are allowed' };
+  }
+
+  if (isPrivateHost(parsed.hostname)) {
+    return { ok: false, error: 'Internal/private IP addresses are not allowed' };
+  }
+
+  return { ok: true, hostname: parsed.hostname };
+}
+
 export function buildAlertMessage(rule: AlertRuleRow, actualValue: number, threshold: number): string {
   const scope = rule.queue_name ? `queue *${rule.queue_name}*` : 'project (all queues)';
   return [
@@ -25,6 +64,11 @@ export async function deliverSlack(
   destination: string,
   text: string
 ): Promise<{ ok: true } | { ok: false; error: string }> {
+  const validated = validateDestination(destination);
+  if (!validated.ok) {
+    return { ok: false, error: `SSRF guard: ${validated.error}` };
+  }
+
   try {
     const response = await fetch(destination, {
       method: 'POST',
@@ -48,6 +92,11 @@ export async function deliverWebhook(
   destination: string,
   payload: Record<string, unknown>
 ): Promise<{ ok: true } | { ok: false; error: string }> {
+  const validated = validateDestination(destination);
+  if (!validated.ok) {
+    return { ok: false, error: `SSRF guard: ${validated.error}` };
+  }
+
   try {
     const response = await fetch(destination, {
       method: 'POST',

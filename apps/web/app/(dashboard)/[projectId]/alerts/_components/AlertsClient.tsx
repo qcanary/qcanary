@@ -14,9 +14,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trackEvent } from "@/components/PostHogProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
@@ -172,9 +174,11 @@ export function AlertsClient({ projectId }: { projectId: string }) {
   const [message, setMessage] = React.useState<string | null>(null);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
   const [form, setForm] = React.useState<RuleFormState>(defaultForm);
   const [formErrors, setFormErrors] = React.useState<FormErrors>({});
   const [submitting, setSubmitting] = React.useState(false);
+  const [deletingRuleId, setDeletingRuleId] = React.useState<string | null>(null);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -321,9 +325,12 @@ export function AlertsClient({ projectId }: { projectId: string }) {
     }
   }
 
-  async function deleteRule(ruleId: string) {
+  async function confirmDeleteRule() {
+    const ruleId = confirmDeleteId;
+    if (!ruleId) return;
     setError(null);
     setMessage(null);
+    setDeletingRuleId(ruleId);
     try {
       const res = await fetch(`/api/v1/projects/${projectId}/alerts/${ruleId}`, {
         method: "DELETE",
@@ -332,9 +339,11 @@ export function AlertsClient({ projectId }: { projectId: string }) {
       if (!json.success) throw new Error(json.error.message);
       setRules((prev) => (prev ?? []).filter((rule) => rule.id !== ruleId));
       setMessage("Rule deleted.");
-      await load();
+      setConfirmDeleteId(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to delete rule.");
+    } finally {
+      setDeletingRuleId(null);
     }
   }
 
@@ -368,10 +377,15 @@ export function AlertsClient({ projectId }: { projectId: string }) {
             <CardTitle>Request failed</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
+          <CardContent>
+            <Button variant="secondary" size="sm" onClick={() => void load()}>
+              Retry
+            </Button>
+          </CardContent>
         </Card>
       )}
 
-      {message && (
+      {message && !error && (
         <Card>
           <CardContent className="pt-6 text-sm text-text-primary">{message}</CardContent>
         </Card>
@@ -384,7 +398,11 @@ export function AlertsClient({ projectId }: { projectId: string }) {
         </CardHeader>
         <CardContent>
           {loading && !rules ? (
-            <div className="text-sm text-text-muted">Loading rules…</div>
+            <div className="space-y-2">
+              <Skeleton className="h-14 w-full" />
+              <Skeleton className="h-14 w-full" />
+              <Skeleton className="h-14 w-full" />
+            </div>
           ) : !rules || rules.length === 0 ? (
             <div className="text-sm text-text-muted">No alert rules yet.</div>
           ) : (
@@ -421,7 +439,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                     <TableCell className="text-xs text-text-muted">{formatRelativeOrIso(rule.lastTriggeredAt)}</TableCell>
                     <TableCell className="text-right">
                       <div className="inline-flex items-center gap-2">
-                        <Switch checked={rule.isActive} onCheckedChange={(checked) => void toggleRule(rule, checked)} />
+                        <Switch checked={rule.isActive} onCheckedChange={(checked) => void toggleRule(rule, checked)} aria-label={`Toggle ${rule.name}`} />
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -432,7 +450,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                         <Button size="sm" variant="secondary" onClick={() => void sendTest(rule.id)}>
                           Send test
                         </Button>
-                        <Button size="sm" variant="destructive" onClick={() => void deleteRule(rule.id)}>
+                        <Button size="sm" variant="destructive" onClick={() => setConfirmDeleteId(rule.id)}>
                           Delete
                         </Button>
                       </div>
@@ -452,7 +470,11 @@ export function AlertsClient({ projectId }: { projectId: string }) {
         </CardHeader>
         <CardContent>
           {loading && !history ? (
-            <div className="text-sm text-text-muted">Loading history…</div>
+            <div className="space-y-2">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
           ) : !history || history.length === 0 ? (
             <div className="text-sm text-text-muted">No alert triggers yet.</div>
           ) : (
@@ -527,9 +549,8 @@ export function AlertsClient({ projectId }: { projectId: string }) {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="rule-condition">Condition type</Label>
-                <select
+                <Select
                   id="rule-condition"
-                  className="flex h-10 w-full rounded-md border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                   value={form.conditionType}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, conditionType: e.target.value as AlertRule["conditionType"] }))
@@ -539,7 +560,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                   <option value="no_activity">no_activity</option>
                   <option value="queue_depth">queue_depth</option>
                   <option value="job_duration">job_duration</option>
-                </select>
+                </Select>
               </div>
             </div>
 
@@ -608,9 +629,8 @@ export function AlertsClient({ projectId }: { projectId: string }) {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label htmlFor="rule-channel">Channel</Label>
-                <select
+                <Select
                   id="rule-channel"
-                  className="flex h-10 w-full rounded-md border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                   value={form.channel}
                   onChange={(e) =>
                     setForm((prev) => {
@@ -624,7 +644,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                   <option value="slack">slack</option>
                   <option value="email">email</option>
                   <option value="webhook">webhook (Pro)</option>
-                </select>
+                </Select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="rule-active">Active</Label>
@@ -633,6 +653,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                     id="rule-active"
                     checked={form.isActive}
                     onCheckedChange={(checked) => setForm((prev) => ({ ...prev, isActive: checked }))}
+                    aria-label="Toggle rule active state"
                   />
                   <span className="ml-3 text-sm text-text-muted">{form.isActive ? "Enabled" : "Disabled"}</span>
                 </div>
@@ -669,6 +690,26 @@ export function AlertsClient({ projectId }: { projectId: string }) {
             </Button>
             <Button onClick={() => void submitForm()} disabled={submitting}>
               {submitting ? "Saving…" : form.id ? "Save changes" : "Create rule"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={confirmDeleteId !== null} onOpenChange={(open) => { if (!open) setConfirmDeleteId(null); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete alert rule?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. The rule will be permanently removed and will stop triggering notifications.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2">
+            <Button variant="secondary" onClick={() => setConfirmDeleteId(null)} disabled={deletingRuleId !== null}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() => void confirmDeleteRule()} disabled={deletingRuleId !== null}>
+              {deletingRuleId !== null ? "Deleting…" : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>
