@@ -1,5 +1,6 @@
 import { Queue, type ConnectionOptions } from 'bullmq';
 import IORedis from 'ioredis';
+import type { RedisOptions } from 'ioredis';
 import { logger } from './logger';
 
 interface UpstashRedisConfig {
@@ -55,7 +56,7 @@ export const redisConnectionOptions: ConnectionOptions = isLocalRedis
       enableReadyCheck: false,
     };
 
-export const redis = new IORedis(redisConnectionOptions);
+export const redis = new IORedis(redisConnectionOptions as RedisOptions);
 redis.on('error', (err) => {
   logger.error({ err }, 'Redis connection error');
 });
