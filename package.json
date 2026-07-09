@@ -13,6 +13,10 @@
     "clean": "turbo run clean",
     "clean:all": "turbo run clean && rm -rf node_modules apps/*/node_modules packages/*/node_modules"
   },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  },
   "devDependencies": {
     "turbo": "^2.5.0",
     "typescript": "^6.0.3",
