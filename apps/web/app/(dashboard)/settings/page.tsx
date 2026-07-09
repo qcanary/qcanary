@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useAuth } from "@clerk/nextjs";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -280,7 +279,6 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
 }
 
 export default function SettingsPage() {
-  const { getToken } = useAuth();
   const [plan, setPlan] = React.useState<PlanName | null>(null);
   const [planExpiresAt, setPlanExpiresAt] = React.useState<string | null>(null);
   const [usage, setUsage] = React.useState<UsageResponse["data"]["usage"] | null>(null);
@@ -358,14 +356,11 @@ export default function SettingsPage() {
     setUpgradingPlan(targetPlan);
     trackEvent("plan_upgrade_started", { targetPlan });
     try {
-      const clerkToken = await getToken();
-      const headers: Record<string, string> = { "content-type": "application/json" };
-      if (clerkToken) {
-        headers["authorization"] = `Bearer ${clerkToken}`;
-      }
+      // Let the Next.js proxy use server-side auth().getToken()
+      // which includes the organization context that Express requires
       const res = await fetch("/api/v1/billing/checkout-session", {
         method: "POST",
-        headers,
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ plan: targetPlan }),
       });
       const json = (await res.json()) as { success: true; data: { checkoutUrl: string } } | ApiError;
