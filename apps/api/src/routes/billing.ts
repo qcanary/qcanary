@@ -10,8 +10,6 @@ import { logger } from '../lib/logger';
 const router = express.Router();
 const publicRouter = express.Router();
 
-const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.API_BASE_URL ?? 'http://localhost:3000';
-
 function errorResponse(res: Response, statusCode: number, code: string, message: string): void {
   res.status(statusCode).json({
     success: false,
@@ -215,6 +213,12 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
         plan,
       },
     });
+
+    if (!session.checkout_url) {
+      logger.error({ sessionId: session.session_id, plan }, 'Dodo returned null checkout_url');
+      errorResponse(res, 502, 'CHECKOUT_URL_MISSING', 'Dodo Payments did not return a checkout URL. Please try again.');
+      return;
+    }
 
     res.status(200).json({
       success: true,

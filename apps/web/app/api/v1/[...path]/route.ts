@@ -25,8 +25,13 @@ async function handler(req: NextRequest, context: { params: { path: string[] } }
     );
   }
 
-  const authResult = await auth();
-  const token = await authResult.getToken();
+  // Use client-provided Authorization header if present (e.g., from useAuth()),
+  // otherwise fall back to server-side auth().getToken()
+  let token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? null;
+  if (!token) {
+    const authResult = await auth();
+    token = await authResult.getToken() ?? null;
+  }
 
   if (!token) {
     return NextResponse.json(
