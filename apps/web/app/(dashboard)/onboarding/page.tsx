@@ -67,6 +67,9 @@ export default function OnboardingPage() {
   const [createdProjectName, setCreatedProjectName] = React.useState<string | null>(null);
   const [apiKey, setApiKey] = React.useState<string | null>(null);
   const [deletingProjectId, setDeletingProjectId] = React.useState<string | null>(null);
+  const [sendingTestEvent, setSendingTestEvent] = React.useState(false);
+  const [testEventSent, setTestEventSent] = React.useState(false);
+  const [testEventError, setTestEventError] = React.useState<string | null>(null);
 
   async function createProjectAndKey(e: React.FormEvent) {
     e.preventDefault();
@@ -142,6 +145,79 @@ export default function OnboardingPage() {
       setError("Failed to delete project.");
     } finally {
       setDeletingProjectId(null);
+    }
+  }
+
+  async function sendTestEvent() {
+    setTestEventError(null);
+    setSendingTestEvent(true);
+    try {
+      const now = new Date().toISOString();
+      const testEvents = {
+        events: [
+          {
+            queueName: "email-notifications",
+            jobId: crypto.randomUUID(),
+            jobName: "send-welcome-email",
+            eventType: "completed",
+            status: "completed",
+            durationMs: 234,
+            environment: environment.trim() || "production",
+            timestamp: now,
+          },
+          {
+            queueName: "email-notifications",
+            jobId: crypto.randomUUID(),
+            jobName: "send-welcome-email",
+            eventType: "completed",
+            status: "completed",
+            durationMs: 189,
+            environment: environment.trim() || "production",
+            timestamp: now,
+          },
+          {
+            queueName: "process-payments",
+            jobId: crypto.randomUUID(),
+            jobName: "charge-customer",
+            eventType: "completed",
+            status: "completed",
+            durationMs: 1245,
+            environment: environment.trim() || "production",
+            timestamp: now,
+          },
+          {
+            queueName: "email-notifications",
+            jobId: crypto.randomUUID(),
+            jobName: "send-verification-email",
+            eventType: "failed",
+            status: "failed",
+            errorMessage: "Connection refused: SMTP server at smtp.example.com:587",
+            durationMs: 5432,
+            attempts: 3,
+            environment: environment.trim() || "production",
+            timestamp: now,
+          },
+        ],
+      };
+
+      const res = await fetch("/api/v1/ingest", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": apiKey!,
+        },
+        body: JSON.stringify(testEvents),
+      });
+
+      const json = (await res.json()) as { success: true } | ApiError;
+      if (!json.success) throw new Error(json.error.message);
+
+      setTestEventSent(true);
+      trackEvent("test_event_sent", { projectId: createdProjectId! });
+    } catch (e) {
+      setTestEventError(e instanceof Error ? e.message : "Failed to send test event. Check that your agent is connected.");
+    } finally {
+      setSendingTestEvent(false);
     }
   }
 
@@ -273,6 +349,57 @@ const monitor = new QueueMonitor({
 
             <div className="text-sm text-text-muted">2) Add the monitor to your BullMQ app</div>
             <CodeBlock>{snippet}</CodeBlock>
+          </CardContent>
+        </Card>
+      )}
+
+      {createdProjectId && apiKey && !testEventSent && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Try it instantly</CardTitle>
+            <CardDescription>
+              Send sample queue events to see your dashboard come to life right now — no agent installation needed.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {testEventError && (
+              <div className="rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+                {testEventError}
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => void sendTestEvent()}
+                disabled={sendingTestEvent}
+              >
+                {sendingTestEvent ? "Sending…" : "Send test events"}
+              </Button>
+              {sendingTestEvent && (
+                <span className="text-sm text-text-muted">Generating sample queue activity…</span>
+              )}
+            </div>
+            <div className="text-xs text-text-muted">
+              Sends 4 sample events across 2 queues (email-notifications, process-payments) including a simulated failure.
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {createdProjectId && apiKey && testEventSent && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Events sent successfully! 🎉</CardTitle>
+            <CardDescription>
+              4 sample events have been ingested. Head to your dashboard to see queues, stats, and failures in action.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href={`/${createdProjectId}`}
+              className="inline-flex h-10 items-center justify-center rounded-md bg-accent px-6 py-2 text-sm font-medium text-black hover:bg-accent/90"
+            >
+              Go to dashboard
+            </Link>
           </CardContent>
         </Card>
       )}

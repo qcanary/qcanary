@@ -52,11 +52,15 @@ async function handler(req: NextRequest, context: { params: { path: string[] } }
       ? undefined
       : await req.text();
 
+  // Forward x-api-key if present (used by the ingest endpoint for test events)
+  const apiKey = req.headers.get("x-api-key") ?? undefined;
+
   const upstream = await fetch(targetUrl.toString(), {
     method: req.method,
     headers: {
       ...(contentType ? { "content-type": contentType } : {}),
       authorization: `Bearer ${token}`,
+      ...(apiKey ? { "x-api-key": apiKey } : {}),
     },
     body,
     cache: "no-store",

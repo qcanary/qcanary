@@ -14,9 +14,9 @@ export interface PlanLimits {
 export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
   free: {
     maxProjects: 1,
-    maxQueuesPerProject: 3,
-    maxEventsPerDay: 10_000,
-    historyDays: 3,
+    maxQueuesPerProject: 1,
+    maxEventsPerDay: 1_000,
+    historyDays: 1,
   },
   starter: {
     maxProjects: 3,
