@@ -281,7 +281,7 @@ export default function ComparePage() {
                 </tr>
               </thead>
               <tbody>
-                {comparisons.map((row, i) => (
+                {comparisons.map((row) => (
                   <tr
                     key={row.feature}
                     className={`border-b border-border/70 text-sm ${
