@@ -6,6 +6,7 @@ import type { ApiKeyInsert, ProjectInsert } from '../types/database';
 import { enforceProjectLimit } from '../middleware/planLimits';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { insertRow, updateRows } from '../lib/typedSupabase';
+import { errorResponse, requireTeamContext } from '../lib/responseUtils';
 
 const router = express.Router();
 
@@ -25,27 +26,6 @@ interface ApiKeyRecord {
   last_used_at: string | null;
   created_at: string;
   revoked_at: string | null;
-}
-
-function errorResponse(
-  res: Response,
-  statusCode: number,
-  code: string,
-  message: string
-): void {
-  res.status(statusCode).json({
-    success: false,
-    error: { code, message },
-  });
-}
-
-function requireTeamContext(req: DashboardAuthedRequest, res: Response): string | null {
-  const teamId = typeof (req as DashboardAuthedRequest).teamId === 'string' ? (req as DashboardAuthedRequest).teamId : '';
-  if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
-    return null;
-  }
-  return teamId;
 }
 
 function sanitizeApiKeyRow(row: ApiKeyRecord): {

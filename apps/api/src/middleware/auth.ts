@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
+import { logger } from '../lib/logger';
 import type { ApiKeyRow, Database } from '../types/database';
 
 export interface AuthenticatedRequest extends Request {
@@ -53,6 +54,17 @@ export async function validateApiKey(
 
     req.apiKeyId = apiKeyRow.id;
     req.projectId = apiKeyRow.project_id;
+
+    // Fire-and-forget update of last_used_at — non-blocking, never fails the request
+    void supabase
+      .from('api_keys')
+      .update({ last_used_at: new Date().toISOString() } as never)
+      .eq('id', apiKeyRow.id)
+      .then(({ error: updateError }) => {
+        if (updateError) {
+          logger.error({ err: updateError, keyId: apiKeyRow.id }, 'Failed to update last_used_at');
+        }
+      });
 
     next();
   } catch {

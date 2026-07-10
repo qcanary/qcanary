@@ -1,9 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
 import { upstashRestConfig } from '../lib/redis';
 import type { AuthenticatedRequest } from './auth';
+import type { DashboardAuthedRequest } from './dashboardAuth';
 import { logger } from '../lib/logger';
 
 const INGEST_LIMIT_PER_MINUTE = 1000;
+const DASHBOARD_LIMIT_PER_MINUTE = 200;
 const WINDOW_MS = 60_000;
 
 interface UpstashPipelineResult {
@@ -64,6 +66,7 @@ export async function ingestRateLimit(
     const requestCount = Number(results[2]?.result ?? 0);
 
     if (requestCount > INGEST_LIMIT_PER_MINUTE) {
+      res.setHeader('Retry-After', '60');
       res.status(429).json({
         success: false,
         error: {
@@ -78,6 +81,59 @@ export async function ingestRateLimit(
   } catch (err) {
     logger.error({ err }, '[rateLimit] Upstash unreachable — failing open. All requests allowed.');
     // Fail open to avoid dropping customer traffic due to transient Upstash issues.
+    next();
+  }
+}
+
+/**
+ * Rate limiter for dashboard (Clerk JWT-authenticated) routes.
+ * Keyed on teamId since dashboard routes use Clerk auth, not API keys.
+ */
+export async function dashboardRateLimit(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const dashReq = req as DashboardAuthedRequest;
+    const teamId = dashReq.teamId;
+
+    if (!teamId) {
+      // Let the route handler deal with missing auth
+      next();
+      return;
+    }
+
+    const now = Date.now();
+    const windowStart = now - WINDOW_MS;
+    const key = `qcanary:ratelimit:dashboard:${teamId}`;
+    const member = `${now}-${Math.random().toString(16).slice(2)}`;
+
+    const commands: unknown[][] = [
+      ['ZREMRANGEBYSCORE', key, '-inf', windowStart],
+      ['ZADD', key, now, member],
+      ['ZCARD', key],
+      ['PEXPIRE', key, WINDOW_MS + 1000],
+    ];
+
+    const results = await runUpstashPipeline(commands);
+    const requestCount = Number(results[2]?.result ?? 0);
+
+    if (requestCount > DASHBOARD_LIMIT_PER_MINUTE) {
+      res.setHeader('Retry-After', '60');
+      res.status(429).json({
+        success: false,
+        error: {
+          code: 'RATE_LIMITED',
+          message: 'Rate limit exceeded: max 200 requests/minute',
+        },
+      });
+      return;
+    }
+
+    next();
+  } catch (err) {
+    logger.error({ err }, '[dashboardRateLimit] Upstash unreachable — failing open.');
     next();
   }
 }

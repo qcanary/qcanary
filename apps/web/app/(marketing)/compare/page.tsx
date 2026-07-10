@@ -151,14 +151,14 @@ export default function ComparePage() {
       <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <BrandLockup href="/" size="md" />
-          <div className="flex items-center gap-4">
-            <Link href="/blog" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+          <div className="flex items-center gap-4 flex-wrap justify-end">
+            <Link href="/blog" className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">
               Blog
             </Link>
-            <Link href="/docs" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+            <Link href="/docs" className="hidden sm:inline text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">
               Docs
             </Link>
-            <Link href="/sign-in" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+            <Link href="/sign-in" className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">
               Sign In
             </Link>
             <Link href="/sign-up">

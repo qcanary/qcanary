@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useAuth } from "@clerk/nextjs";
 
@@ -72,21 +73,35 @@ function healthLabel(queue: QueueSummary): string {
 }
 
 export function ProjectOverviewClient({ projectId }: { projectId: string }) {
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
+  const router = useRouter();
 
   const [queues, setQueues] = React.useState<QueueSummary[] | null>(null);
   const [recentFailures, setRecentFailures] = React.useState<JobEventRow[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const authRedirected = React.useRef(false);
+
+  // Redirect unauthenticated users to sign-in
+  React.useEffect(() => {
+    if (isSignedIn === false) {
+      router.push("/sign-in");
+    }
+  }, [isSignedIn, router]);
 
   const refreshQueues = React.useCallback(async () => {
     const res = await fetch(`/api/v1/projects/${projectId}/queues`, { cache: "no-store" });
+    if (res.status === 401) {
+      authRedirected.current = true;
+      router.push("/sign-in");
+      throw new Error("Unauthorized");
+    }
     const json = (await res.json()) as QueuesOk | ApiError;
     if (!json.success) {
       throw new Error(json.error.message);
     }
     setQueues(json.data.queues);
-  }, [projectId]);
+  }, [projectId, router]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -98,9 +113,9 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
         await refreshQueues();
       } catch (e) {
         const message = e instanceof Error ? e.message : "Failed to load project data.";
-        if (!cancelled) setError(message);
+        if (!cancelled && !authRedirected.current) setError(message);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled && !authRedirected.current) setLoading(false);
       }
     }
 
@@ -243,45 +258,51 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
         </Card>
       )}
 
+      {/* Stat cards with mini progress bars — animated counts */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Total jobs</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{formatNumber(totals.totalJobs)}</div>
-            <div className="mt-2 text-sm text-text-muted">Across all queues</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Failed</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{formatNumber(totals.failed)}</div>
-            <div className="mt-2 text-sm text-text-muted">Failure rate {formatPercent(totals.failureRate)}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Success rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{formatPercent(totals.successRate)}</div>
-            <div className="mt-2 text-sm text-text-muted">Completed / total</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Active / stalled</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">
-              {formatNumber(totals.active)} <span className="text-text-muted">/</span> {formatNumber(totals.stalled)}
+        {(() => {
+          const progressFailed = totals.totalJobs > 0 ? Math.min((totals.failed / totals.totalJobs) * 100, 100) : 0;
+          const progressSuccess = totals.successRate;
+          const progressActive = totals.totalJobs > 0 ? Math.min(((totals.active + totals.completed) / totals.totalJobs) * 100, 100) : 0;
+          
+          return [
+            { label: "Total jobs", value: formatNumber(totals.totalJobs), sub: "Across all queues", icon: "📊", tone: "default" as const, progress: 100, progressColor: "bg-accent/50" },
+            { label: "Failed", value: formatNumber(totals.failed), sub: `Failure rate ${formatPercent(totals.failureRate)}`, icon: "❌", tone: totals.failed > 0 ? "danger" as const : "default" as const, progress: progressFailed, progressColor: "bg-red-500" },
+            { label: "Success rate", value: formatPercent(totals.successRate), sub: "Completed / total", icon: "✅", tone: totals.successRate > 90 ? "success" as const : totals.failureRate > 10 ? "danger" as const : "default" as const, progress: progressSuccess, progressColor: "bg-accent" },
+            { label: "Active / stalled", value: `${formatNumber(totals.active)} / ${formatNumber(totals.stalled)}`, sub: "Currently in-flight vs stalled", icon: totals.stalled > 0 ? "⚠️" : "⚡", tone: totals.stalled > 0 ? "warning" as const : "default" as const, progress: progressActive, progressColor: totals.stalled > 0 ? "bg-yellow-400" : "bg-accent/50" },
+          ];
+        })().map((stat, idx) => (
+          <div key={stat.label} className={`card-hover group rounded-xl border border-border bg-surface p-5 ${idx === 0 ? 'animate-fade-in-up' : idx === 1 ? 'animate-fade-in-up-delay-1' : idx === 2 ? 'animate-fade-in-up-delay-2' : 'animate-fade-in-up-delay-3'}`}>
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-xs font-medium uppercase tracking-wider text-text-muted flex items-center gap-1.5">
+                  <span className="text-base">{stat.icon}</span>
+                  {stat.label}
+                </div>
+                <div className={`mt-2 text-3xl font-semibold tracking-tight ${
+                  stat.tone === 'danger' ? 'text-red-400' : 
+                  stat.tone === 'success' ? 'text-accent' : 
+                  stat.tone === 'warning' ? 'text-yellow-400' : 
+                  'text-text-primary'
+                }`}>
+                  {stat.value}
+                </div>
+              </div>
+              {/* Mini indicator */}
+              <div className="h-10 w-10 shrink-0 rounded-lg bg-surface/60 border border-border flex items-center justify-center text-lg opacity-60 group-hover:opacity-100 transition-opacity">
+                {stat.tone === 'danger' ? '📈' : stat.tone === 'success' ? '🎯' : '📉'}
+              </div>
             </div>
-            <div className="mt-2 text-sm text-text-muted">Currently in-flight vs stalled</div>
-          </CardContent>
-        </Card>
+            <div className="mt-3 text-xs text-text-muted">{stat.sub}</div>
+            {/* Progress bar — data-driven width */}
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-border/50">
+              <div 
+                className={`h-full rounded-full transition-all duration-1000 ease-out ${stat.progressColor}`}
+                style={{ width: `${stat.progress}%` }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
@@ -292,8 +313,24 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
           </CardHeader>
           <CardContent>
             {!queues || queues.length === 0 ? (
-              <div className="text-sm text-text-muted">
-                No queues yet. Install the agent and start sending events, then refresh.
+              <div className="flex flex-col items-center gap-4 py-12 text-center">
+                <div className="text-4xl">📡</div>
+                <div>
+                  <p className="text-sm font-medium text-text-primary">No queues detected yet</p>
+                  <p className="mt-1 text-xs text-text-muted">
+                    Install the Qcanary agent in your BullMQ service and start sending events.
+                    Once events arrive, your queues will show up here in real-time.
+                  </p>
+                </div>
+                <a
+                  href="https://github.com/qcanary/qcanary#quickstart"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-xs font-medium text-text-primary hover:bg-surface/80 transition-colors"
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  View setup guide
+                </a>
               </div>
             ) : (
               <Table>

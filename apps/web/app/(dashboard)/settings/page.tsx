@@ -5,8 +5,8 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { trackEvent } from "@/components/PostHogProvider";
+
+import { trackEvent, trackCriticalEvent } from "@/components/PostHogProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 type PlanName = "free" | "starter" | "pro";
@@ -149,6 +149,8 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
   }, [projectId]);
 
   async function createKey() {
+    const keyLabel = window.prompt('Enter a label for this API key (e.g., "Production CI", "Staging"):', 'default');
+    if (keyLabel === null) return;
     setError(null);
     setCreating(true);
     setNewKeyPlaintext(null);
@@ -156,7 +158,7 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
       const res = await fetch(`/api/v1/projects/${projectId}/keys`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ label: "Settings key" }),
+        body: JSON.stringify({ label: keyLabel.trim() || 'default' }),
       });
       const json = (await res.json()) as CreateKeyResponse | ApiError;
       if (!json.success) throw new Error(json.error.message);
@@ -207,7 +209,10 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
           {error && <div className="text-xs text-red-400">{error}</div>}
 
           {loading ? (
-            <div className="text-xs text-text-muted">Loading keys...</div>
+            <div className="space-y-2">
+              <div className="h-10 animate-pulse rounded-md bg-border" />
+              <div className="h-10 animate-pulse rounded-md bg-border" />
+            </div>
           ) : (
             <>
               {keys && keys.length > 0 && (
@@ -278,7 +283,11 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
   );
 }
 
+const TABS = ["Plan", "Usage", "API Keys", "Billing"] as const;
+type Tab = (typeof TABS)[number];
+
 export default function SettingsPage() {
+  const [activeTab, setActiveTab] = React.useState<Tab>("Plan");
   const [plan, setPlan] = React.useState<PlanName | null>(null);
   const [planExpiresAt, setPlanExpiresAt] = React.useState<string | null>(null);
   const [usage, setUsage] = React.useState<UsageResponse["data"]["usage"] | null>(null);
@@ -365,6 +374,7 @@ export default function SettingsPage() {
       });
       const json = (await res.json()) as { success: true; data: { checkoutUrl: string } } | ApiError;
       if (!json.success) throw new Error(json.error.message);
+      trackCriticalEvent("checkout_started", { targetPlan, checkoutUrl: json.data.checkoutUrl });
       window.location.href = json.data.checkoutUrl;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to start upgrade.");
@@ -383,7 +393,7 @@ export default function SettingsPage() {
       </div>
 
       {paymentMessage && (
-        <Card>
+        <Card className="animate-slide-in-right">
           <CardHeader>
             <CardTitle>{paymentMessage}</CardTitle>
           </CardHeader>
@@ -399,77 +409,115 @@ export default function SettingsPage() {
         </Card>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Current plan</CardTitle>
-          <CardDescription>Active subscription for your organization.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex items-center gap-3">
-          {loadingPlan ? (
-            <span className="text-sm text-text-muted">Loading plan...</span>
-          ) : (
-            <>
-              <Badge variant={currentPlan === "free" ? "outline" : "success"}>{currentPlan}</Badge>
-              {expiresText && <span className="text-sm text-text-muted">Renews/ends: {expiresText}</span>}
-            </>
-          )}
-        </CardContent>
-      </Card>
+      {/* Tab navigation */}
+      <div className="flex gap-1 rounded-xl border border-border bg-surface/50 p-1">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+              activeTab === tab
+                ? "bg-accent text-black shadow-sm"
+                : "text-text-muted hover:text-text-primary hover:bg-surface/70"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Usage</CardTitle>
-          <CardDescription>Current plan consumption for your organization.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          {loadingUsage || !usage ? (
-            <span className="text-sm text-text-muted">Loading usage...</span>
-          ) : (
-            <>
-              <UsageMeter label="Projects" used={usage.projectsUsed} limit={usage.projectsLimit} />
-              <UsageMeter label="Daily events" used={usage.eventsUsedToday} limit={usage.eventsLimit} />
-              {((usage.projectsLimit !== null && usage.projectsUsed >= usage.projectsLimit) ||
-                (usage.eventsLimit !== null && usage.eventsUsedToday >= usage.eventsLimit)) && (
-                <div className="rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
-                  Your current plan is at capacity. Upgrade to raise these limits.
-                </div>
+      {/* Tab: Plan */}
+      {activeTab === "Plan" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Current plan
+              {loadingPlan ? (
+                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent" />
+              ) : (
+                <Badge variant={currentPlan === "free" ? "outline" : "success"}>{currentPlan}</Badge>
               )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+            </CardTitle>
+            <CardDescription>Active subscription for your organization.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loadingPlan ? (
+              <div className="text-sm text-text-muted">Loading plan details...</div>
+            ) : (
+              <div className="flex items-center gap-3">
+                {expiresText && <span className="text-sm text-text-muted">Renews/ends: {expiresText}</span>}
+                {currentPlan !== "pro" && (
+                  <span className="text-xs text-text-muted">
+                    — <button type="button" onClick={() => setActiveTab("Billing")} className="text-accent hover:underline">Upgrade</button> for more features
+                  </span>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>API keys</CardTitle>
-          <CardDescription>View and manage API keys for each project. Expand a project to see its keys.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {!projects ? (
-            <span className="text-sm text-text-muted">Loading projects...</span>
-          ) : projects.length === 0 ? (
-            <div className="text-sm text-text-muted">
-              No projects yet.{' '}
-              <a href="/onboarding" className="text-accent hover:underline">Create your first project</a>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {projects.map((project) => (
-                <ApiKeysPanel key={project.id} projectId={project.id} projectName={project.name} />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Tab: Usage */}
+      {activeTab === "Usage" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Usage</CardTitle>
+            <CardDescription>Current plan consumption for your organization.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {loadingUsage || !usage ? (
+              <div className="text-sm text-text-muted">Loading usage...</div>
+            ) : (
+              <>
+                <UsageMeter label="Projects" used={usage.projectsUsed} limit={usage.projectsLimit} />
+                <UsageMeter label="Daily events" used={usage.eventsUsedToday} limit={usage.eventsLimit} />
+                {((usage.projectsLimit !== null && usage.projectsUsed >= usage.projectsLimit) ||
+                  (usage.eventsLimit !== null && usage.eventsUsedToday >= usage.eventsLimit)) && (
+                  <div className="rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+                    Your current plan is at capacity. <button type="button" onClick={() => setActiveTab("Billing")} className="underline hover:no-underline">Upgrade</button> to raise these limits.
+                  </div>
+                )}
+              </>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-      <Separator />
+      {/* Tab: API Keys */}
+      {activeTab === "API Keys" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>API keys</CardTitle>
+            <CardDescription>View and manage API keys for each project. Expand a project to see its keys.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {!projects ? (
+              <span className="text-sm text-text-muted">Loading projects...</span>
+            ) : projects.length === 0 ? (
+              <div className="text-sm text-text-muted">
+                No projects yet.{' '}
+                <a href="/onboarding" className="text-accent hover:underline">Create your first project</a>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {projects.map((project) => (
+                  <ApiKeysPanel key={project.id} projectId={project.id} projectName={project.name} />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Upgrade</CardTitle>
-          <CardDescription>Choose a higher tier to unlock alerts and larger limits.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-5">
+      {/* Tab: Billing */}
+      {activeTab === "Billing" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Upgrade</CardTitle>
+            <CardDescription>Choose a higher tier to unlock alerts and larger limits.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
           {/* Billing interval toggle */}
           <div className="flex items-center justify-center gap-3">
             <span className={`text-sm ${billingInterval === "month" ? "font-medium text-text-primary" : "text-text-muted"}`}>
@@ -539,8 +587,9 @@ export default function SettingsPage() {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

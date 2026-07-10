@@ -74,6 +74,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ReticleDev } from "./reticle-dev";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -176,7 +178,10 @@ export default function RootLayout({
             },
           }}
         >
-          <PostHogProvider>{children}</PostHogProvider>
+          <PostHogProvider>
+            {process.env.NODE_ENV === 'development' ? <ReticleDev /> : null}
+            {children}
+          </PostHogProvider>
         </ClerkProvider>
       </body>
     </html>

@@ -49,12 +49,18 @@ services:
         sync: false
       - key: DODO_SECRET_KEY
         sync: false
+      - key: DODO_ENVIRONMENT
+        value: test_mode          # switch to 'live' for production
       - key: DODO_WEBHOOK_SECRET
         sync: false
       - key: DODO_STARTER_PRODUCT_ID
-        sync: false
+        sync: false              # monthly product
+      - key: DODO_STARTER_YEARLY_PRODUCT_ID
+        sync: false              # yearly product
       - key: DODO_PRO_PRODUCT_ID
-        sync: false
+        sync: false              # monthly product
+      - key: DODO_PRO_YEARLY_PRODUCT_ID
+        sync: false              # yearly product
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_FROM_EMAIL

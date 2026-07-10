@@ -1,8 +1,21 @@
 "use client";
 
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import * as React from "react";
+import { usePathname } from "next/navigation";
+import { trackEvent } from "@/components/PostHogProvider";
 
 export function DashboardTopbar() {
+  const pathname = usePathname();
+  const trackedRef = React.useRef<string | null>(null);
+
+  // Track page views for funnel analysis
+  React.useEffect(() => {
+    if (trackedRef.current !== pathname) {
+      trackedRef.current = pathname;
+      trackEvent("page_viewed", { path: pathname });
+    }
+  }, [pathname]);
   return (
     <div className="border-b border-border bg-bg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">

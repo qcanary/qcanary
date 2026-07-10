@@ -17,11 +17,11 @@ const PRIVATE_IP_PATTERNS = [
   /^localhost$/i,
 ];
 
-function isPrivateHost(hostname: string): boolean {
+export function isPrivateHost(hostname: string): boolean {
   return PRIVATE_IP_PATTERNS.some((pattern) => pattern.test(hostname));
 }
 
-function validateDestination(url: string): { ok: true; hostname: string } | { ok: false; error: string } {
+export function validateDestination(url: string): { ok: true; hostname: string } | { ok: false; error: string } {
   let parsed: URL;
   try {
     parsed = new URL(url);

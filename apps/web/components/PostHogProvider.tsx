@@ -21,6 +21,24 @@ export function trackEvent(event: string, properties?: Record<string, unknown>) 
   }
 }
 
+/**
+ * Track a critical event that must be delivered even during page navigation.
+ * Uses `sendBeacon` internally so the event is not dropped on redirect/unload.
+ */
+/**
+ * Track a critical event that must be delivered even during page navigation.
+ * Uses `sendBeacon` transport internally so the event is not dropped on redirect/unload.
+ */
+export function trackCriticalEvent(event: string, properties?: Record<string, unknown>) {
+  try {
+    if (posthog.__loaded) {
+      posthog.capture(event, properties, { transport: "sendBeacon" });
+    }
+  } catch {
+    // silently fail — analytics are non-critical
+  }
+}
+
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== "undefined" && !posthog.__loaded && POSTHOG_KEY) {

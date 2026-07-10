@@ -3,16 +3,10 @@ import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { getPlanLimits, type PlanName } from '../middleware/planLimits';
+import { errorResponse, requireTeamContext } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
 
 const router = express.Router();
-
-function errorResponse(res: Response, statusCode: number, code: string, message: string): void {
-  res.status(statusCode).json({
-    success: false,
-    error: { code, message },
-  });
-}
 
 function normalizePlan(plan: string | null): PlanName {
   if (plan === 'starter' || plan === 'pro') {
@@ -22,12 +16,9 @@ function normalizePlan(plan: string | null): PlanName {
 }
 
 router.get('/', async (req: Request, res: Response) => {
-  const teamId = typeof (req as DashboardAuthedRequest).teamId === 'string'
-    ? (req as DashboardAuthedRequest).teamId
-    : '';
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
 
   if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
     return;
   }
 

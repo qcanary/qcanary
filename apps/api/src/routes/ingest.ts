@@ -98,6 +98,7 @@ router.post(
       return;
     }
 
+    // Respond immediately, then process asynchronously
     res.status(200).json({
       success: true,
       data: {
@@ -237,32 +238,70 @@ async function processEvents(projectId: string, events: IngestEventPayload[]): P
   }
 }
 
+/**
+ * Aggregated metrics update — batches events by (queueName, hourBucket)
+ * to make a single RPC call per unique bucket instead of one per event.
+ */
 async function updateQueueMetrics(projectId: string, events: IngestEventPayload[]): Promise<void> {
   if (events.length === 0) {
     return;
   }
 
-  const metricsCalls: Promise<unknown>[] = [];
+  // Aggregate: key = queueName|hourBucket -> accumulated counts
+  type BucketKey = string;
+  type AggregatedMetrics = {
+    completed: number;
+    failed: number;
+    stalled: number;
+    total: number;
+    durationMsSum: number;
+    durationMsCount: number;
+  };
+
+  const bucketMap = new Map<BucketKey, AggregatedMetrics>();
 
   for (const event of events) {
     const hourBucket = getHourBucket(event.timestamp);
+    const key = `${event.queueName}|${hourBucket}`;
+
+    let agg = bucketMap.get(key);
+    if (!agg) {
+      agg = { completed: 0, failed: 0, stalled: 0, total: 0, durationMsSum: 0, durationMsCount: 0 };
+      bucketMap.set(key, agg);
+    }
+
+    agg.total += 1;
+    if (event.status === 'completed') agg.completed += 1;
+    else if (event.status === 'failed') agg.failed += 1;
+    else if (event.status === 'stalled') agg.stalled += 1;
+
+    if (typeof event.durationMs === 'number') {
+      agg.durationMsSum += event.durationMs;
+      agg.durationMsCount += 1;
+    }
+  }
+
+  const rpcCalls: Promise<unknown>[] = [];
+
+  for (const [key, agg] of bucketMap) {
+    const [queueName, hour] = key.split('|');
+    const avgDurationMs = agg.durationMsCount > 0 ? agg.durationMsSum / agg.durationMsCount : null;
 
     const args: UpsertQueueMetricsArgs = {
       p_project_id: projectId,
-      p_queue_name: event.queueName,
-      p_hour: hourBucket,
-      p_completed: event.status === 'completed' ? 1 : 0,
-      p_failed: event.status === 'failed' ? 1 : 0,
-      p_stalled: event.status === 'stalled' ? 1 : 0,
-      p_duration_ms: event.durationMs ?? null,
-      p_total: 1,
+      p_queue_name: queueName,
+      p_hour: hour,
+      p_completed: agg.completed,
+      p_failed: agg.failed,
+      p_stalled: agg.stalled,
+      p_duration_ms: avgDurationMs,
+      p_total: agg.total,
     };
 
-    const rpcPromise = Promise.resolve(callRpc('upsert_queue_metrics_hourly', args));
-    metricsCalls.push(rpcPromise);
+    rpcCalls.push(Promise.resolve(callRpc('upsert_queue_metrics_hourly', args)));
   }
 
-  const results = await Promise.allSettled(metricsCalls);
+  const results = await Promise.allSettled(rpcCalls);
 
   for (const result of results) {
     if (result.status === 'rejected') {

@@ -1,5 +1,6 @@
 import { SignUp } from "@clerk/nextjs";
 import type { Metadata } from "next";
+import { SignUpTracker } from "./SignUpTracker";
 
 export const metadata: Metadata = {
   title: "Sign Up — Qcanary",
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 export default function SignUpPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-bg px-4">
+      <SignUpTracker />
       <SignUp
         appearance={{
           variables: {

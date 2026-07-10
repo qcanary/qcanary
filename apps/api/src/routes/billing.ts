@@ -1,21 +1,16 @@
 import express from 'express';
 import type { Request, Response } from 'express';
+import * as Sentry from '@sentry/node';
 import { getDodo, verifyDodoWebhook } from '../lib/dodo';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { updateRows } from '../lib/typedSupabase';
 import { deliverEmail, escapeHtml } from '../lib/alertDelivery';
+import { errorResponse, requireTeamContext } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
 
 const router = express.Router();
 const publicRouter = express.Router();
-
-function errorResponse(res: Response, statusCode: number, code: string, message: string): void {
-  res.status(statusCode).json({
-    success: false,
-    error: { code, message },
-  });
-}
 
 async function updateTeamPlanById(
   teamId: string,
@@ -167,18 +162,11 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json', limit: '50
 
 router.use(express.json({ limit: '1mb' }));
 
-function requireTeamId(req: DashboardAuthedRequest, res: Response): string | null {
-  const teamId = typeof req.teamId === 'string' ? req.teamId : '';
-  if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
-    return null;
-  }
-  return teamId;
-}
+
 
 // POST /billing/checkout-session — Create Dodo checkout session
 router.post('/checkout-session', async (req: Request, res: Response) => {
-  const teamId = requireTeamId(req as DashboardAuthedRequest, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -191,12 +179,16 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
 
   const billingInterval = interval === 'year' ? 'year' : 'month';
 
+  const isYearly = billingInterval === 'year';
   const dodoProductId = plan === 'starter'
-    ? process.env.DODO_STARTER_PRODUCT_ID
-    : process.env.DODO_PRO_PRODUCT_ID;
+    ? (isYearly ? process.env.DODO_STARTER_YEARLY_PRODUCT_ID : process.env.DODO_STARTER_PRODUCT_ID)
+    : (isYearly ? process.env.DODO_PRO_YEARLY_PRODUCT_ID : process.env.DODO_PRO_PRODUCT_ID);
 
   if (!dodoProductId) {
-    errorResponse(res, 500, 'CONFIG_ERROR', `DODO_${plan.toUpperCase()}_PRODUCT_ID is not configured`);
+    const envVarName = plan === 'starter'
+      ? (isYearly ? 'DODO_STARTER_YEARLY_PRODUCT_ID' : 'DODO_STARTER_PRODUCT_ID')
+      : (isYearly ? 'DODO_PRO_YEARLY_PRODUCT_ID' : 'DODO_PRO_PRODUCT_ID');
+    errorResponse(res, 500, 'CONFIG_ERROR', `${envVarName} is not configured`);
     return;
   }
 
@@ -231,15 +223,49 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to create checkout session';
-    logger.error({ err: error }, 'Checkout session creation failed');
+    // Best-effort Sentry capture — never let error reporting crash the handler
+    if (process.env.SENTRY_DSN) {
+      try {
+        Sentry.captureException(error, { level: 'error' });
+      } catch { /* best-effort */ }
+    }
+
+    // Dodo SDK errors have a response body with the actual API error detail.
+    // The SDK attaches `statusCode`, `response?.data`, and `body` to the error object.
+    let message = 'Failed to create checkout session';
+    if (error instanceof Error) {
+      message = error.message;
+
+      // Safely extract the Dodo API response body (may not exist on all errors)
+      let responseBody: unknown;
+      try {
+        const dodoError = error as unknown as { response?: { data?: unknown }; body?: unknown };
+        responseBody = dodoError.response?.data ?? dodoError.body;
+      } catch { /* ignore extraction failures */ }
+
+      // Extract a user-friendly detail string from the response body
+      let detail: unknown;
+      if (responseBody && typeof responseBody === 'object') {
+        const obj = responseBody as Record<string, unknown>;
+        detail = obj.detail ?? obj.message;
+      }
+
+      if (typeof detail === 'string') {
+        message = `${message}: ${detail}`;
+      }
+
+      logger.error({ err: error, responseBody, productId: dodoProductId, interval: billingInterval }, 'Checkout session creation failed');
+    } else {
+      logger.error({ err: error, productId: dodoProductId }, 'Checkout session creation failed (non-Error)');
+    }
+
     errorResponse(res, 500, 'CHECKOUT_SESSION_FAILED', message);
   }
 });
 
 // POST /billing/cancel — Cancel active subscription at next billing date
 router.post('/cancel', async (req: Request, res: Response) => {
-  const teamId = requireTeamId(req as DashboardAuthedRequest, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }
@@ -286,7 +312,7 @@ router.post('/cancel', async (req: Request, res: Response) => {
 
 // GET /billing/plan — Get current plan for the authenticated team
 router.get('/plan', async (req: Request, res: Response) => {
-  const teamId = requireTeamId(req as DashboardAuthedRequest, res);
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
     return;
   }

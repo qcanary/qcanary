@@ -607,43 +607,51 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
         </Card>
       )}
 
+      {/* Queue stat cards with color-coded values */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Total jobs ({period})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.totalJobs) : "—"}</div>
-            <div className="mt-2 text-sm text-text-muted">Completed + failed + stalled</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Failed ({period})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.failed) : "—"}</div>
-            <div className="mt-2 text-sm text-text-muted">Failure rate {summary ? formatPercent(summary.failureRate) : "—"}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Completed ({period})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.completed) : "—"}</div>
-            <div className="mt-2 text-sm text-text-muted">Successful jobs</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-text-muted">Stalled ({period})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{summary ? formatNumber(summary.stalled) : "—"}</div>
-            <div className="mt-2 text-sm text-text-muted">Potential issues</div>
-          </CardContent>
-        </Card>
+        {(() => {
+          const total = summary?.totalJobs ?? 0;
+          const failed = summary?.failed ?? 0;
+          const completed = summary?.completed ?? 0;
+          const stalled = summary?.stalled ?? 0;
+          const rate = summary?.failureRate ?? 0;
+          
+          return [
+            { label: `Total jobs (${period})`, value: summary ? formatNumber(total) : "—", sub: "Completed + failed + stalled", icon: "📊", tone: "default" as const, progress: total > 0 ? 100 : 0, progressColor: "bg-accent/50" },
+            { label: `Failed (${period})`, value: summary ? formatNumber(failed) : "—", sub: `Failure rate ${summary ? formatPercent(rate) : "—"}`, icon: "❌", tone: failed > 0 ? "danger" as const : "default" as const, progress: total > 0 ? Math.min((failed / total) * 100, 100) : 0, progressColor: "bg-red-500" },
+            { label: `Completed (${period})`, value: summary ? formatNumber(completed) : "—", sub: "Successful jobs", icon: "✅", tone: completed > 0 ? "success" as const : "default" as const, progress: total > 0 ? Math.min((completed / total) * 100, 100) : 0, progressColor: "bg-accent" },
+            { label: `Stalled (${period})`, value: summary ? formatNumber(stalled) : "—", sub: "Potential issues", icon: stalled > 0 ? "⚠️" : "⚡", tone: stalled > 0 ? "warning" as const : "default" as const, progress: total > 0 ? Math.min((stalled / total) * 100, 100) : 0, progressColor: stalled > 0 ? "bg-yellow-400" : "bg-accent/50" },
+          ];
+        })().map((stat) => (
+          <div key={stat.label} className="card-hover group rounded-xl border border-border bg-surface p-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-xs font-medium uppercase tracking-wider text-text-muted flex items-center gap-1.5">
+                  <span className="text-base">{stat.icon}</span>
+                  {stat.label}
+                </div>
+                <div className={`mt-2 text-3xl font-semibold tracking-tight ${
+                  stat.tone === 'danger' ? 'text-red-400' : 
+                  stat.tone === 'success' ? 'text-accent' : 
+                  stat.tone === 'warning' ? 'text-yellow-400' : 
+                  'text-text-primary'
+                }`}>
+                  {stat.value}
+                </div>
+              </div>
+              <div className="h-10 w-10 shrink-0 rounded-lg bg-surface/60 border border-border flex items-center justify-center text-lg opacity-60 group-hover:opacity-100 transition-opacity">
+                {stat.tone === 'danger' ? '📈' : stat.tone === 'success' ? '🎯' : '📉'}
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-text-muted">{stat.sub}</div>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-border/50">
+              <div 
+                className={`h-full rounded-full transition-all duration-1000 ease-out ${stat.progressColor}`}
+                style={{ width: `${stat.progress}%` }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
 
       <Card>
@@ -655,7 +663,16 @@ export function QueueDetailClient({ projectId, queueName }: { projectId: string;
           {loading && !metrics ? (
             <Skeleton className="h-64 w-full" />
           ) : points.length === 0 ? (
-            <div className="text-sm text-text-muted">No metrics yet.</div>
+            <div className="flex flex-col items-center gap-3 py-10 text-center">
+              <div className="text-3xl">📈</div>
+              <div>
+                <p className="text-sm font-medium text-text-primary">No metrics yet</p>
+                <p className="mt-1 text-xs text-text-muted">
+                  Metrics appear as events flow through this queue. The hourly chart will populate once
+                  we have enough data for the selected time period.
+                </p>
+              </div>
+            </div>
           ) : (
             <div className="relative h-64 w-full">
               {periodLoading && (

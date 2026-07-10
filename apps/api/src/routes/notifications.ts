@@ -1,6 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { getResend, getResendFromAddress } from '../lib/resend';
+import { errorResponse } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
 
 const router = express.Router();
@@ -10,13 +11,6 @@ type OnboardingStep = 1 | 2 | 3;
 interface OnboardingEmail {
   subject: string;
   html: string;
-}
-
-function errorResponse(res: Response, statusCode: number, code: string, message: string): void {
-  res.status(statusCode).json({
-    success: false,
-    error: { code, message },
-  });
 }
 
 function isAuthorized(req: Request): boolean {

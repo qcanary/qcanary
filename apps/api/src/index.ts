@@ -41,6 +41,8 @@ import { supabase } from './lib/supabase';
 import { redis } from './lib/redis';
 import { httpLogger, logger } from './lib/logger';
 import { pruneOldJobEvents } from './lib/retention';
+import { sendOnboardingEmails } from './lib/onboarding';
+import { dashboardRateLimit } from './middleware/rateLimit';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -52,6 +54,19 @@ cron.schedule('0 0 * * *', () => {
     })
     .catch((err) => {
       logger.error({ err }, 'Daily retention cron failed');
+    });
+}, {
+  timezone: 'UTC',
+});
+
+// Daily onboarding email cron — runs at 10:00 UTC to catch business hours
+cron.schedule('0 10 * * *', () => {
+  void sendOnboardingEmails()
+    .then((result) => {
+      logger.info(result, 'Onboarding email cron completed');
+    })
+    .catch((err) => {
+      logger.error({ err }, 'Onboarding email cron failed');
     });
 }, {
   timezone: 'UTC',
@@ -81,8 +96,18 @@ app.use('/v1/billing', billingPublicRouter);
 app.use(express.json({ limit: '1mb' }));
 app.use(clerkMiddleware());
 
-// ── Shared health check logic ──────────────────────────────
+// ── Cached health check ────────────────────────────────────
+// Cached for 5 seconds to reduce load on Supabase/Redis from load balancer pings
+let healthCache: { status: number; body: string; expiresAt: number } | null = null;
+const HEALTH_CACHE_TTL_MS = 5_000;
+
 async function healthCheckHandler(_req: Request, res: Response): Promise<void> {
+  const now = Date.now();
+  if (healthCache && now < healthCache.expiresAt) {
+    res.status(healthCache.status).json(JSON.parse(healthCache.body));
+    return;
+  }
+
   let dbStatus = 'disconnected';
   let redisStatus = 'disconnected';
 
@@ -101,8 +126,7 @@ async function healthCheckHandler(_req: Request, res: Response): Promise<void> {
   }
 
   const healthy = dbStatus === 'connected' && redisStatus === 'connected';
-
-  res.status(healthy ? 200 : 503).json({
+  const body = JSON.stringify({
     success: healthy,
     data: {
       status: healthy ? 'ok' : 'degraded',
@@ -112,6 +136,14 @@ async function healthCheckHandler(_req: Request, res: Response): Promise<void> {
       timestamp: new Date().toISOString(),
     },
   });
+
+  healthCache = {
+    status: healthy ? 200 : 503,
+    body,
+    expiresAt: now + HEALTH_CACHE_TTL_MS,
+  };
+
+  res.status(healthy ? 200 : 503).json(JSON.parse(body));
 }
 
 app.get('/health', healthCheckHandler);
@@ -120,11 +152,11 @@ app.get('/v1/health', healthCheckHandler);
 // ── Routes ─────────────────────────────────────────────────
 app.use('/v1/ingest', ingestRouter);
 app.use('/v1/notifications', notificationsRouter);
-app.use('/v1/projects', requireDashboardAuth, projectsRouter);
-app.use('/v1/projects', requireDashboardAuth, queuesRouter);
-app.use('/v1/projects', requireDashboardAuth, alertsRouter);
-app.use('/v1/billing', requireDashboardAuth, billingRouter);
-app.use('/v1/usage', requireDashboardAuth, usageRouter);
+app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, projectsRouter);
+app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, queuesRouter);
+app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, alertsRouter);
+app.use('/v1/billing', requireDashboardAuth, dashboardRateLimit, billingRouter);
+app.use('/v1/usage', requireDashboardAuth, dashboardRateLimit, usageRouter);
 
 // ── Sentry Error Handler ───────────────────────────────────
 if (process.env.SENTRY_DSN) {

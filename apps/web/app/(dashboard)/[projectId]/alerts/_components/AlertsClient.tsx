@@ -404,7 +404,22 @@ export function AlertsClient({ projectId }: { projectId: string }) {
               <Skeleton className="h-14 w-full" />
             </div>
           ) : !rules || rules.length === 0 ? (
-            <div className="text-sm text-text-muted">No alert rules yet.</div>
+            <div className="flex flex-col items-center gap-4 py-12 text-center">
+              <div className="text-4xl">🔔</div>
+              <div>
+                <p className="text-sm font-medium text-text-primary">No alert rules yet</p>
+                <p className="mt-1 text-xs text-text-muted">
+                  Alert rules notify your team via Slack, email, or webhook when things go wrong.
+                  Create your first rule to get notified about failures, queue depth, or no activity.
+                </p>
+              </div>
+              <button
+                onClick={openCreateDialog}
+                className="inline-flex h-9 items-center gap-2 rounded-lg bg-accent px-4 text-xs font-medium text-black hover:bg-accent/90 transition-colors"
+              >
+                Create your first rule
+              </button>
+            </div>
           ) : (
             <Table>
               <TableHeader>

@@ -6,10 +6,12 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
+import { validateDestination } from '../lib/alertDelivery';
 import { buildTestMessage, deliverEmail, deliverSlack, deliverWebhook, escapeHtml } from '../lib/alertDelivery';
 import type { AlertRuleInsert, AlertRuleRow, AlertRuleUpdate } from '../types/database';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { insertRow, updateRows } from '../lib/typedSupabase';
+import { errorResponse, requireTeamContext } from '../lib/responseUtils';
 
 const router = express.Router();
 
@@ -24,27 +26,6 @@ const CHANNELS = new Set(['slack', 'email', 'webhook']);
 
 interface ProjectOwnershipRecord {
   id: string;
-}
-
-function errorResponse(
-  res: Response,
-  statusCode: number,
-  code: string,
-  message: string
-): void {
-  res.status(statusCode).json({
-    success: false,
-    error: { code, message },
-  });
-}
-
-function requireTeamContext(req: DashboardAuthedRequest, res: Response): string | null {
-  const teamId = typeof req.teamId === 'string' ? req.teamId : '';
-  if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
-    return null;
-  }
-  return teamId;
 }
 
 async function ensureProjectOwnership(
@@ -80,6 +61,9 @@ async function ensureProjectOwnership(
 
   return { ok: true };
 }
+
+/** Validate that a destination URL doesn't point to a private/internal host */
+
 
 function serializeRule(row: AlertRuleRow) {
   return {
@@ -150,7 +134,11 @@ function parseCreateBody(
   const destination = typeof b.destination === 'string' ? b.destination.trim() : '';
   if (!destination) {
     return { ok: false, message: 'destination is required' };
-  }
+  }    // SSRF guard at write time
+    const urlCheck = validateDestination(destination);
+    if (!urlCheck.ok) {
+      return { ok: false, message: urlCheck.error };
+    }
 
   const thresholdRaw = b.thresholdValue;
   const thresholdValue =
@@ -270,6 +258,11 @@ function parsePatchBody(body: unknown): { ok: true; value: AlertRuleUpdate } | {
   if (b.destination !== undefined) {
     if (typeof b.destination !== 'string' || b.destination.trim().length === 0) {
       return { ok: false, message: 'destination must be a non-empty string' };
+    }
+    // SSRF guard at write time
+    const urlCheck = validateDestination(b.destination.trim());
+    if (!urlCheck.ok) {
+      return { ok: false, message: urlCheck.error };
     }
     update.destination = b.destination.trim();
   }

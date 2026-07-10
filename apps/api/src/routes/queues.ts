@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
+import { errorResponse, requireTeamContext } from '../lib/responseUtils';
 
 const router = express.Router();
 
@@ -37,27 +38,6 @@ interface QueueMetricRecord {
   avg_duration_ms: number | null;
   p95_duration_ms: number | null;
   total_jobs: number;
-}
-
-function errorResponse(
-  res: Response,
-  statusCode: number,
-  code: string,
-  message: string
-): void {
-  res.status(statusCode).json({
-    success: false,
-    error: { code, message },
-  });
-}
-
-function requireTeamContext(req: DashboardAuthedRequest, res: Response): string | null {
-  const teamId = typeof req.teamId === 'string' ? req.teamId : '';
-  if (!teamId) {
-    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
-    return null;
-  }
-  return teamId;
 }
 
 function parsePeriod(value: unknown): Period | null {
@@ -150,22 +130,37 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
   const windowDays = Number.isFinite(windowParam) && windowParam > 0 ? Math.min(windowParam, 90) : DEFAULT_QUEUE_WINDOW_DAYS;
   const cutoffIso = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
 
-  const { data, error } = await supabase
+  // Step 1: Aggregate counts by (queue_name, status) at the DB level
+  type QueueStatusCount = { queue_name: string; status: string; id_count: number };
+
+  const { data: statusCounts, error: countError } = await supabase
     .from('job_events')
-    .select(
-      'queue_name, status, duration_ms, timestamp'
-    )
+    .select('queue_name, status, id.count()')
     .eq('project_id', projectId)
     .gte('timestamp', cutoffIso)
-    .order('timestamp', { ascending: false });
+    .order('queue_name');
 
-  const events = (data ?? []) as Pick<JobEventRecord, 'queue_name' | 'status' | 'duration_ms' | 'timestamp'>[];
-
-  if (error) {
-    errorResponse(res, 500, 'QUEUE_LIST_FAILED', 'Failed to fetch queues');
+  if (countError) {
+    errorResponse(res, 500, 'QUEUE_LIST_FAILED', 'Failed to fetch queue counts');
     return;
   }
 
+  // Step 2: Fetch last event timestamp and duration data per queue
+  // Limited to 1000 most recent events — enough for accurate averages + lastEventAt
+  const { data: recentEvents, error: recentError } = await supabase
+    .from('job_events')
+    .select('queue_name, status, duration_ms, timestamp')
+    .eq('project_id', projectId)
+    .gte('timestamp', cutoffIso)
+    .order('timestamp', { ascending: false })
+    .limit(1000);
+
+  if (recentError) {
+    errorResponse(res, 500, 'QUEUE_LIST_FAILED', 'Failed to fetch queue details');
+    return;
+  }
+
+  // Build per-queue aggregation from pre-aggregated counts + recent events
   const queueMap = new Map<
     string,
     {
@@ -180,8 +175,10 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
     }
   >();
 
-  for (const event of events) {
-    const current = queueMap.get(event.queue_name) ?? {
+  // Apply the pre-aggregated counts
+  const countRows = (statusCounts ?? []) as QueueStatusCount[];
+  for (const row of countRows) {
+    const current = queueMap.get(row.queue_name) ?? {
       totalJobs: 0,
       completed: 0,
       failed: 0,
@@ -191,17 +188,22 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
       durationSamples: 0,
       lastEventAt: null,
     };
-
-    current.totalJobs += 1;
-    if (event.status === 'completed') {
-      current.completed += 1;
-    } else if (event.status === 'failed') {
-      current.failed += 1;
-    } else if (event.status === 'active') {
-      current.active += 1;
-    } else if (event.status === 'stalled') {
-      current.stalled += 1;
+    const countVal = row.id_count ?? 0;
+    current.totalJobs += countVal;
+    switch (row.status) {
+      case 'completed': current.completed += countVal; break;
+      case 'failed': current.failed += countVal; break;
+      case 'active': current.active += countVal; break;
+      case 'stalled': current.stalled += countVal; break;
     }
+    queueMap.set(row.queue_name, current);
+  }
+
+  // Merge detail data (duration, lastEventAt) from recent events
+  const events = (recentEvents ?? []) as Pick<JobEventRecord, 'queue_name' | 'status' | 'duration_ms' | 'timestamp'>[];
+  for (const event of events) {
+    const current = queueMap.get(event.queue_name);
+    if (!current) continue; // Shouldn't happen, but guard against edge cases
 
     if (typeof event.duration_ms === 'number') {
       current.durationTotal += event.duration_ms;
@@ -211,8 +213,6 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
     if (!current.lastEventAt || event.timestamp > current.lastEventAt) {
       current.lastEventAt = event.timestamp;
     }
-
-    queueMap.set(event.queue_name, current);
   }
 
   const queues = Array.from(queueMap.entries())

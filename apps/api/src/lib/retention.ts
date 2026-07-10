@@ -13,6 +13,8 @@ interface RetentionPruneResult {
   deletedRows: number;
 }
 
+const BATCH_SIZE = 10_000;
+
 function normalizePlan(plan: string | null): PlanName {
   if (plan === 'starter' || plan === 'pro') {
     return plan;
@@ -20,6 +22,10 @@ function normalizePlan(plan: string | null): PlanName {
   return 'free';
 }
 
+/**
+ * Prune old job events in batches of BATCH_SIZE per team to avoid
+ * long-running table locks for teams with millions of events.
+ */
 export async function pruneOldJobEvents(): Promise<RetentionPruneResult> {
   const { data: teams, error: teamsError } = await supabase
     .from('teams')
@@ -58,21 +64,52 @@ export async function pruneOldJobEvents(): Promise<RetentionPruneResult> {
       continue;
     }
 
-    const { count, error: deleteError } = await supabase
-      .from('job_events')
-      .delete({ count: 'exact' })
-      .in('project_id', projectIds)
-      .lt('timestamp', cutoff);
+    // Batch delete in chunks to avoid table locks
+    // Select IDs first, then delete by ID (Supabase delete with limit may not work reliably)
+    let teamDeleted = 0;
+    let hasMore = true;
 
-    if (deleteError) {
-      logger.error({ err: deleteError, teamId: team.id, plan }, 'Failed to prune old job events');
-      throw deleteError;
+    while (hasMore) {
+      const { data: batchIds, error: selectError } = await supabase
+        .from('job_events')
+        .select('id')
+        .in('project_id', projectIds)
+        .lt('timestamp', cutoff)
+        .order('id', { ascending: true })
+        .limit(BATCH_SIZE);
+
+      if (selectError) {
+        logger.error({ err: selectError, teamId: team.id, plan }, 'Failed to select batch for retention pruning');
+        throw selectError;
+      }
+
+      const ids = ((batchIds ?? []) as Array<{ id: number }>).map((r) => r.id);
+      if (ids.length === 0) {
+        hasMore = false;
+        break;
+      }
+
+      const { count, error: deleteError } = await supabase
+        .from('job_events')
+        .delete({ count: 'exact' })
+        .in('id', ids);
+
+      if (deleteError) {
+        logger.error({ err: deleteError, teamId: team.id, plan }, 'Failed to prune old job events');
+        throw deleteError;
+      }
+
+      const batchDeleted = count ?? 0;
+      teamDeleted += batchDeleted;
+
+      if (ids.length < BATCH_SIZE) {
+        hasMore = false;
+      }
     }
 
-    const teamDeletedRows = count ?? 0;
-    deletedRows += teamDeletedRows;
+    deletedRows += teamDeleted;
     teamsPruned += 1;
-    logger.info({ teamId: team.id, plan, cutoff, deletedRows: teamDeletedRows }, 'Retention pruning completed for team');
+    logger.info({ teamId: team.id, plan, cutoff, deletedRows: teamDeleted }, 'Retention pruning completed for team');
   }
 
   const result = {

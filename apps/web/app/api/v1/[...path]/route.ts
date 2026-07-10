@@ -8,6 +8,24 @@ function apiBaseUrl(): string | null {
   return raw.replace(/\/+$/, "");
 }
 
+function sanitizeUpstreamError(status: number, upstreamText: string): { message: string; code: string } {
+  if (status >= 500) {
+    return { message: "Internal server error", code: "UPSTREAM_ERROR" };
+  }
+  try {
+    const parsed = JSON.parse(upstreamText);
+    if (parsed?.error) {
+      return {
+        message: typeof parsed.error.message === "string" ? parsed.error.message : "Request failed",
+        code: typeof parsed.error.code === "string" ? parsed.error.code : "REQUEST_ERROR",
+      };
+    }
+  } catch {
+    // Not JSON — use generic message
+  }
+  return { message: "Request failed", code: "REQUEST_ERROR" };
+}
+
 async function handler(req: NextRequest, context: { params: { path: string[] } }) {
   const base = apiBaseUrl();
   if (!base) {
@@ -67,8 +85,26 @@ async function handler(req: NextRequest, context: { params: { path: string[] } }
   });
 
   const upstreamText = await upstream.text();
-  const response = new NextResponse(upstreamText, {
-    status: upstream.status,
+
+  // Sanitize upstream errors: preserve original error code + message for 4xx,
+  // only mask internal details for 5xx
+  let responseBody = upstreamText;
+  let responseStatus = upstream.status;
+
+  if (!upstream.ok) {
+    const { message, code } = sanitizeUpstreamError(upstream.status, upstreamText);
+    responseBody = JSON.stringify({
+      success: false,
+      error: { code, message },
+    });
+    // Pass through 4xx status codes, only mask 5xx as 502
+    if (upstream.status >= 500) {
+      responseStatus = 502;
+    }
+  }
+
+  const response = new NextResponse(responseBody, {
+    status: responseStatus,
     headers: {
       "content-type": upstream.headers.get("content-type") ?? "application/json; charset=utf-8",
     },
@@ -89,4 +125,3 @@ export async function PATCH(req: NextRequest, context: { params: { path: string[
 export async function DELETE(req: NextRequest, context: { params: { path: string[] } }) {
   return handler(req, context);
 }
-
