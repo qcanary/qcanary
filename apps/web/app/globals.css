@@ -47,6 +47,10 @@ body {
   animation: fade-in-up 0.5s ease-out 0.2s both;
 }
 
+.animate-fade-in-up-delay-3 {
+  animation: fade-in-up 0.5s ease-out 0.3s both;
+}
+
 /* ── Reduced motion ────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -182,12 +182,14 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
   if (!teamId) {
     return;
   }
-  const { plan } = req.body as { plan?: unknown };
+  const { plan, interval } = req.body as { plan?: unknown; interval?: unknown };
 
   if (plan !== 'starter' && plan !== 'pro') {
     errorResponse(res, 400, 'INVALID_PAYLOAD', 'plan must be starter or pro');
     return;
   }
+
+  const billingInterval = interval === 'year' ? 'year' : 'month';
 
   const dodoProductId = plan === 'starter'
     ? process.env.DODO_STARTER_PRODUCT_ID
@@ -211,6 +213,7 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
       metadata: {
         teamId,
         plan,
+        interval: billingInterval,
       },
     });
 

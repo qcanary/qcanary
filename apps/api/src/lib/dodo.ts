@@ -22,7 +22,7 @@ export function getDodo(): DodoPayments {
     throw new Error('APP_URL is not set');
   }
 
-  const environment = process.env.NODE_ENV === 'production' ? 'live_mode' : 'test_mode';
+  const environment = process.env.DODO_ENVIRONMENT === 'live' ? 'live_mode' : 'test_mode';
 
   dodoClient = new DodoPayments({
     bearerToken: secretKey,

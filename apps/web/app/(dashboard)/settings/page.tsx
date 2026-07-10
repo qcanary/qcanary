@@ -287,6 +287,7 @@ export default function SettingsPage() {
   const [loadingUsage, setLoadingUsage] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [upgradingPlan, setUpgradingPlan] = React.useState<PlanName | null>(null);
+  const [billingInterval, setBillingInterval] = React.useState<"month" | "year">("month");
   const [paymentMessage, setPaymentMessage] = React.useState<string | null>(null);
 
   // Handle redirect-from-Dodo payment status
@@ -354,14 +355,12 @@ export default function SettingsPage() {
     if (targetPlan === "free") return;
     setError(null);
     setUpgradingPlan(targetPlan);
-    trackEvent("plan_upgrade_started", { targetPlan });
+    trackEvent("plan_upgrade_started", { targetPlan, interval: billingInterval });
     try {
-      // Let the Next.js proxy use server-side auth().getToken()
-      // which includes the organization context that Express requires
       const res = await fetch("/api/v1/billing/checkout-session", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ plan: targetPlan }),
+        body: JSON.stringify({ plan: targetPlan, interval: billingInterval }),
       });
       const json = (await res.json()) as { success: true; data: { checkoutUrl: string } } | ApiError;
       if (!json.success) throw new Error(json.error.message);
@@ -469,37 +468,75 @@ export default function SettingsPage() {
           <CardTitle>Upgrade</CardTitle>
           <CardDescription>Choose a higher tier to unlock alerts and larger limits.</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-border bg-surface/50 p-4">
-            <div className="text-sm font-medium text-text-primary">Starter - $9/mo</div>
-            <div className="mt-1 text-xs text-text-muted">Slack/email alerts, 3 projects, 30-day history.</div>
-            <Button
-              className="mt-4 w-full"
-              disabled={planRank.starter <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
-              onClick={() => void startUpgrade("starter")}
+        <CardContent className="space-y-5">
+          {/* Billing interval toggle */}
+          <div className="flex items-center justify-center gap-3">
+            <span className={`text-sm ${billingInterval === "month" ? "font-medium text-text-primary" : "text-text-muted"}`}>
+              Monthly
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={billingInterval === "year"}
+              onClick={() => setBillingInterval(billingInterval === "month" ? "year" : "month")}
+              className={`relative h-6 w-11 rounded-full transition-colors ${
+                billingInterval === "year" ? "bg-accent" : "bg-border"
+              }`}
             >
-              {currentPlan === "starter"
-                ? "Current plan"
-                : upgradingPlan === "starter"
-                  ? "Redirecting..."
-                  : "Upgrade to Starter"}
-            </Button>
+              <span
+                className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-black transition-transform ${
+                  billingInterval === "year" ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+            <span className={`text-sm ${billingInterval === "year" ? "font-medium text-text-primary" : "text-text-muted"}`}>
+              Yearly
+              <span className="ml-1 rounded-full bg-accent/10 px-1.5 py-0.5 text-xs font-medium text-accent">Save 15%</span>
+            </span>
           </div>
 
-          <div className="rounded-md border border-border bg-surface/50 p-4">
-            <div className="text-sm font-medium text-text-primary">Pro - $24/mo</div>
-            <div className="mt-1 text-xs text-text-muted">Unlimited projects/queues and advanced alerting.</div>
-            <Button
-              className="mt-4 w-full"
-              disabled={planRank.pro <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
-              onClick={() => void startUpgrade("pro")}
-            >
-              {currentPlan === "pro"
-                ? "Current plan"
-                : upgradingPlan === "pro"
-                  ? "Redirecting..."
-                  : "Upgrade to Pro"}
-            </Button>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-md border border-border bg-surface/50 p-4">
+              <div className="text-sm font-medium text-text-primary">
+                Starter - {billingInterval === "year" ? "$92/yr" : "$9/mo"}
+              </div>
+              <div className="mt-1 text-xs text-text-muted">Slack/email alerts, 3 projects, 30-day history.</div>
+              {billingInterval === "year" && (
+                <div className="mt-1 text-xs text-accent">$7.67/mo billed annually</div>
+              )}
+              <Button
+                className="mt-4 w-full"
+                disabled={planRank.starter <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
+                onClick={() => void startUpgrade("starter")}
+              >
+                {currentPlan === "starter"
+                  ? "Current plan"
+                  : upgradingPlan === "starter"
+                    ? "Redirecting..."
+                    : billingInterval === "year" ? "Upgrade — $92/yr" : "Upgrade to Starter"}
+              </Button>
+            </div>
+
+            <div className="rounded-md border border-border bg-surface/50 p-4">
+              <div className="text-sm font-medium text-text-primary">
+                Pro - {billingInterval === "year" ? "$245/yr" : "$24/mo"}
+              </div>
+              <div className="mt-1 text-xs text-text-muted">Unlimited projects/queues and advanced alerting.</div>
+              {billingInterval === "year" && (
+                <div className="mt-1 text-xs text-accent">$20.42/mo billed annually</div>
+              )}
+              <Button
+                className="mt-4 w-full"
+                disabled={planRank.pro <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
+                onClick={() => void startUpgrade("pro")}
+              >
+                {currentPlan === "pro"
+                  ? "Current plan"
+                  : upgradingPlan === "pro"
+                    ? "Redirecting..."
+                    : billingInterval === "year" ? "Upgrade — $245/yr" : "Upgrade to Pro"}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -38,14 +38,15 @@ const pricingRows: Array<{
   pro: string;
 }> = [
   { feature: "Projects", free: "1", starter: "3", pro: "Unlimited" },
-  { feature: "Queues per project", free: "3", starter: "10", pro: "Unlimited" },
-  { feature: "Event history", free: "3 days", starter: "30 days", pro: "90 days" },
-  { feature: "Events per day", free: "10,000", starter: "100,000", pro: "Unlimited" },
+  { feature: "Queues per project", free: "1", starter: "10", pro: "Unlimited" },
+  { feature: "Event history", free: "24 hours", starter: "30 days", pro: "90 days" },
+  { feature: "Events per day", free: "1,000", starter: "100,000", pro: "Unlimited" },
   { feature: "Slack alerts", free: "No", starter: "Yes", pro: "Yes" },
   { feature: "Email alerts", free: "No", starter: "Yes", pro: "Yes" },
+  { feature: "Send test events", free: "Yes", starter: "Yes", pro: "Yes" },
   { feature: "Webhook alerts", free: "No", starter: "No", pro: "Yes" },
   { feature: "Alert rules", free: "0", starter: "5", pro: "Unlimited" },
-  { feature: "Team members", free: "1", starter: "1", pro: "3" },
+  { feature: "Team members", free: "1", starter: "3", pro: "10" },
   { feature: "Job detail + stack trace", free: "Yes", starter: "Yes", pro: "Yes" },
   { feature: "Historical charts", free: "No", starter: "Yes", pro: "Yes" },
 ];
@@ -131,6 +132,9 @@ export default async function MarketingPage() {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
           <BrandLockup href="/" size="md" />
           <div className="flex items-center gap-4">
+            <Link href="/compare/bull-board" className="text-sm text-text-muted transition-colors hover:text-text-primary">
+              vs Bull-Board
+            </Link>
             <Link href="/blog" className="text-sm text-text-muted transition-colors hover:text-text-primary">
               Blog
             </Link>
@@ -148,35 +152,59 @@ export default async function MarketingPage() {
       </nav>
 
       <section className="relative overflow-hidden border-b border-border">
-        {/* Background glow — moved left of center for side-by-side layout */}
-        <div className="pointer-events-none absolute left-[-200px] top-[-240px] h-[600px] w-[800px] rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.15)_0%,_rgba(34,197,94,0.05)_40%,_rgba(10,10,10,0)_70%)]" />
+        {/* Enhanced background glow — animated layers for depth */}
+        <div className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
+        <div className="pointer-events-none absolute right-[-100px] top-[-100px] h-[400px] w-[400px] animate-pulse rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_60%)]" style={{ animationDelay: '2s' }} />
         
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-6 pb-24 pt-24 md:flex-row md:items-start md:pt-28">
           {/* Left: Text content */}
           <div className="flex-1 md:pt-8">
-            <Badge variant="outline" className="mb-6 animate-fade-in-up border-accent/40 text-accent">
-              Zero-Trust BullMQ Monitoring
-            </Badge>
+            <div className="mb-6 flex items-center gap-2">
+              <Badge variant="outline" className="border-accent/40 text-accent animate-fade-in-up">
+                Zero-Trust BullMQ Monitoring
+              </Badge>
+              <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent animate-fade-in-up-delay-1">
+                Free tier available
+              </span>
+            </div>
             <h1 className="animate-fade-in-up-delay-1 text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
               Monitor BullMQ Without Exposing Redis.
             </h1>
             <p className="animate-fade-in-up-delay-2 mt-5 text-base text-text-muted md:text-lg lg:text-xl">
-              QCanary runs an agent inside your worker process. It streams job metadata over
-              HTTPS. Your Redis instance stays private, no firewall changes required.
+              The lightweight agent runs inside your worker process streaming job metadata over HTTPS.
+              <span className="block mt-2">Your Redis stays private. No firewall changes. No credentials shared.</span>
             </p>
             <div className="animate-fade-in-up-delay-2 mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/sign-up">
-                <Button size="lg">Start Free</Button>
+                <Button size="lg" className="group gap-2">
+                  Start Monitoring Free
+                  <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </Button>
               </Link>
               <Link href="/docs">
                 <Button variant="secondary" size="lg">View Docs</Button>
               </Link>
             </div>
+            {/* Trust bar */}
+            <div className="animate-fade-in-up-delay-3 mt-8 flex flex-wrap items-center gap-6 text-xs text-text-muted">
+              <span className="flex items-center gap-1.5">
+                <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                MIT-licensed open source
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+                No Redis credentials needed
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Setup in 3 lines · 10 minutes
+              </span>
+            </div>
           </div>
 
           {/* Right: Terminal code block */}
           <div className="w-full max-w-xl flex-1 md:max-w-none">
-            <div className="animate-fade-in-up overflow-hidden rounded-xl border border-border bg-[#0C0C0C] shadow-lg">
+            <div className="animate-fade-in-up overflow-hidden rounded-xl border border-border bg-[#0C0C0C] shadow-lg shadow-accent/5">
               {/* Terminal header */}
               <div className="flex items-center gap-1.5 border-b border-border bg-[#111] px-4 py-2.5">
                 <div className="h-3 w-3 rounded-full bg-red-500/70" />
@@ -721,11 +749,15 @@ export default async function MarketingPage() {
                 <ul className="mt-4 space-y-1.5">
                   <li className="flex items-center gap-2 text-xs">
                     <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                    1 project, 3 queues
+                    1 project, 1 queue
                   </li>
                   <li className="flex items-center gap-2 text-xs">
                     <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                    3-day history, 10K events/day
+                    24h history, 1K events/day
+                  </li>
+                  <li className="flex items-center gap-2 text-xs">
+                    <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    Send test events
                   </li>
                   <li className="flex items-center gap-2 text-xs">
                     <svg className="h-3.5 w-3.5 shrink-0 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
