@@ -27,6 +27,7 @@ type CreateKeyOk = {
 
 function CodeBlock({ children, apiKey }: { children: string; apiKey?: string }) {
   const [copied, setCopied] = React.useState(false);
+  const preRef = React.useRef<HTMLPreElement>(null);
 
   async function handleCopy() {
     try {
@@ -38,15 +39,31 @@ function CodeBlock({ children, apiKey }: { children: string; apiKey?: string }) 
     }
   }
 
+  // Auto-select API key text on mount
+  React.useEffect(() => {
+    if (apiKey && preRef.current) {
+      const range = document.createRange();
+      range.selectNodeContents(preRef.current);
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  }, [apiKey]);
+
   return (
     <div className="relative mt-3">
-      <pre className="overflow-auto rounded-md border border-border bg-code-bg p-4 text-xs text-text-primary font-mono">
+      <pre
+        ref={preRef}
+        className="overflow-auto rounded-md border border-border bg-code-bg p-4 text-xs text-text-primary font-mono select-all cursor-text"
+      >
         {children}
       </pre>
       {apiKey && (
         <button
           onClick={() => void handleCopy()}
-          className="absolute right-2 top-2 rounded-md bg-accent px-2 py-1 text-xs font-medium text-black transition-all hover:bg-accent/90"
+          className="absolute right-2 top-2 rounded-md bg-accent px-2 py-1 text-xs font-medium text-black transition-all hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent/50"
           aria-label={copied ? "Copied" : "Copy API key to clipboard"}
         >
           {copied ? "Copied!" : "Copy"}

@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
+import { trackEvent } from "@/components/PostHogProvider";
 
 type UsageResponse = {
   success: true;
@@ -77,6 +78,7 @@ export function UsageNudge() {
 
   React.useEffect(() => {
     let cancelled = false;
+    let hasTrackedLimit = false;
 
     async function fetchUsage() {
       try {
@@ -85,7 +87,19 @@ export function UsageNudge() {
         if (!json.success) return;
 
         if (!cancelled) {
-          setNudge(evaluateUsage(json.data.usage));
+          const result = evaluateUsage(json.data.usage);
+          setNudge(result);
+          // Track limit reached once per session
+          if (result?.isAtLimit && !hasTrackedLimit) {
+            hasTrackedLimit = true;
+            trackEvent("limit_reached", {
+              plan: json.data.plan,
+              projectsUsed: json.data.usage.projectsUsed,
+              projectsLimit: json.data.usage.projectsLimit,
+              eventsUsedToday: json.data.usage.eventsUsedToday,
+              eventsLimit: json.data.usage.eventsLimit,
+            });
+          }
         }
       } catch {
         // Silent — nudge is non-critical

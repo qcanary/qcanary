@@ -296,6 +296,7 @@ export default function SettingsPage() {
     const payment = params.get('payment');
     if (payment === 'success') {
       setPaymentMessage('Payment successful! Your plan has been upgraded.');
+      trackEvent("checkout_completed");
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
