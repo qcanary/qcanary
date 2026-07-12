@@ -1,11 +1,9 @@
-"use client";
-
-import * as React from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { BrandLockup } from "@/components/Brand";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CouponCapture } from "./CouponCapture";
 
 export const metadata: Metadata = {
   title: "Product Hunt Launch — Qcanary",
@@ -19,16 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProductHuntPage() {
-  // Save coupon code to sessionStorage so it survives the Clerk sign-up redirect chain
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const coupon = params.get('coupon');
-    if (coupon) {
-      sessionStorage.setItem('qcanary_coupon', coupon.toUpperCase());
-    }
-  }, []);
   return (
-    <main id="main-content" className="min-h-screen bg-bg text-text-primary">
+    <>
+      <CouponCapture />
+      <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
@@ -281,5 +273,6 @@ export default function ProductHuntPage() {
         </div>
       </footer>
     </main>
+    </>
   );
 }
