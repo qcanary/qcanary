@@ -22,7 +22,7 @@ export default async function BlogPage() {
   const posts = await getAllBlogPosts();
 
   return (
-    <main className="min-h-screen bg-bg text-text-primary">
+    <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       <MarketingNav showCompare={false} />
 
       <section className="mx-auto w-full max-w-5xl px-6 py-14">

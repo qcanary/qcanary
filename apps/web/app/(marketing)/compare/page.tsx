@@ -148,7 +148,7 @@ const featureCards: Array<{
 
 export default function ComparePage() {
   return (
-    <main className="min-h-screen bg-bg text-text-primary">
+    <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       <MarketingNav showCompare={false} />
 
       {/* Hero */}

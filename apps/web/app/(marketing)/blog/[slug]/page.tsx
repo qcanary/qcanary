@@ -53,7 +53,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-bg text-text-primary">
+    <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       <nav className="border-b border-border bg-bg/80">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-6 py-4">
           <BrandLockup href="/" size="md" />

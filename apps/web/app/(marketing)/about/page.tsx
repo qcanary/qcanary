@@ -32,7 +32,7 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-bg text-text-primary">
+    <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       <MarketingNav />
 
       <section className="border-b border-border">

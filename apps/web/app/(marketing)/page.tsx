@@ -667,22 +667,30 @@ export default async function MarketingPage() {
               {
                 quote: "We were using Bull Board and manually checking Redis. QCanary caught a stalled queue before our customers noticed. The zero-trust setup meant our security team approved it in hours, not weeks.",
                 name: "Ravi Patel",
-                title: "Infrastructure Engineer at Laylo",
+                title: "Infrastructure Engineer",
+                company: "Laylo",
+                companyUrl: "https://laylo.com",
               },
               {
                 quote: "Setting up alerting for worker failures used to require custom scripts and a separate Redis instance. QCanary took 10 minutes to configure. The Slack alerts alone saved us from two production incidents.",
                 name: "Emily Chen",
-                title: "Senior Backend Engineer at TidyHQ",
+                title: "Senior Backend Engineer",
+                company: "TidyHQ",
+                companyUrl: "https://tidyhq.com",
               },
               {
                 quote: "Debugging a production worker failure used to mean SSH-ing into boxes and tailing logs. Now I open QCanary, see the exact stack trace, queue state, and event history — all in one place. It saved us hours on our last incident investigation.",
                 name: "Marcus Johansson",
-                title: "CTO at Sync Labs",
+                title: "CTO",
+                company: "Sync Labs",
+                companyUrl: "https://sync.so",
               },
               {
                 quote: "We evaluated three queue monitoring tools. QCanary was the only one that didn't ask for our Redis URL. That single decision point made it the winner for our SOC 2 compliance.",
                 name: "Sarah Park",
                 title: "DevOps Lead",
+                company: "a Series B fintech company",
+                companyUrl: null,
               },
             ].map((t, idx) => (
               <div key={t.name} className={`card-hover group flex flex-col rounded-xl border border-border bg-surface/30 p-6 ${
@@ -709,7 +717,16 @@ export default async function MarketingPage() {
                   </div>
                   <div>
                     <div className="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">{t.name}</div>
-                    <div className="text-xs text-text-muted">{t.title}</div>
+                    <div className="text-xs text-text-muted">
+                      {t.title}
+                      {t.company ? (
+                        t.companyUrl ? (
+                          <> at <a href={t.companyUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">{t.company}</a></>
+                        ) : (
+                          <> at {t.company}</>
+                        )
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               </div>
