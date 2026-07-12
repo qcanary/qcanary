@@ -28,6 +28,28 @@ export function BillingCheckoutClient() {
           </Card>
         )}
 
+        {status === "error" && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-red-400">Payment failed</CardTitle>
+              <CardDescription>
+                There was a problem processing your payment. Please try again or contact support.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        )}
+
+        {status === "cancelled" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Checkout cancelled</CardTitle>
+              <CardDescription>
+                You cancelled the checkout process. No charges were made. You can upgrade at any time from your settings page.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle>Complete billing checkout</CardTitle>

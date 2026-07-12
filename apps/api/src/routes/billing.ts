@@ -29,9 +29,45 @@ async function updateTeamPlanById(
   }
 }
 
+// ── In-memory rate limiter for public webhook ─────────────
+const webhookRateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const WEBHOOK_RATE_LIMIT = 100; // requests per window
+const WEBHOOK_RATE_WINDOW_MS = 60_000; // 1 minute
+
+function checkWebhookRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = webhookRateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    webhookRateLimitMap.set(ip, { count: 1, resetAt: now + WEBHOOK_RATE_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= WEBHOOK_RATE_LIMIT) {
+    return false;
+  }
+  entry.count += 1;
+  return true;
+}
+
+// Periodic cleanup to prevent memory leak from stale entries
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of webhookRateLimitMap) {
+    if (now > entry.resetAt) {
+      webhookRateLimitMap.delete(ip);
+    }
+  }
+}, 60_000);
+
 // ── Public Webhook Endpoint ────────────────────────────────
 
 publicRouter.post('/webhook', express.raw({ type: 'application/json', limit: '500kb' }), async (req: Request, res: Response) => {
+  // Rate limit by IP to protect against webhook floods
+  const clientIp = req.ip ?? req.socket.remoteAddress ?? 'unknown';
+  if (!checkWebhookRateLimit(clientIp)) {
+    errorResponse(res, 429, 'RATE_LIMITED', 'Too many webhook requests. Please try again later.');
+    return;
+  }
+
   const webhookSecret = process.env.DODO_WEBHOOK_SECRET;
   if (!webhookSecret) {
     errorResponse(res, 503, 'BILLING_UNAVAILABLE', 'Billing webhook is not configured');
@@ -170,7 +206,9 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
   if (!teamId) {
     return;
   }
-  const { plan, interval } = req.body as { plan?: unknown; interval?: unknown };
+  const body = req.body as { plan?: unknown; interval?: unknown; coupon?: unknown };
+  const { plan, interval } = body;
+  const coupon = typeof body.coupon === 'string' && body.coupon.trim().length > 0 ? body.coupon.trim() : null;
 
   if (plan !== 'starter' && plan !== 'pro') {
     errorResponse(res, 400, 'INVALID_PAYLOAD', 'plan must be starter or pro');
@@ -192,6 +230,13 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
     return;
   }
 
+  if (!process.env.APP_URL) {
+    errorResponse(res, 500, 'CONFIG_ERROR', 'APP_URL environment variable is not configured');
+    return;
+  }
+
+  const appUrl = process.env.APP_URL;
+
   try {
     const session = await getDodo().checkoutSessions.create({
       product_cart: [
@@ -200,13 +245,15 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
           quantity: 1,
         },
       ],
-      return_url: `${process.env.APP_URL}/settings?payment=success`,
-      cancel_url: `${process.env.APP_URL}/settings?billing=cancelled`,
+      return_url: `${appUrl}/settings?payment=success`,
+      cancel_url: `${appUrl}/settings?billing=cancelled`,
       metadata: {
         teamId,
         plan,
         interval: billingInterval,
       },
+      // Pass coupon code to Dodo if provided (PH20 discount for Product Hunt launch)
+      ...(coupon ? { discount_codes: [coupon] } : {}),
     });
 
     if (!session.checkout_url) {

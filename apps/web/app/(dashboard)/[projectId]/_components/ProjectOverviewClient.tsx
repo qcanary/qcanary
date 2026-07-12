@@ -96,7 +96,12 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
       router.push("/sign-in");
       throw new Error("Unauthorized");
     }
-    const json = (await res.json()) as QueuesOk | ApiError;
+    let json: QueuesOk | ApiError;
+    try {
+      json = (await res.json()) as QueuesOk | ApiError;
+    } catch {
+      throw new Error(`Server returned ${res.status}: expected JSON, got unexpected response`);
+    }
     if (!json.success) {
       throw new Error(json.error.message);
     }
@@ -184,7 +189,7 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
               }
             }
           )
-          .subscribe();
+          .subscribe((status) => { if (status !== "SUBSCRIBED") { console.error("Realtime subscription error for project", projectId, status); } });
 
         return () => {
           if (refreshTimer) clearTimeout(refreshTimer);
@@ -346,7 +351,7 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
                 </TableHeader>
                 <TableBody>
                   {queues.map((q) => (
-                    <TableRow key={q.queueName}>
+                    <TableRow key={`${projectId}-${q.queueName}`}>
                       <TableCell className="font-medium">
                         <Link
                           href={`/${projectId}/queues/${encodeURIComponent(q.queueName)}`}

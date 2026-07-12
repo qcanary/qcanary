@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { createAuthedSupabaseClient } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 
@@ -329,6 +330,14 @@ function JobDetailDialog({
 }
 
 export function QueueDetailClient({ projectId, queueName }: { projectId: string; queueName: string }) {
+  return (
+    <ErrorBoundary>
+      <QueueDetailClientInner projectId={projectId} queueName={queueName} />
+    </ErrorBoundary>
+  );
+}
+
+function QueueDetailClientInner({ projectId, queueName }: { projectId: string; queueName: string }) {
   const { getToken } = useAuth();
 
   const [period, setPeriod] = React.useState<Period>("7d");

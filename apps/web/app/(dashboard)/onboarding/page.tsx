@@ -238,6 +238,7 @@ export default function OnboardingPage() {
     }
   }
 
+  const escapedEnv = (environment.trim() || "production").replace(/'/g, "\\'");
   const snippet = `import { QueueMonitor } from '@qcanary/agent'
 
 const monitor = new QueueMonitor({
@@ -245,7 +246,7 @@ const monitor = new QueueMonitor({
   queues: [emailQueue, reportQueue],
   includePayload: false,
   flushInterval: 5000,
-  environment: '${environment.trim() || "production"}'
+  environment: '${escapedEnv}'
 })
 `;
 
@@ -336,7 +337,8 @@ const monitor = new QueueMonitor({
                     size="sm"
                     disabled={deletingProjectId === project.id}
                     onClick={() => {
-                      if (window.confirm(`Delete "${project.name}"? This will permanently remove the project, all API keys, events, and alert rules. This cannot be undone.`)) {
+                      const escapedName = project.name.replace(/['"\\<>]/g, '');
+                      if (window.confirm(`Delete "${escapedName}"? This will permanently remove the project, all API keys, events, and alert rules. This cannot be undone.`)) {
                         void deleteProject(project.id);
                       }
                     }}

@@ -41,9 +41,18 @@ async function readPostFile(filename: string): Promise<{ meta: BlogPostMeta; con
   };
 }
 
+async function readMarkdownFilenames(): Promise<string[]> {
+  try {
+    const filenames = await fs.readdir(postsDirectory);
+    return filenames.filter((filename) => filename.endsWith(".md"));
+  } catch {
+    // Directory doesn't exist yet — no posts
+    return [];
+  }
+}
+
 export async function getAllBlogPosts(): Promise<BlogPostMeta[]> {
-  const filenames = await fs.readdir(postsDirectory);
-  const markdownFiles = filenames.filter((filename) => filename.endsWith(".md"));
+  const markdownFiles = await readMarkdownFilenames();
   const posts = await Promise.all(markdownFiles.map((filename) => readPostFile(filename)));
 
   return posts
@@ -52,14 +61,9 @@ export async function getAllBlogPosts(): Promise<BlogPostMeta[]> {
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const posts = await getAllBlogPosts();
-  const meta = posts.find((post) => post.slug === slug);
-  if (!meta) {
-    return null;
-  }
+  const markdownFiles = await readMarkdownFilenames();
 
-  const filenames = await fs.readdir(postsDirectory);
-  for (const filename of filenames.filter((item) => item.endsWith(".md"))) {
+  for (const filename of markdownFiles) {
     const post = await readPostFile(filename);
     if (post.meta.slug !== slug) {
       continue;

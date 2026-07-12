@@ -3,6 +3,9 @@
 -- Run AFTER the migration has been applied
 -- ============================================================
 
+-- Enable pgcrypto extension for digest() function used in API key hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- ── Test Team ───────────────────────────────────────────────
 -- Fixed UUID so we can reference it in other seeds
 INSERT INTO teams (id, name, clerk_org_id, plan)

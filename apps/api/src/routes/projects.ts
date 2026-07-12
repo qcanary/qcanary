@@ -71,6 +71,11 @@ router.post('/', enforceProjectLimit, async (req: Request, res: Response) => {
     return;
   }
 
+  if (name.trim().length > 100) {
+    errorResponse(res, 400, 'INVALID_PAYLOAD', 'Project name must be 100 characters or fewer');
+    return;
+  }
+
   const insertPayload: ProjectInsert = {
     team_id: teamId,
     name: name.trim(),

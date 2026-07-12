@@ -112,7 +112,7 @@ router.post('/send-onboarding', async (req: Request, res: Response) => {
 
   if (error) {
     logger.error({ err: error, step }, 'Failed to send onboarding email');
-    errorResponse(res, 502, 'EMAIL_SEND_FAILED', error.message);
+    errorResponse(res, 502, 'EMAIL_SEND_FAILED', 'Failed to send email');
     return;
   }
 

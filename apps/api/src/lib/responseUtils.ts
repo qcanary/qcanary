@@ -11,13 +11,17 @@ import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 /**
  * Send a standardized error JSON response.
  */
+/**
+ * Send a standardized error JSON response and return the response object
+ * so callers can `return errorResponse(res, ...)` to prevent double-send bugs.
+ */
 export function errorResponse(
   res: Response,
   statusCode: number,
   code: string,
   message: string
-): void {
-  res.status(statusCode).json({
+): Response {
+  return res.status(statusCode).json({
     success: false,
     error: { code, message },
   });
@@ -35,3 +39,4 @@ export function requireTeamContext(req: DashboardAuthedRequest, res: Response): 
   }
   return teamId;
 }
+

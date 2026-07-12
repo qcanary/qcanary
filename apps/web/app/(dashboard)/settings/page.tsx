@@ -298,8 +298,9 @@ export default function SettingsPage() {
   const [upgradingPlan, setUpgradingPlan] = React.useState<PlanName | null>(null);
   const [billingInterval, setBillingInterval] = React.useState<"month" | "year">("month");
   const [paymentMessage, setPaymentMessage] = React.useState<string | null>(null);
+  const [couponCode, setCouponCode] = React.useState<string | null>(null);
 
-  // Handle redirect-from-Dodo payment status
+  // Handle redirect-from-Dodo payment status, billing cancellation, and coupon codes
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const payment = params.get('payment');
@@ -308,13 +309,16 @@ export default function SettingsPage() {
       trackEvent("checkout_completed");
       window.history.replaceState({}, '', window.location.pathname);
     }
-  }, []);
-
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
     const billing = params.get('billing');
     if (billing === 'cancelled') {
       setPaymentMessage('Billing upgrade was cancelled. You can try again anytime.');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    // Read coupon from URL param or sessionStorage (survives Clerk sign-up redirect)
+    const coupon = params.get('coupon') || sessionStorage.getItem('qcanary_coupon');
+    if (coupon) {
+      setCouponCode(coupon.toUpperCase());
+      sessionStorage.removeItem('qcanary_coupon');
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
@@ -326,22 +330,58 @@ export default function SettingsPage() {
         setLoadingPlan(true);
         setLoadingUsage(true);
         setError(null);
+        // Fetch all three in parallel but handle each independently so a single
+        // failure doesn't lose all data (e.g., billing API is down but usage works)
         const [planRes, usageRes, projectsRes] = await Promise.all([
-          fetch("/api/v1/billing/plan", { cache: "no-store" }),
-          fetch("/api/v1/usage", { cache: "no-store" }),
-          fetch("/api/v1/projects", { cache: "no-store" }),
+          fetch("/api/v1/billing/plan", { cache: "no-store" }).catch(() => null),
+          fetch("/api/v1/usage", { cache: "no-store" }).catch(() => null),
+          fetch("/api/v1/projects", { cache: "no-store" }).catch(() => null),
         ]);
-        const planJson = (await planRes.json()) as PlanResponse | ApiError;
-        const usageJson = (await usageRes.json()) as UsageResponse | ApiError;
-        const projectsJson = (await projectsRes.json()) as ProjectListResponse | ApiError;
-        if (!planJson.success) throw new Error(planJson.error.message);
-        if (!usageJson.success) throw new Error(usageJson.error.message);
-        if (!projectsJson.success) throw new Error(projectsJson.error.message);
-        if (!cancelled) {
-          setPlan(planJson.data.plan);
-          setPlanExpiresAt(planJson.data.planExpiresAt);
-          setUsage(usageJson.data.usage);
-          setProjects(projectsJson.data.projects);
+
+        let anyFailed = false;
+
+        if (planRes && planRes.ok) {
+          const planJson = await planRes.json().catch(() => null) as PlanResponse | null;
+          if (planJson?.success) {
+            if (!cancelled) {
+              setPlan(planJson.data.plan);
+              setPlanExpiresAt(planJson.data.planExpiresAt);
+            }
+          } else {
+            anyFailed = true;
+          }
+        } else {
+          anyFailed = true;
+        }
+
+        if (usageRes && usageRes.ok) {
+          const usageJson = await usageRes.json().catch(() => null) as UsageResponse | null;
+          if (usageJson?.success) {
+            if (!cancelled) {
+              setUsage(usageJson.data.usage);
+            }
+          } else {
+            anyFailed = true;
+          }
+        } else {
+          anyFailed = true;
+        }
+
+        if (projectsRes && projectsRes.ok) {
+          const projectsJson = await projectsRes.json().catch(() => null) as ProjectListResponse | null;
+          if (projectsJson?.success) {
+            if (!cancelled) {
+              setProjects(projectsJson.data.projects);
+            }
+          } else {
+            anyFailed = true;
+          }
+        } else {
+          anyFailed = true;
+        }
+
+        if (anyFailed && !cancelled) {
+          setError("Some settings couldn't be loaded. Data shown may be incomplete.");
         }
       } catch (e) {
         if (!cancelled) {
@@ -367,10 +407,14 @@ export default function SettingsPage() {
     setUpgradingPlan(targetPlan);
     trackEvent("plan_upgrade_started", { targetPlan, interval: billingInterval });
     try {
+      const requestBody: Record<string, unknown> = { plan: targetPlan, interval: billingInterval };
+      if (couponCode) {
+        requestBody.coupon = couponCode;
+      }
       const res = await fetch("/api/v1/billing/checkout-session", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ plan: targetPlan, interval: billingInterval }),
+        body: JSON.stringify(requestBody),
       });
       const json = (await res.json()) as { success: true; data: { checkoutUrl: string } } | ApiError;
       if (!json.success) throw new Error(json.error.message);
@@ -518,6 +562,20 @@ export default function SettingsPage() {
             <CardDescription>Choose a higher tier to unlock alerts and larger limits.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
+          {/* Coupon code indicator */}
+          {couponCode && (
+            <div className="rounded-xl border-2 border-orange-400/30 bg-gradient-to-r from-orange-500/10 via-yellow-500/10 to-orange-500/10 p-4">
+              <div className="flex items-center gap-2 text-sm">
+                <span>🎉</span>
+                <span className="font-medium text-orange-300">
+                  Coupon <code className="rounded-md bg-code-bg px-1.5 py-0.5 font-mono text-accent ring-1 ring-accent/20">{couponCode}</code> applied
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-text-muted">
+                You&apos;ll receive <span className="text-accent font-medium">20% off Pro for life</span>. The discount will show in the Dodo checkout.
+              </p>
+            </div>
+          )}
           {/* Billing interval toggle */}
           <div className="flex items-center justify-center gap-3">
             <span className={`text-sm ${billingInterval === "month" ? "font-medium text-text-primary" : "text-text-muted"}`}>

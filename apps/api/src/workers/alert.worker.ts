@@ -319,25 +319,29 @@ async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promis
   const now = new Date();
 
   for (const rule of rules) {
-    if (!ruleAppliesToIngest(rule, queueNames)) {
-      continue;
+    try {
+      if (!ruleAppliesToIngest(rule, queueNames)) {
+        continue;
+      }
+
+      const threshold = numericThreshold(rule.threshold_value);
+
+      const events = await fetchEventsInWindow(projectId, rule.queue_name, rule.window_minutes);
+      const { shouldFire, actualValue } = evaluateCondition(rule.condition_type, threshold, events);
+
+      if (!shouldFire) {
+        await resolveActiveAlert(projectId, rule);
+        continue;
+      }
+
+      if (isInCooldown(rule, now)) {
+        continue;
+      }
+
+      await logAndDeliver(projectId, rule, actualValue, threshold);
+    } catch (ruleError) {
+      logger.error({ err: ruleError, ruleId: rule.id, projectId }, 'Failed to evaluate alert rule');
     }
-
-    const threshold = numericThreshold(rule.threshold_value);
-
-    const events = await fetchEventsInWindow(projectId, rule.queue_name, rule.window_minutes);
-    const { shouldFire, actualValue } = evaluateCondition(rule.condition_type, threshold, events);
-
-    if (!shouldFire) {
-      await resolveActiveAlert(projectId, rule);
-      continue;
-    }
-
-    if (isInCooldown(rule, now)) {
-      continue;
-    }
-
-    await logAndDeliver(projectId, rule, actualValue, threshold);
   }
 }
 
@@ -362,6 +366,10 @@ worker.on('failed', (job, err) => {
 
 worker.on('completed', () => {
   // optional: verbose logging off for production
+});
+
+worker.on('error', (err) => {
+  logger.error({ err }, 'Alert worker error — restarting connection');
 });
 
 function shutdown(): void {

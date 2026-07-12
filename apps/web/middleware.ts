@@ -9,6 +9,8 @@ const isPublicRoute = createRouteMatcher([
   "/features(.*)",
   "/about(.*)",
   "/contact(.*)",
+  "/pricing",
+  "/ph",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/v1/ingest(.*)",
@@ -16,29 +18,17 @@ const isPublicRoute = createRouteMatcher([
   "/health",
 ]);
 
-const isDashboardRoute = createRouteMatcher([
-  "/settings(.*)",
-  "/onboarding(.*)",
-  "/alerts(.*)",
-  "/queues(.*)",
-  "/projects(.*)",
-]);
-
 export default clerkMiddleware(async (auth, req) => {
-  // Let public routes and all non-dashboard routes pass through freely.
-  // Non-existent routes will hit Next.js's not-found.tsx 404 handler.
+  // All routes are protected by default except those explicitly listed as public.
+  // This ensures dashboard routes like /[projectId], /[projectId]/queues, etc.
+  // are always behind auth, even if they aren't explicitly listed.
+  // Non-existent routes will hit the sign-in page first (Clerk redirect),
+  // then redirect to Next.js's not-found.tsx after authentication.
   if (isPublicRoute(req)) {
     return;
   }
 
-  // Only protect actual dashboard routes — unknown/404 routes stay public
-  if (isDashboardRoute(req)) {
-    await auth.protect();
-    return;
-  }
-
-  // All other routes (including non-existent ones) are public —
-  // let Next.js handle 404s via not-found.tsx
+  await auth.protect();
   return;
 });
 

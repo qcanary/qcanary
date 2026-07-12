@@ -193,11 +193,14 @@ async function gracefulShutdown(signal: string): Promise<void> {
     } catch (sentryErr) {
       logger.error({ err: sentryErr }, 'Sentry close error during shutdown');
     }
+    // Gracefully disconnect Redis if it was ever initialized
+    // Dynamic import avoids crash if module never loaded due to missing env vars
     try {
-      redis.disconnect();
-    } catch (redisErr) {
-      logger.error({ err: redisErr }, 'Redis disconnect error during shutdown');
-    }
+      const { getRedis } = await import('./lib/redis.js');
+      try {
+        getRedis().disconnect();
+      } catch { /* never initialized — nothing to disconnect */ }
+    } catch { /* module may not have loaded */ }
     logger.info('HTTP server closed — goodbye');
     process.exit(0);
   });
@@ -214,6 +217,23 @@ async function gracefulShutdown(signal: string): Promise<void> {
 
 process.on('SIGTERM', () => { void gracefulShutdown('SIGTERM'); });
 process.on('SIGINT', () => { void gracefulShutdown('SIGINT'); });
+
+// ── Startup validation ────────────────────────────────────
+// Validate that all required env vars are present before accepting requests.
+// This prevents a partially-configured deployment from serving traffic.
+const REQUIRED_ENV_VARS = [
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'UPSTASH_REDIS_REST_URL',
+  'UPSTASH_REDIS_REST_TOKEN',
+  'CLERK_SECRET_KEY',
+] as const;
+
+const missingVars = REQUIRED_ENV_VARS.filter((name) => !process.env[name] || process.env[name]!.trim().length === 0);
+if (missingVars.length > 0) {
+  logger.error({ missingVars: missingVars.join(', ') }, 'Startup failed: missing required environment variables');
+  process.exit(1);
+}
 
 // ── Start ──────────────────────────────────────────────────
 server = app.listen(PORT, () => {

@@ -427,7 +427,7 @@ export default async function MarketingPage() {
                 <svg className="h-6 w-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
               </div>
               <div>
-                <img src="https://img.shields.io/github/stars/qcanary/qcanary?style=flat&labelColor=%23111111&color=%2322C55E&label=" alt="GitHub Stars" className="h-5" loading="lazy" decoding="async" />
+                <Image src="https://img.shields.io/github/stars/qcanary/qcanary?style=flat&labelColor=%23111111&color=%2322C55E&label=" alt="GitHub Stars" width={80} height={20} className="h-5 w-auto" />
                 <div className="text-xs text-text-muted">GitHub Stars</div>
               </div>
             </div>
@@ -436,7 +436,7 @@ export default async function MarketingPage() {
                 <svg className="h-6 w-6 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v4.001H12V15H9.999v-.002h-1.33v-.001h-1v.001h-1v.001h-.002v-1.334h1.335v-2.667H9.333V14h1.333v-.002h.002v-4h1.334v4.002zm6.667 0v1.336H16v-5.335h-2.667v-1.33h8v1.33h-2.666v5.335h-1.334v-5.335h-1.333v5.335h-1.334v-6.666H20l.001 5.335h-1.332v1.33h-1v.001h-1.334v-1.334H20V10.668h-2.667z" /></svg>
               </div>
               <div>
-                <img src="https://img.shields.io/npm/dt/@qcanary/agent?style=flat&labelColor=%23111111&color=%23EF4444&label=" alt="npm Downloads" className="h-5" loading="lazy" decoding="async" />
+                <Image src="https://img.shields.io/npm/dt/@qcanary/agent?style=flat&labelColor=%23111111&color=%23EF4444&label=" alt="npm Downloads" width={80} height={20} className="h-5 w-auto" />
                 <div className="text-xs text-text-muted">Weekly npm Downloads</div>
               </div>
             </div>

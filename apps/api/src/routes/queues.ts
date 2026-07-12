@@ -130,37 +130,24 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
   const windowDays = Number.isFinite(windowParam) && windowParam > 0 ? Math.min(windowParam, 90) : DEFAULT_QUEUE_WINDOW_DAYS;
   const cutoffIso = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
 
-  // Step 1: Aggregate counts by (queue_name, status) at the DB level
-  type QueueStatusCount = { queue_name: string; status: string; id_count: number };
-
-  const { data: statusCounts, error: countError } = await supabase
-    .from('job_events')
-    .select('queue_name, status, id.count()')
-    .eq('project_id', projectId)
-    .gte('timestamp', cutoffIso)
-    .order('queue_name');
-
-  if (countError) {
-    errorResponse(res, 500, 'QUEUE_LIST_FAILED', 'Failed to fetch queue counts');
-    return;
-  }
-
-  // Step 2: Fetch last event timestamp and duration data per queue
-  // Limited to 1000 most recent events — enough for accurate averages + lastEventAt
-  const { data: recentEvents, error: recentError } = await supabase
+  // Step 1: Fetch recent events for counts, duration data, and last event timestamps
+  // We fetch all events in the window (limited to 10,000 for projects with huge volume)
+  // and aggregate in-memory. This avoids Supabase aggregate column name issues and
+  // ensures accurate counts across all statuses.
+  const { data: eventRows, error: eventsError } = await supabase
     .from('job_events')
     .select('queue_name, status, duration_ms, timestamp')
     .eq('project_id', projectId)
     .gte('timestamp', cutoffIso)
     .order('timestamp', { ascending: false })
-    .limit(1000);
+    .limit(10000);
 
-  if (recentError) {
-    errorResponse(res, 500, 'QUEUE_LIST_FAILED', 'Failed to fetch queue details');
+  if (eventsError) {
+    errorResponse(res, 500, 'QUEUE_LIST_FAILED', 'Failed to fetch queue events');
     return;
   }
 
-  // Build per-queue aggregation from pre-aggregated counts + recent events
+  // Build per-queue aggregation from event data
   const queueMap = new Map<
     string,
     {
@@ -175,35 +162,30 @@ router.get('/:id/queues', async (req: Request, res: Response) => {
     }
   >();
 
-  // Apply the pre-aggregated counts
-  const countRows = (statusCounts ?? []) as QueueStatusCount[];
-  for (const row of countRows) {
-    const current = queueMap.get(row.queue_name) ?? {
-      totalJobs: 0,
-      completed: 0,
-      failed: 0,
-      active: 0,
-      stalled: 0,
-      durationTotal: 0,
-      durationSamples: 0,
-      lastEventAt: null,
-    };
-    const countVal = row.id_count ?? 0;
-    current.totalJobs += countVal;
-    switch (row.status) {
-      case 'completed': current.completed += countVal; break;
-      case 'failed': current.failed += countVal; break;
-      case 'active': current.active += countVal; break;
-      case 'stalled': current.stalled += countVal; break;
+  const allEvents = (eventRows ?? []) as Pick<JobEventRecord, 'queue_name' | 'status' | 'duration_ms' | 'timestamp'>[];
+  for (const event of allEvents) {
+    let current = queueMap.get(event.queue_name);
+    if (!current) {
+      current = {
+        totalJobs: 0,
+        completed: 0,
+        failed: 0,
+        active: 0,
+        stalled: 0,
+        durationTotal: 0,
+        durationSamples: 0,
+        lastEventAt: null,
+      };
+      queueMap.set(event.queue_name, current);
     }
-    queueMap.set(row.queue_name, current);
-  }
 
-  // Merge detail data (duration, lastEventAt) from recent events
-  const events = (recentEvents ?? []) as Pick<JobEventRecord, 'queue_name' | 'status' | 'duration_ms' | 'timestamp'>[];
-  for (const event of events) {
-    const current = queueMap.get(event.queue_name);
-    if (!current) continue; // Shouldn't happen, but guard against edge cases
+    current.totalJobs += 1;
+    switch (event.status) {
+      case 'completed': current.completed += 1; break;
+      case 'failed': current.failed += 1; break;
+      case 'active': current.active += 1; break;
+      case 'stalled': current.stalled += 1; break;
+    }
 
     if (typeof event.duration_ms === 'number') {
       current.durationTotal += event.duration_ms;

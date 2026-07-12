@@ -14,6 +14,7 @@ type Project = {
 type TeamProjectContextValue = {
   projects: Project[];
   loading: boolean;
+  error: string | null;
   refresh: () => Promise<void>;
 };
 
@@ -33,6 +34,7 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const previousOrgIdRef = React.useRef<string | null | undefined>(orgId);
 
   const refresh = React.useCallback(async () => {
@@ -44,13 +46,14 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
         | { success: false; error: { code: string; message: string } };
 
       if (!json.success) {
+        setError(json.error.message);
         setProjects([]);
         return;
       }
+      setError(null);
       setProjects(json.data.projects ?? []);
     } catch {
-      // Silently fail — projects list will be empty, user sees "No projects yet"
-      // and is prompted to create one.
+      setError("Failed to load projects. Check your connection and try again.");
       setProjects([]);
     } finally {
       setLoading(false);
@@ -65,6 +68,7 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
     const previousOrgId = previousOrgIdRef.current;
     if (previousOrgId !== orgId) {
       previousOrgIdRef.current = orgId;
+      setError(null);
       setProjects([]);
       setLoading(true);
       router.push("/onboarding");
@@ -88,7 +92,7 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
   }, [loading, pathname, projects, router]);
 
   return (
-    <TeamProjectContext.Provider value={{ projects, loading, refresh }}>
+    <TeamProjectContext.Provider value={{ projects, loading, error, refresh }}>
       {children}
     </TeamProjectContext.Provider>
   );

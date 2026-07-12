@@ -47,7 +47,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         capture_pageview: true,
         autocapture: true,
         loaded: (ph) => {
-          ph.register_for_session({ project_id: "459800" });
+          ph.register_for_session({ project_id: process.env.NEXT_PUBLIC_POSTHOG_PROJECT_ID ?? "" });
         },
       });
     }

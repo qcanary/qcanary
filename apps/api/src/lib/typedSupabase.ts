@@ -23,12 +23,30 @@ import type { Database } from '../types/database';
 type Tables = Database['public']['Tables'];
 
 /**
+ * Assert that a value is a non-null object at runtime.
+ * Used as a regression guard for the `as never` workaround.
+ * If postgrest-js fixes its generic constraint and the cast breaks,
+ * this will throw a descriptive error instead of silently corrupting data.
+ */
+function assertRecord(value: unknown, label: string): asserts value is Record<string, unknown> {
+  if (value === null || value === undefined || typeof value !== 'object') {
+    throw new TypeError(
+      `[typedSupabase] Expected ${label} to be a record, got ${String(value)}`
+    );
+  }
+}
+
+const INSERT_LABEL = 'data (Insert)';
+const UPDATE_LABEL = 'data (Update)';
+
+/**
  * Insert a single row into a table with full type checking at the call site.
  */
 export function insertRow<T extends keyof Tables>(
   table: T,
   data: Tables[T]['Insert']
 ) {
+  assertRecord(data as unknown, INSERT_LABEL);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
   return supabase.from(table).insert(data as never);
 }
@@ -51,6 +69,7 @@ export function updateRows<T extends keyof Tables>(
   table: T,
   data: Tables[T]['Update']
 ) {
+  assertRecord(data as unknown, UPDATE_LABEL);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
   return supabase.from(table).update(data as never);
 }

@@ -68,7 +68,7 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   const pathname = usePathname();
   const params = useParams<{ projectId?: string }>();
   const projectId = typeof params?.projectId === "string" ? params.projectId : null;
-  const { projects, loading } = useTeamProjects();
+  const { projects, loading, error } = useTeamProjects();
   const hasProjects = projects.length > 0;
 
   return (
@@ -115,7 +115,10 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
       <div className="flex-1 overflow-y-auto">
         <div className="text-xs uppercase tracking-wider text-text-muted mb-3">Projects</div>
         {loading && <div className="text-sm text-text-muted">Loading...</div>}
-        {!loading && projects.length === 0 && (
+        {!loading && error && (
+          <div className="text-sm text-red-400">{error}</div>
+        )}
+        {!loading && !error && projects.length === 0 && (
           <div className="text-sm text-text-muted">No projects yet</div>
         )}
         {!loading && projects.length > 0 && (
