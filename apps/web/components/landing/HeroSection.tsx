@@ -102,9 +102,10 @@ export function HeroSection() {
               ))}
             </div>
             <span className="text-xs text-text-muted">
-              Loved by engineering teams at <span className="font-medium text-text-primary">Laylo</span>,{" "}
-              <span className="font-medium text-text-primary">TidyHQ</span>,{" "}
-              <span className="font-medium text-text-primary">Sync Labs</span> + more
+              Loved by engineering teams at{" "}
+              <a href="https://laylo.com" target="_blank" rel="noopener noreferrer" className="font-medium text-text-primary hover:text-accent transition-colors">Laylo</a>,{" "}
+              <a href="https://tidyhq.com" target="_blank" rel="noopener noreferrer" className="font-medium text-text-primary hover:text-accent transition-colors">TidyHQ</a>,{" "}
+              <a href="https://sync.so" target="_blank" rel="noopener noreferrer" className="font-medium text-text-primary hover:text-accent transition-colors">Sync Labs</a> + more
             </span>
           </div>
         </div>

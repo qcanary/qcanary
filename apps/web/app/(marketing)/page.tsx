@@ -468,33 +468,33 @@ export default async function MarketingPage() {
             </div>
           </div>
 
-          {/* Live stats row — Shields.io badges fetch from GitHub/npm APIs at render time */}
+          {/* Quality signals row — no live counters */}
           <div className="mb-8 grid gap-4 sm:grid-cols-3">
             <div className="flex items-center gap-4 rounded-xl border border-border bg-surface/40 px-5 py-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-yellow-500/10">
-                <svg className="h-6 w-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10">
+                <svg aria-hidden="true" className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
               </div>
               <div>
-                <Image src="https://img.shields.io/github/stars/qcanary/qcanary?style=flat&labelColor=%23111111&color=%2322C55E&label=" alt="GitHub Stars" width={80} height={20} unoptimized priority className="h-5 w-auto" />
-                <div className="text-xs text-text-muted">GitHub Stars</div>
+                <div className="text-lg font-semibold">TypeScript</div>
+                <div className="text-xs text-text-muted">Full type safety across agent + API</div>
               </div>
             </div>
             <div className="flex items-center gap-4 rounded-xl border border-border bg-surface/40 px-5 py-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-500/10">
-                <svg className="h-6 w-6 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v4.001H12V15H9.999v-.002h-1.33v-.001h-1v.001h-1v.001h-.002v-1.334h1.335v-2.667H9.333V14h1.333v-.002h.002v-4h1.334v4.002zm6.667 0v1.336H16v-5.335h-2.667v-1.33h8v1.33h-2.666v5.335h-1.334v-5.335h-1.333v5.335h-1.334v-6.666H20l.001 5.335h-1.332v1.33h-1v.001h-1.334v-1.334H20V10.668h-2.667z" /></svg>
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-500/10">
+                <svg aria-hidden="true" className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
               </div>
               <div>
-                <Image src="https://img.shields.io/npm/dt/@qcanary/agent?style=flat&labelColor=%23111111&color=%23EF4444&label=" alt="npm Downloads" width={80} height={20} unoptimized priority className="h-5 w-auto" />
-                <div className="text-xs text-text-muted">Weekly npm Downloads</div>
+                <div className="text-lg font-semibold">3-line</div>
+                <div className="text-xs text-text-muted">Setup · 10 minutes to first event</div>
               </div>
             </div>
             <div className="flex items-center gap-4 rounded-xl border border-border bg-surface/40 px-5 py-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10">
-                <svg className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <svg aria-hidden="true" className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
               </div>
               <div>
-                <div className="text-lg font-semibold">3-line</div>
-                <div className="text-xs text-text-muted">Setup · 10 minutes</div>
+                <div className="text-lg font-semibold">SOC 2 Ready</div>
+                <div className="text-xs text-text-muted">Zero-trust architecture by design</div>
               </div>
             </div>
           </div>
@@ -682,7 +682,7 @@ export default async function MarketingPage() {
               {
                 quote: "We evaluated three queue monitoring tools. QCanary was the only one that didn't ask for our Redis URL. That single decision point made it the winner for our SOC 2 compliance.",
                 name: "Sarah Park",
-                title: "DevOps Lead at Capiter",
+                title: "DevOps Lead",
               },
             ].map((t, idx) => (
               <div key={t.name} className={`card-hover group flex flex-col rounded-xl border border-border bg-surface/30 p-6 ${
