@@ -149,3 +149,9 @@ If your app already observes BullMQ events, you can stream the metadata you need
 QCanary is one implementation of that model: real-time dashboards, alert rules, and job history for BullMQ with no Redis credential sharing.
 
 Docs: https://qcanary.dev/docs
+
+---
+
+**Read next:** [Bull Board vs. Hosted Queue Monitoring →](/blog/bull-board-vs-hosted-monitoring) — A side-by-side comparison of Bull Board and agent-based monitoring for production deployments.
+
+**Also see:** [How QueueEvents Works Without Exposing Redis →](/blog/how-to-monitor-bullmq-without-exposing-redis) — A technical deep-dive into BullMQ's built-in event emitter and how QCanary uses it.

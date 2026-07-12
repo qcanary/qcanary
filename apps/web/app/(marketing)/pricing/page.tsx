@@ -26,7 +26,7 @@ const pricingRows: Array<{
   { feature: "Event history", free: "24 hours", starter: "30 days", pro: "90 days" },
   { feature: "Events per day", free: "1,000", starter: "100,000", pro: "Unlimited" },
   { feature: "Slack alerts", free: "No", starter: "Yes", pro: "Yes" },
-  { feature: "Email alerts", free: "No", starter: "Yes", pro: "Yes" },
+  { feature: "Email alerts", free: "Email only", starter: "Yes", pro: "Yes" },
   { feature: "Send test events", free: "Yes", starter: "Yes", pro: "Yes" },
   { feature: "Webhook alerts", free: "No", starter: "No", pro: "Yes" },
   { feature: "Alert rules", free: "0", starter: "5", pro: "Unlimited" },
@@ -163,11 +163,10 @@ export default function PricingPage() {
                 <li className="flex items-center gap-2 text-xs">
                   <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   Send test events
-                </li>
-                <li className="flex items-center gap-2 text-xs">
-                  <svg className="h-3.5 w-3.5 shrink-0 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                  <span className="text-text-muted">No alerts</span>
-                </li>
+                </li>                  <li className="flex items-center gap-2 text-xs">
+                    <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    Email alerts (1 rule)
+                  </li>
               </ul>
               <Link href="/sign-up" className="mt-5 block">
                 <Button size="sm" className="w-full" variant="secondary">Get Started</Button>
@@ -305,7 +304,7 @@ export default function PricingPage() {
             Start monitoring your queues <span className="text-gradient">in 3 lines</span>
           </h2>
           <p className="mt-4 max-w-xl text-base text-text-muted">
-            No Redis credentials required. No firewall changes. Just install, connect, and monitor.
+            Start with a single queue. Add alerting when you need it. Scale to production without switching tools.
           </p>
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
             <Link href="/sign-up">

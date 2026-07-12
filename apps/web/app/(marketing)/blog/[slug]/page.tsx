@@ -68,13 +68,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           Back to blog
         </Link>
         <header className="mt-6 border-b border-border pb-8">
-          <time className="text-xs text-text-muted" dateTime={post.date}>
-            {new Date(post.date).toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </time>
+          <div className="flex items-center gap-3 text-xs text-text-muted">
+            <time dateTime={post.date}>
+              {new Date(post.date).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </time>
+            <span aria-hidden="true">·</span>
+            <span>QCanary Engineering</span>
+          </div>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight">{post.title}</h1>
           <p className="mt-4 text-lg text-text-muted">{post.description}</p>
         </header>

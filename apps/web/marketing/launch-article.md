@@ -104,3 +104,9 @@ The goal is not to alert on every failed job. The goal is to catch meaningful de
 QCanary is built for teams that run BullMQ in production and want visibility without exposing Redis. Install the agent, attach it to your queues, and get real-time dashboards and alerts with no Redis credential sharing and no firewall changes.
 
 Start free, send your first events, and add alerts when your team is ready for production-grade queue operations.
+
+---
+
+**Read next:** [How to Monitor BullMQ in Production →](/blog/how-to-monitor-bullmq-in-production) — A practical guide to setting up queue monitoring with best practices.
+
+**Also see:** [Bull Board vs. Hosted Queue Monitoring →](/blog/bull-board-vs-hosted-monitoring) — Why teams choose agent-based monitoring over traditional Bull Board setups.

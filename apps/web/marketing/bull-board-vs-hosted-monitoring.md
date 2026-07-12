@@ -178,3 +178,9 @@ if (process.env.NODE_ENV === "production") {
 ---
 
 *QCanary provides hosted BullMQ monitoring with the agent pattern described in this article. It tracks queue health, sends Slack alerts on failures, and retains 90-day history — without ever connecting to your Redis instance. [Try it free at qcanary.dev](https://qcanary.dev).*
+
+---
+
+**Read next:** [How to Monitor BullMQ in Production →](/blog/how-to-monitor-bullmq-in-production) — A practical guide to setting up production queue monitoring with agent-based architecture.
+
+**Also see:** [Introducing QCanary: Monitor Without Sharing Redis →](/blog/monitor-bullmq-without-exposing-redis) — Why we built QCanary and how it simplifies Redis-safe queue monitoring.

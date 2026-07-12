@@ -238,3 +238,9 @@ push(event: JobEvent): void {
 ---
 
 *QCanary is a monitoring platform built on this exact agent pattern. It provides real-time dashboards, Slack/email/webhook alerts, and job history — all without ever seeing your Redis URL. [Start free at qcanary.dev](https://qcanary.dev).*
+
+---
+
+**Read next:** [Bull Board vs. Hosted Queue Monitoring →](/blog/bull-board-vs-hosted-monitoring) — When to use Bull Board vs. agent-based monitoring for different environments.
+
+**Also see:** [How to Monitor BullMQ in Production →](/blog/how-to-monitor-bullmq-in-production) — Best practices for alerting, queue prioritization, and production observability.

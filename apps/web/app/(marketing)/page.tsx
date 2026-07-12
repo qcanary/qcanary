@@ -43,7 +43,7 @@ const pricingRows: Array<{
   { feature: "Event history", free: "24 hours", starter: "30 days", pro: "90 days" },
   { feature: "Events per day", free: "1,000", starter: "100,000", pro: "Unlimited" },
   { feature: "Slack alerts", free: "No", starter: "Yes", pro: "Yes" },
-  { feature: "Email alerts", free: "No", starter: "Yes", pro: "Yes" },
+  { feature: "Email alerts", free: "Email only", starter: "Yes", pro: "Yes" },
   { feature: "Send test events", free: "Yes", starter: "Yes", pro: "Yes" },
   { feature: "Webhook alerts", free: "No", starter: "No", pro: "Yes" },
   { feature: "Alert rules", free: "0", starter: "5", pro: "Unlimited" },
@@ -266,7 +266,7 @@ export default async function MarketingPage() {
               {
                 step: "01",
                 title: "Install @qcanary/agent",
-                desc: "Add the package to your worker process. Initialize with your API key and BullMQ queues. No Redis URL needed.",
+                desc: "Add the package to your worker process. Initialize with your API key and BullMQ queues. Monitoring in 3 lines.",
                 code: "npm install @qcanary/agent",
                 icon: "📦",
               },
@@ -280,7 +280,7 @@ export default async function MarketingPage() {
               {
                 step: "03",
                 title: "Dashboards & Alerts live",
-                desc: "Track failures, trends, and alerts in real time. Your Redis stays private — always.",
+                desc: "Track failures, trends, and alerts in real time. Catch issues before they reach production.",
                 code: "✓ Agent connected · streaming events",
                 icon: "📊",
               },
@@ -315,6 +315,74 @@ export default async function MarketingPage() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── vs Bull-Board ───────────────────────────────────── */}
+      <section className="border-y border-border bg-gradient-to-br from-bg via-surface/10 to-code-bg">
+        <div className="relative mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
+          <div className="mb-10 max-w-2xl animate-fade-in-up">
+            <Badge variant="outline" className="mb-4 border-amber-500/30 text-amber-400">Comparison</Badge>
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Why teams choose QCanary over Bull Board</h2>
+            <p className="mt-3 text-text-muted">
+              Bull Board is great for local debugging, but production monitoring demands
+              secure infrastructure, alerting, and zero-config deployments.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 animate-fade-in-up-delay-1">
+            <div className="rounded-xl border border-red-500/15 bg-gradient-to-br from-red-500/5 to-code-bg p-6">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-500/20">
+                  <svg className="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </div>
+                <span className="text-sm font-semibold text-red-400">Bull Board</span>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  "Requires SSH tunnel or VPC bastion to access Redis",
+                  "No built-in alerting — need separate Nagios/Datadog setup",
+                  "Manual authentication — no team access controls",
+                  "No event history — only live queue state",
+                  "Dashboard accessible only from private network",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm">
+                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-red-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    <span className="text-text-muted">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-xl border border-accent/20 bg-gradient-to-br from-accent/5 to-code-bg p-6">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/20">
+                  <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <span className="text-sm font-semibold text-accent">QCanary</span>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  "Zero-trust agent runs inside your process — no network exposure",
+                  "Built-in Slack, email, and webhook alerting with 5+ rule types",
+                  "Team-based access controls with Clerk authentication",
+                  "30-day event history with job-level detail and stack traces",
+                  "Accessible from anywhere — secure dashboard with HTTPS",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm">
+                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <span className="text-text-primary">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="mt-6 text-center animate-fade-in-up-delay-2">
+            <Link href="/compare">
+              <Button variant="secondary" size="sm" className="gap-2">
+                Full comparison
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -551,7 +619,7 @@ export default async function MarketingPage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-base font-semibold text-text-primary">Secure by Design</h3>
-                <p className="mt-1 text-sm leading-relaxed text-text-muted">QCanary never asks for Redis credentials and does not require inbound firewall changes. Your Redis stays behind your VPC — always.</p>
+                <p className="mt-1 text-sm leading-relaxed text-text-muted">QCanary uses QueueEvents inside your worker process — no external database access, no firewall rules. Deploy with confidence on day one.</p>
               </div>
               <span className="shrink-0 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent ring-1 ring-accent/20">Core feature</span>
             </div>
@@ -607,7 +675,7 @@ export default async function MarketingPage() {
                 title: "Senior Backend Engineer at TidyHQ",
               },
               {
-                quote: "The fact that @qcanary/agent runs inside our existing worker process and uses QueueEvents directly is brilliant. No VPC peering, no iptables changes, no security review bottleneck.",
+                quote: "Debugging a production worker failure used to mean SSH-ing into boxes and tailing logs. Now I open QCanary, see the exact stack trace, queue state, and event history — all in one place. It saved us hours on our last incident investigation.",
                 name: "Marcus Johansson",
                 title: "CTO at Sync Labs",
               },
@@ -737,8 +805,8 @@ export default async function MarketingPage() {
                     Send test events
                   </li>
                   <li className="flex items-center gap-2 text-xs">
-                    <svg className="h-3.5 w-3.5 shrink-0 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                    <span className="text-text-muted">No alerts</span>
+                    <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    Email alerts (1 rule)
                   </li>
                 </ul>
                 <Link href="/sign-up" className="mt-5 block">
@@ -808,8 +876,8 @@ export default async function MarketingPage() {
           </details>
 
           <p className="mt-4 text-sm text-text-muted">
-            Free plan intentionally includes zero alerting to keep advanced reliability tooling
-            available as teams scale.
+            Free plan includes email alerting so you can catch failures from day one.
+            Upgrade to Starter for Slack and advanced alert rules.
           </p>
         </div>
       </section>
@@ -839,7 +907,7 @@ export default async function MarketingPage() {
               },
               {
                 q: "Which alerts are available?",
-                a: "Starter and Pro plans include Slack and email alerts. Pro adds webhook alerts for PagerDuty, OpsGenie, or custom integrations. Free plan intentionally excludes alerts.",
+                a: "Starter and Pro plans include Slack and email alerts. Pro adds webhook alerts for PagerDuty, OpsGenie, or custom integrations. Free plan includes email alerts (1 rule) to get you started.",
               },
               {
                 q: "Can I view failed job details?",
@@ -926,7 +994,7 @@ export default async function MarketingPage() {
             Queue monitoring, <span className="text-gradient">reimagined.</span>
           </h2>
           <p className="animate-fade-in-up-delay-2 mt-4 max-w-xl text-base text-text-muted">
-            No Redis credentials required. No firewall changes. Just install, connect, and monitor.
+            Monitor every queue. Catch every failure. Install in 3 lines, go live in 10 minutes.
           </p>
           <div className="animate-fade-in-up-delay-3 mt-10 flex flex-col items-center gap-3 sm:flex-row">
             <Link href="/sign-up">
