@@ -9,7 +9,8 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
-import { BrandLockup } from "@/components/Brand";
+import MarketingNav from "@/components/MarketingNav";
+import MarketingFooter from "@/components/MarketingFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -130,28 +131,7 @@ export default async function MarketingPage() {
 
   return (
     <main id="main-content" className="min-h-screen bg-bg text-text-primary">
-      <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-          <BrandLockup href="/" size="md" />
-          <div className="flex items-center gap-4 flex-wrap justify-end">
-            <Link href="/compare" className="text-sm text-text-muted transition-colors hover:text-text-primary whitespace-nowrap">
-              vs Bull-Board
-            </Link>
-            <Link href="/blog" className="text-sm text-text-muted transition-colors hover:text-text-primary whitespace-nowrap">
-              Blog
-            </Link>
-            <Link href="/docs" className="hidden sm:inline text-sm text-text-muted transition-colors hover:text-text-primary whitespace-nowrap">
-              Docs
-            </Link>
-            <Link href="/sign-in" className="text-sm text-text-muted transition-colors hover:text-text-primary whitespace-nowrap">
-              Sign In
-            </Link>
-            <Link href="/sign-up">
-              <Button size="sm">Start Free</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <MarketingNav />
 
       {/* Mobile-responsive hero: stacking, overflow, padding */}
       <div className="overflow-x-hidden">
@@ -427,7 +407,7 @@ export default async function MarketingPage() {
                 <svg className="h-6 w-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
               </div>
               <div>
-                <Image src="https://img.shields.io/github/stars/qcanary/qcanary?style=flat&labelColor=%23111111&color=%2322C55E&label=" alt="GitHub Stars" width={80} height={20} className="h-5 w-auto" />
+                <Image src="https://img.shields.io/github/stars/qcanary/qcanary?style=flat&labelColor=%23111111&color=%2322C55E&label=" alt="GitHub Stars" width={80} height={20} unoptimized priority className="h-5 w-auto" />
                 <div className="text-xs text-text-muted">GitHub Stars</div>
               </div>
             </div>
@@ -436,7 +416,7 @@ export default async function MarketingPage() {
                 <svg className="h-6 w-6 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v4.001H12V15H9.999v-.002h-1.33v-.001h-1v.001h-1v.001h-.002v-1.334h1.335v-2.667H9.333V14h1.333v-.002h.002v-4h1.334v4.002zm6.667 0v1.336H16v-5.335h-2.667v-1.33h8v1.33h-2.666v5.335h-1.334v-5.335h-1.333v5.335h-1.334v-6.666H20l.001 5.335h-1.332v1.33h-1v.001h-1.334v-1.334H20V10.668h-2.667z" /></svg>
               </div>
               <div>
-                <Image src="https://img.shields.io/npm/dt/@qcanary/agent?style=flat&labelColor=%23111111&color=%23EF4444&label=" alt="npm Downloads" width={80} height={20} className="h-5 w-auto" />
+                <Image src="https://img.shields.io/npm/dt/@qcanary/agent?style=flat&labelColor=%23111111&color=%23EF4444&label=" alt="npm Downloads" width={80} height={20} unoptimized priority className="h-5 w-auto" />
                 <div className="text-xs text-text-muted">Weekly npm Downloads</div>
               </div>
             </div>
@@ -474,15 +454,15 @@ export default async function MarketingPage() {
             Monitor queue health, inspect failures, and track trends from one dashboard.
           </p>
         </div>
-        <div className="screenshot-glow relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface/80 to-code-bg shadow-lg shadow-accent/5">
-          <Image
-            src="/screenshots/dashboard-overview.png"
-            alt="Qcanary dashboard showing queue overview, job history, and health metrics"
-            width={1918}
-            height={1058}
-            className="h-auto w-full"
-            sizes="(max-width: 768px) 100vw, 1152px"
-          />
+        <div className="screenshot-glow relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface/80 to-code-bg shadow-lg shadow-accent/5">            <Image
+              src="/screenshots/dashboard-overview.png"
+              alt="Qcanary dashboard showing queue overview, job history, and health metrics"
+              width={1918}
+              height={1058}
+              loading="lazy"
+              className="h-auto w-full"
+              sizes="(max-width: 768px) 100vw, 1152px"
+            />
         </div>
       </section>
 
@@ -969,50 +949,7 @@ export default async function MarketingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-border bg-surface/20">
-        <div className="mx-auto w-full max-w-6xl px-6 py-12">
-          <div className="grid gap-8 md:grid-cols-4">
-            {/* Brand */}
-            <div className="md:col-span-2">
-              <BrandLockup href="/" size="sm" />
-              <p className="mt-3 max-w-xs text-sm leading-relaxed text-text-muted">
-                Monitor BullMQ queues without sharing Redis credentials. Zero-trust monitoring for production teams.
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                <Link href="https://github.com/qcanary" className="text-text-muted hover:text-text-primary transition-colors" aria-label="GitHub">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" /></svg>
-                </Link>
-                <Link href="https://x.com/qcanary" className="text-text-muted hover:text-text-primary transition-colors" aria-label="X (Twitter)">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                </Link>
-              </div>
-            </div>
-            {/* Product */}
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-text-muted">Product</div>
-              <div className="mt-4 flex flex-col gap-2.5">
-                <Link href="/features" className="text-sm text-text-muted hover:text-text-primary transition-colors">Features</Link>
-                <Link href="/pricing" className="text-sm text-text-muted hover:text-text-primary transition-colors">Pricing</Link>
-                <Link href="/docs" className="text-sm text-text-muted hover:text-text-primary transition-colors">Documentation</Link>
-                <Link href="/compare" className="text-sm text-text-muted hover:text-text-primary transition-colors">vs Bull-Board</Link>
-              </div>
-            </div>
-            {/* Company */}
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-text-muted">Company</div>
-              <div className="mt-4 flex flex-col gap-2.5">
-                <Link href="/blog" className="text-sm text-text-muted hover:text-text-primary transition-colors">Blog</Link>
-                <Link href="/about" className="text-sm text-text-muted hover:text-text-primary transition-colors">About</Link>
-                <Link href="/contact" className="text-sm text-text-muted hover:text-text-primary transition-colors">Contact</Link>
-                <Link href="/sign-up" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors">Sign Up →</Link>
-              </div>
-            </div>
-          </div>
-          <div className="mt-10 border-t border-border pt-6 text-center text-xs text-text-muted">
-            &copy; {new Date().getFullYear()} Qcanary. MIT-licensed agent. Built for the BullMQ ecosystem.
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </main>
   );
 }

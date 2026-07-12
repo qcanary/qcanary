@@ -8,9 +8,8 @@ const isPublicRoute = createRouteMatcher([
   "/compare(.*)",
   "/features(.*)",
   "/about(.*)",
-  "/contact(.*)",
-  "/pricing",
-  "/ph",
+  "/contact(.*)",    "/pricing",
+    "/ph",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/v1/ingest(.*)",
@@ -35,7 +34,7 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|txt|xml)).*)",
     // Always run for API routes
     "/(api|trpc)(.*)",
   ],

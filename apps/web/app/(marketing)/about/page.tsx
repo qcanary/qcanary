@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Shield, Github, Package, Code2 } from "lucide-react";
-import { BrandLockup, BrandMark } from "@/components/Brand";
+import MarketingNav from "@/components/MarketingNav";
+import MarketingFooter from "@/components/MarketingFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -32,18 +33,7 @@ const values = [
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-bg text-text-primary">
-      <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-          <BrandLockup href="/" size="md" />
-          <div className="flex items-center gap-4 flex-wrap justify-end">
-            <Link href="/compare" className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">vs Bull-Board</Link>
-            <Link href="/blog" className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">Blog</Link>
-            <Link href="/docs" className="hidden sm:inline text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">Docs</Link>
-            <Link href="/sign-in" className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">Sign In</Link>
-            <Link href="/sign-up"><Button size="sm">Start Free</Button></Link>
-          </div>
-        </div>
-      </nav>
+      <MarketingNav />
 
       <section className="border-b border-border">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center md:py-28">
@@ -111,21 +101,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <footer className="border-t border-border bg-surface/20">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-text-muted md:flex-row">
-          <div className="flex items-center gap-3">
-            <BrandMark size="sm" />
-            <p>Qcanary - BullMQ monitoring for production teams.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/" className="hover:text-text-primary">Home</Link>
-            <span className="text-border">|</span>
-            <Link href="/features" className="hover:text-text-primary">Features</Link>
-            <span className="text-border">|</span>
-            <Link href="/docs" className="hover:text-text-primary">Docs</Link>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </main>
   );
 }

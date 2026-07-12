@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { BrandLockup } from "@/components/Brand";
+import MarketingNav from "@/components/MarketingNav";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAllBlogPosts } from "./posts";
 
@@ -15,14 +15,7 @@ export default async function BlogPage() {
 
   return (
     <main className="min-h-screen bg-bg text-text-primary">
-      <nav className="border-b border-border bg-bg/80">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
-          <BrandLockup href="/" size="md" />
-          <Link href="/docs" className="text-sm text-text-muted hover:text-text-primary">
-            Docs
-          </Link>
-        </div>
-      </nav>
+      <MarketingNav showCompare={false} />
 
       <section className="mx-auto w-full max-w-5xl px-6 py-14">
         <div className="mb-8 max-w-2xl">

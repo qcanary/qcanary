@@ -41,8 +41,8 @@ export function HeroSection() {
         }}
       />
       {/* Static ambient glows */}
-      <div className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
-      <div className="pointer-events-none absolute right-[-100px] top-[-100px] h-[400px] w-[400px] animate-pulse rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_60%)]" style={{ animationDelay: '2s' }} />
+      <div aria-hidden="true" className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute right-[-100px] top-[-100px] h-[400px] w-[400px] animate-pulse rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_60%)]" style={{ animationDelay: '2s' }} />
       
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-6 pb-24 pt-24 md:flex-row md:items-start md:pt-28">
         {/* Left: Text content */}
@@ -111,7 +111,7 @@ export function HeroSection() {
 
         {/* Right: Terminal code block */}
         <div className="w-full max-w-xl flex-1 md:max-w-none">
-          <div className="animate-scale-in overflow-hidden rounded-xl border border-border bg-[#0C0C0C] shadow-lg shadow-accent/5">
+          <div className="animate-scale-in overflow-hidden rounded-xl border border-border bg-[#0C0C0C] shadow-lg shadow-accent/5" translate="no">
             {/* Terminal header */}
             <div className="flex items-center gap-1.5 border-b border-border bg-[#111] px-4 py-2.5">
               <div className="h-3 w-3 rounded-full bg-red-500/70" />

@@ -63,7 +63,7 @@ function CodeBlock({ children, apiKey }: { children: string; apiKey?: string }) 
       {apiKey && (
         <button
           onClick={() => void handleCopy()}
-          className="absolute right-2 top-2 rounded-md bg-accent px-2 py-1 text-xs font-medium text-black transition-all hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent/50"
+          className="absolute right-2 top-2 rounded-md bg-accent px-2 py-1 text-xs font-medium text-black transition-all hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
           aria-label={copied ? "Copied" : "Copy API key to clipboard"}
         >
           {copied ? "Copied!" : "Copy"}

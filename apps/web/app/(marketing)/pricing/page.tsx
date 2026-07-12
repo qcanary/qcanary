@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BrandLockup } from "@/components/Brand";
+import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -39,22 +39,7 @@ export default function PricingPage() {
   return (
     <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-          <BrandLockup href="/" size="md" />
-          <div className="flex items-center gap-4 flex-wrap justify-end">
-            <Link href="/docs" className="hidden sm:inline text-sm text-text-muted transition-colors hover:text-text-primary whitespace-nowrap">
-              Docs
-            </Link>
-            <Link href="/sign-in" className="text-sm text-text-muted transition-colors hover:text-text-primary whitespace-nowrap">
-              Sign In
-            </Link>
-            <Link href="/sign-up">
-              <Button size="sm">Start Free</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <MarketingNav showCompare={false} showBlog={false} />
 
       {/* Hero */}
       <section className="border-b border-border bg-gradient-to-b from-surface/10 to-bg">

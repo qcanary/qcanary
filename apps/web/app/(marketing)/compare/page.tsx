@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Shield, Zap, Bell, BarChart3, Layers, Clock, Lock, Users, ExternalLink } from "lucide-react";
-import { BrandLockup, BrandMark } from "@/components/Brand";
+import { BrandMark } from "@/components/Brand";
+import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -148,25 +149,7 @@ const featureCards: Array<{
 export default function ComparePage() {
   return (
     <main className="min-h-screen bg-bg text-text-primary">
-      <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
-          <BrandLockup href="/" size="md" />
-          <div className="flex items-center gap-4 flex-wrap justify-end">
-            <Link href="/blog" className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">
-              Blog
-            </Link>
-            <Link href="/docs" className="hidden sm:inline text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">
-              Docs
-            </Link>
-            <Link href="/sign-in" className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary">
-              Sign In
-            </Link>
-            <Link href="/sign-up">
-              <Button size="sm">Start Free</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <MarketingNav showCompare={false} />
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">

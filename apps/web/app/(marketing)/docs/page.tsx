@@ -2,6 +2,7 @@ import Link from "next/link";
 import Script from "next/script";
 import type { Metadata } from "next";
 
+import MarketingNav from "@/components/MarketingNav";
 import { BrandLockup } from "@/components/Brand";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -72,7 +73,7 @@ export const metadata: Metadata = {
 
 function CodeBlock({ children }: { children: string }) {
   return (
-    <pre className="overflow-auto rounded-md border border-border bg-code-bg p-4 font-mono text-xs text-text-primary">
+    <pre className="overflow-auto rounded-md border border-border bg-code-bg p-4 font-mono text-xs text-text-primary" translate="no">
       <code>{children}</code>
     </pre>
   );
@@ -80,7 +81,9 @@ function CodeBlock({ children }: { children: string }) {
 
 export default function DocsPage() {
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-8 px-6 py-10">
+    <>
+      <MarketingNav showCompare={false} showBlog={false} />
+      <div className="mx-auto w-full max-w-5xl space-y-8 px-6 py-10">
       {/* ── Header ───────────────────────────────────────────── */}
       <div className="space-y-3">
         <BrandLockup
@@ -542,5 +545,6 @@ export default function DocsPage() {
         }}
       />
     </div>
+    </>
   );
 }

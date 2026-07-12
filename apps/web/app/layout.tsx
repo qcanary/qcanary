@@ -22,6 +22,9 @@ const ogImage = "/opengraph-image";
 const siteName = "Qcanary — BullMQ Monitoring Dashboard";
 
 export const metadata: Metadata = {
+    other: {
+      "theme-color": "#0A0A0A",
+    },
   title: {
     default: siteName,
     template: `%s — Qcanary`,
@@ -84,9 +87,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        {/* Preconnect hints */}
-        <link rel="preconnect" href="https://clerk.accounts.dev" />
-        <link rel="preconnect" href="https://app.posthog.com" />
+        {/* Preconnect hints */}            <link rel="preconnect" href="https://clerk.accounts.dev" />
+            <link rel="preconnect" href="https://app.posthog.com" />
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
 

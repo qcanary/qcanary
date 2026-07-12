@@ -44,6 +44,7 @@ export function BrandMark({
         alt="Qcanary"
         width={config.icon}
         height={config.icon}
+        priority
         className={cn("h-auto w-auto", imageClassName)}
       />
     </span>
@@ -78,6 +79,7 @@ export function BrandLockup({
           labelSizes[size],
           labelClassName,
         )}
+        translate="no"
       >
         Qcanary
       </span>
