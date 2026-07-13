@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Contact — Qcanary",
+  title: "Contact",
   description:
     "Get in touch with the Qcanary team. Support, feedback, partnerships — we'd love to hear from you.",
 };

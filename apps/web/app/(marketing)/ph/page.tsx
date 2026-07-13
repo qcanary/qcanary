@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CouponCapture } from "./CouponCapture";
 
 export const metadata: Metadata = {
-  title: "Product Hunt Launch — Qcanary",
+  title: "Product Hunt Launch",
   description:
     "Monitor BullMQ queues without exposing Redis credentials. Product Hunt special: 20% off Pro for life with code PH20.",
   openGraph: {

@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Features — Qcanary",
+  title: "Features",
   description:
     "Explore Qcanary's features: zero-trust BullMQ monitoring, real-time dashboards, Slack/email/webhook alerts, job debugging, and team collaboration — all without exposing your infrastructure.",
 };
