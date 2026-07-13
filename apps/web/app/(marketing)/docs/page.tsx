@@ -380,12 +380,6 @@ export default function DocsPage() {
                   <td className="px-2 py-2 text-text-muted">Unlimited</td>
                 </tr>
                 <tr className="border-b border-border/70">
-                  <td className="px-2 py-2 text-text-primary">Projects</td>
-                  <td className="px-2 py-2 text-text-muted">1</td>
-                  <td className="px-2 py-2 text-text-muted">3</td>
-                  <td className="px-2 py-2 text-text-muted">Unlimited</td>
-                </tr>
-                <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Queues per project</td>
                   <td className="px-2 py-2 text-text-muted">1</td>
                   <td className="px-2 py-2 text-text-muted">10</td>
