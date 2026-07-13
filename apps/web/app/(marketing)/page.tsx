@@ -46,7 +46,6 @@ const pricingRows: Array<{
   { feature: "Email alerts", free: "Email only", starter: "Yes", pro: "Yes" },
   { feature: "Send test events", free: "Yes", starter: "Yes", pro: "Yes" },
   { feature: "Webhook alerts", free: "No", starter: "No", pro: "Yes" },
-  { feature: "Alert rules", free: "0", starter: "5", pro: "Unlimited" },
   { feature: "Team members", free: "1", starter: "3", pro: "10" },
   { feature: "Job detail + stack trace", free: "Yes", starter: "Yes", pro: "Yes" },
   { feature: "Historical charts", free: "No", starter: "Yes", pro: "Yes" },
