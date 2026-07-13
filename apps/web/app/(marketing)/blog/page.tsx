@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     title: "QCanary Blog — BullMQ Monitoring & Queue Observability",
     description:
       "Technical writing about BullMQ monitoring, Redis queue observability, and production background jobs.",
+    url: `${siteUrl}/blog`,
   },
 };
 

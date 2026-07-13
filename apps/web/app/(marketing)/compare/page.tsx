@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${siteUrl}/compare`,
   },
+  openGraph: {
+    url: `${siteUrl}/compare`,
+  },
 };
 
 const comparisons: Array<{

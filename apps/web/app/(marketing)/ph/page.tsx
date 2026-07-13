@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     title: "Qcanary — Monitor BullMQ Without Exposing Redis",
     description:
       "Zero-trust BullMQ monitoring. No Redis credentials needed. Product Hunt special: 20% off Pro for life.",
+    url: `${siteUrl}/ph`,
   },
 };
 

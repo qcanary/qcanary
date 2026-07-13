@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${siteUrl}/features`,
   },
+  openGraph: {
+    url: `${siteUrl}/features`,
+  },
 };
 
 const featureGroups = [

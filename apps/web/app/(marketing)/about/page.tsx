@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${siteUrl}/about`,
   },
+  openGraph: {
+    url: `${siteUrl}/about`,
+  },
 };
 
 const values = [

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Script from "next/script";
 import type { Metadata } from "next";
 import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
     title: "Qcanary Pricing — Monitor BullMQ Without Exposing Redis",
     description:
       "Start free, upgrade when you need alerts. Product Hunt special: 20% off Pro for life.",
+    url: `${siteUrl}/pricing`,
   },
 };
 
@@ -328,6 +330,50 @@ export default function PricingPage() {
           </p>
         </div>
       </section>
+
+      {/* Product JSON-LD Structured Data */}
+      <Script
+        id="json-ld-product"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "QCanary",
+            applicationCategory: "DeveloperApplication",
+            description:
+              "Monitor BullMQ queues without sharing Redis credentials.",
+            offers: [
+              {
+                "@type": "Offer",
+                name: "Free",
+                price: "0",
+                priceCurrency: "USD",
+                description:
+                  "1 project, 1 queue, 24h history, 1K events/day, email alerts (1 rule).",
+              },
+              {
+                "@type": "Offer",
+                name: "Starter",
+                price: "9",
+                priceCurrency: "USD",
+                priceInterval: "Monthly",
+                description:
+                  "3 projects, 10 queues, 30-day history, 100K events/day, Slack + Email alerts.",
+              },
+              {
+                "@type": "Offer",
+                name: "Pro",
+                price: "24",
+                priceCurrency: "USD",
+                priceInterval: "Monthly",
+                description:
+                  "Unlimited projects & queues, 90-day history, unlimited events, Webhook alerts.",
+              },
+            ],
+          }),
+        }}
+      />
 
       {/* Footer */}
       <footer className="border-t border-border bg-surface/20">

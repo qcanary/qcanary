@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${siteUrl}/contact`,
   },
+  openGraph: {
+    url: `${siteUrl}/contact`,
+  },
 };
 
 const contactMethods = [
