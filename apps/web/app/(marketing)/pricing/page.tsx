@@ -4,10 +4,15 @@ import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
+
 export const metadata: Metadata = {
   title: "Pricing",
   description:
     "Start free, upgrade when you need alerts and history. Product Hunt launch special: 20% off Pro for life with code PH20.",
+  alternates: {
+    canonical: `${siteUrl}/pricing`,
+  },
   openGraph: {
     title: "Qcanary Pricing — Monitor BullMQ Without Exposing Redis",
     description:

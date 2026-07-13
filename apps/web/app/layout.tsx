@@ -42,7 +42,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Qcanary" }],
   metadataBase: new URL(siteUrl),
-  // canonical is auto-generated from metadataBase + page path
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
     title: siteName,
     description: siteDescription,

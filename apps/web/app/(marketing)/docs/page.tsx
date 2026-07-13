@@ -64,6 +64,9 @@ export const metadata: Metadata = {
   title: "QCanary Docs — BullMQ Monitoring Agent",
   description:
     "Install @qcanary/agent in your worker process to stream BullMQ queue events over HTTPS. No Redis credentials required. Quick start, configuration, alert rules, and API key management.",
+  alternates: {
+    canonical: `${siteUrl}/docs`,
+  },
   openGraph: {
     title: "QCanary Docs",
     description:

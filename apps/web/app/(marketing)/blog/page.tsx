@@ -11,6 +11,9 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://qcanary.dev";
 export const metadata: Metadata = {
   title: "QCanary Blog",
   description: "Technical writing about BullMQ monitoring, Redis queue observability, and production background jobs.",
+  alternates: {
+    canonical: `${siteUrl}/blog`,
+  },
   openGraph: {
     title: "QCanary Blog — BullMQ Monitoring & Queue Observability",
     description:

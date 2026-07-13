@@ -6,10 +6,15 @@ import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
+
 export const metadata: Metadata = {
   title: "Contact",
   description:
     "Get in touch with the Qcanary team. Support, feedback, partnerships — we'd love to hear from you.",
+  alternates: {
+    canonical: `${siteUrl}/contact`,
+  },
 };
 
 const contactMethods = [

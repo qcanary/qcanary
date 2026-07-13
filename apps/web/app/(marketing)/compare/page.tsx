@@ -6,10 +6,15 @@ import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
+
 export const metadata: Metadata = {
   title: "Qcanary vs Bull-Board — BullMQ Monitoring Comparison",
   description:
     "Compare Qcanary with Bull-Board: features, security model, alerting, and pricing. See why teams choose Qcanary for production BullMQ monitoring.",
+  alternates: {
+    canonical: `${siteUrl}/compare`,
+  },
 };
 
 const comparisons: Array<{

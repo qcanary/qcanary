@@ -16,10 +16,15 @@ import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
+
 export const metadata: Metadata = {
   title: "Features",
   description:
     "Explore Qcanary's features: zero-trust BullMQ monitoring, real-time dashboards, Slack/email/webhook alerts, job debugging, and team collaboration — all without exposing your infrastructure.",
+  alternates: {
+    canonical: `${siteUrl}/features`,
+  },
 };
 
 const featureGroups = [

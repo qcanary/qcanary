@@ -6,10 +6,15 @@ import MarketingFooter from "@/components/MarketingFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
+
 export const metadata: Metadata = {
   title: "About",
   description:
     "Qcanary helps engineering teams monitor BullMQ queues without sharing Redis credentials. Open-source agent, managed dashboard, zero-trust by design.",
+  alternates: {
+    canonical: `${siteUrl}/about`,
+  },
 };
 
 const values = [

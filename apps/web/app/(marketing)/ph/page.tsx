@@ -5,10 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CouponCapture } from "./CouponCapture";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
+
 export const metadata: Metadata = {
   title: "Product Hunt Launch",
   description:
     "Monitor BullMQ queues without exposing Redis credentials. Product Hunt special: 20% off Pro for life with code PH20.",
+  alternates: {
+    canonical: `${siteUrl}/ph`,
+  },
   openGraph: {
     title: "Qcanary — Monitor BullMQ Without Exposing Redis",
     description:
