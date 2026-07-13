@@ -380,46 +380,52 @@ export default function DocsPage() {
                   <td className="px-2 py-2 text-text-muted">Unlimited</td>
                 </tr>
                 <tr className="border-b border-border/70">
-                  <td className="px-2 py-2 text-text-primary">Queues per project</td>
+                  <td className="px-2 py-2 text-text-primary">Projects</td>
+                  <td className="px-2 py-2 text-text-muted">1</td>
                   <td className="px-2 py-2 text-text-muted">3</td>
+                  <td className="px-2 py-2 text-text-muted">Unlimited</td>
+                </tr>
+                <tr className="border-b border-border/70">
+                  <td className="px-2 py-2 text-text-primary">Queues per project</td>
+                  <td className="px-2 py-2 text-text-muted">1</td>
                   <td className="px-2 py-2 text-text-muted">10</td>
                   <td className="px-2 py-2 text-text-muted">Unlimited</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Event history</td>
-                  <td className="px-2 py-2 text-text-muted">3 days</td>
+                  <td className="px-2 py-2 text-text-muted">24 hours</td>
                   <td className="px-2 py-2 text-text-muted">30 days</td>
                   <td className="px-2 py-2 text-text-muted">90 days</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Events / day</td>
-                  <td className="px-2 py-2 text-text-muted">10,000</td>
+                  <td className="px-2 py-2 text-text-muted">1,000</td>
                   <td className="px-2 py-2 text-text-muted">100,000</td>
                   <td className="px-2 py-2 text-text-muted">Unlimited</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Slack alerts</td>
-                  <td className="px-2 py-2 text-text-muted">—</td>
-                  <td className="px-2 py-2 text-text-muted">✓</td>
-                  <td className="px-2 py-2 text-text-muted">✓</td>
+                  <td className="px-2 py-2 text-text-muted">No</td>
+                  <td className="px-2 py-2 text-text-muted">Yes</td>
+                  <td className="px-2 py-2 text-text-muted">Yes</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Email alerts</td>
-                  <td className="px-2 py-2 text-text-muted">—</td>
-                  <td className="px-2 py-2 text-text-muted">✓</td>
-                  <td className="px-2 py-2 text-text-muted">✓</td>
+                  <td className="px-2 py-2 text-text-muted">Email only</td>
+                  <td className="px-2 py-2 text-text-muted">Yes</td>
+                  <td className="px-2 py-2 text-text-muted">Yes</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Webhook alerts</td>
-                  <td className="px-2 py-2 text-text-muted">—</td>
-                  <td className="px-2 py-2 text-text-muted">—</td>
-                  <td className="px-2 py-2 text-text-muted">✓</td>
+                  <td className="px-2 py-2 text-text-muted">No</td>
+                  <td className="px-2 py-2 text-text-muted">No</td>
+                  <td className="px-2 py-2 text-text-muted">Yes</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Team members</td>
                   <td className="px-2 py-2 text-text-muted">1</td>
-                  <td className="px-2 py-2 text-text-muted">1</td>
                   <td className="px-2 py-2 text-text-muted">3</td>
+                  <td className="px-2 py-2 text-text-muted">10</td>
                 </tr>
               </tbody>
             </table>
