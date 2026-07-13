@@ -69,8 +69,10 @@ export default async function ProjectOverviewPage({
       }
     }
   } catch {
-    // API unreachable or timeout — fall through so real users can still
-    // access their dashboard during backend issues.
+    // API unreachable or timeout — redirect to sign-in rather than render
+    // dashboard chrome for unauthenticated users. Real users will sign in
+    // and be redirected back by Clerk after authentication.
+    redirect("/sign-in");
   }
 
   return <ProjectOverviewClient projectId={params.projectId} />;
