@@ -46,6 +46,7 @@ import { httpLogger, logger } from './lib/logger';
 import { pruneOldJobEvents } from './lib/retention';
 import { sendOnboardingEmails } from './lib/onboarding';
 import { dashboardRateLimit } from './middleware/rateLimit';
+import { calculateBenchmarks } from './lib/benchmarks';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -57,6 +58,19 @@ cron.schedule('0 0 * * *', () => {
     })
     .catch((err) => {
       logger.error({ err }, 'Daily retention cron failed');
+    });
+}, {
+  timezone: 'UTC',
+});
+
+// Daily benchmark cron — runs at 03:00 UTC (low traffic time)
+cron.schedule('0 3 * * *', () => {
+  void calculateBenchmarks()
+    .then(() => {
+      logger.info('Queue health benchmark calculation completed');
+    })
+    .catch((err) => {
+      logger.error({ err }, 'Queue health benchmark calculation failed');
     });
 }, {
   timezone: 'UTC',

@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { errorResponse, requireTeamContext } from '../lib/responseUtils';
+import { getBenchmarkForQueue } from '../lib/benchmarks';
 
 const router = express.Router();
 
@@ -480,6 +481,42 @@ router.get('/:id/queues/:name/jobs/:jobId', async (req: Request, res: Response) 
         errorMessage: event.error_message,
         timestamp: event.timestamp,
       })),
+    },
+  });
+});
+
+// ── Queue Health Benchmark ─────────────────────────────────
+router.get('/:id/queues/:name/benchmark', async (req: Request, res: Response) => {
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
+  if (!teamId) {
+    return;
+  }
+
+  const projectId = typeof req.params.id === 'string' ? req.params.id : '';
+  const queueName = typeof req.params.name === 'string' ? req.params.name : '';
+  if (!projectId || !queueName) {
+    errorResponse(res, 400, 'INVALID_PATH_PARAMS', 'Invalid project id or queue name');
+    return;
+  }
+
+  const result = await getBenchmarkForQueue(projectId, queueName);
+
+  if ('error' in result) {
+    res.status(200).json({
+      success: true,
+      data: {
+        available: false,
+        message: result.error,
+      },
+    });
+    return;
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      available: true,
+      ...result,
     },
   });
 });

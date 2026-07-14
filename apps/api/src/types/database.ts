@@ -22,6 +22,7 @@ export interface Database {
       feedback_applications: { Row: FeedbackApplicationRow; Insert: FeedbackApplicationInsert; Update: FeedbackApplicationUpdate; Relationships: [] };
       testimonials:    { Row: TestimonialRow;    Insert: TestimonialInsert;    Update: TestimonialUpdate;    Relationships: [] };
       enterprise_inquiries: { Row: EnterpriseInquiryRow; Insert: EnterpriseInquiryInsert; Update: EnterpriseInquiryUpdate; Relationships: [] };
+      queue_benchmarks: { Row: QueueBenchmarkRow; Insert: QueueBenchmarkInsert; Update: QueueBenchmarkUpdate; Relationships: [] };
     };
     Views: Record<string, never>;
     Functions: {
@@ -495,6 +496,58 @@ export interface EnterpriseInquiryUpdate {
   notes?: string | null;
   created_at?: string;
   updated_at?: string;
+}
+
+// ============================================================
+// QUEUE BENCHMARK TYPES
+// ============================================================
+
+export interface QueueBenchmarkRow {
+  id: string;
+  category: string;
+  metric_name: string;
+  p10: number | null;
+  p25: number | null;
+  p50: number | null;
+  p75: number | null;
+  p90: number | null;
+  p95: number | null;
+  mean: number | null;
+  stddev: number | null;
+  sample_size: number;
+  calculated_at: string;
+}
+
+export interface QueueBenchmarkInsert {
+  id?: string;
+  category: string;
+  metric_name: string;
+  p10?: number | null;
+  p25?: number | null;
+  p50?: number | null;
+  p75?: number | null;
+  p90?: number | null;
+  p95?: number | null;
+  mean?: number | null;
+  stddev?: number | null;
+  sample_size?: number;
+  calculated_at?: string;
+}
+
+export interface QueueBenchmarkUpdate {
+  id?: string;
+  category?: string;
+  metric_name?: string;
+  p10?: number | null;
+  p25?: number | null;
+  p50?: number | null;
+  p75?: number | null;
+  p90?: number | null;
+  p95?: number | null;
+  mean?: number | null;
+  stddev?: number | null;
+  sample_size?: number;
+  calculated_at?: string;
 }
 
 // ============================================================

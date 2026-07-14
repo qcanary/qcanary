@@ -23,6 +23,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { createAuthedSupabaseClient } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { QueueBenchmarkCard } from "@/components/dashboard/QueueBenchmarkCard";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 
@@ -662,6 +663,9 @@ function QueueDetailClientInner({ projectId, queueName }: { projectId: string; q
           </div>
         ))}
       </div>
+
+      {/* Queue Health Benchmark */}
+      <QueueBenchmarkCard projectId={projectId} queueName={queueName} />
 
       <Card>
         <CardHeader>
