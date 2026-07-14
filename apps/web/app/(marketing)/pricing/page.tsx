@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IncidentCostCalculator } from "@/components/landing/IncidentCostCalculator";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
@@ -90,6 +91,13 @@ export default function PricingPage() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Incident Cost Calculator */}
+      <section className="border-b border-border bg-gradient-to-b from-bg via-surface/[0.03] to-code-bg/10">
+        <div className="mx-auto max-w-5xl px-6 py-16 md:py-20">
+          <IncidentCostCalculator />
         </div>
       </section>
 
