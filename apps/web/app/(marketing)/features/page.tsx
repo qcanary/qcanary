@@ -91,9 +91,9 @@ const featureGroups = [
       },
       {
         icon: Lock,
-        title: "SOC 2 Ready",
-        desc: "Qcanary's architecture is designed for compliance. Credentials never leave your network, making security reviews straightforward.",
-        details: ["No third-party Redis access", "Audit-compatible design", "API-key based auth", "Encrypted data in transit"],
+        title: "SOC 2 in Progress",
+        desc: "We are working toward SOC 2 Type II certification. Our zero-trust architecture — no Redis credentials shared — provides a strong foundation for compliance.",
+        details: ["No third-party Redis access", "SOC 2 Type II audit in progress", "API-key based auth", "Encrypted data in transit"],
       },
       {
         icon: Users,

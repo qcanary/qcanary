@@ -70,7 +70,7 @@ const comparisons: Array<{
     qcanaryWins: true,
   },
   {
-    feature: "SOC 2 / compliance ready",
+    feature: "Zero-trust architecture",
     icon: <Lock className="h-4 w-4" />,
     bullBoard: "❌ Requires Redis credential sharing",
     qcanary: "✅ No credentials leave your network",
