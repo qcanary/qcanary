@@ -39,6 +39,7 @@ export default function MarketingFooter() {
               <Link href="/blog" className="text-sm text-text-muted hover:text-text-primary transition-colors">Blog</Link>
               <Link href="/about" className="text-sm text-text-muted hover:text-text-primary transition-colors">About</Link>
               <Link href="/trust" className="text-sm text-text-muted hover:text-text-primary transition-colors">Trust & Security</Link>
+              <Link href="/feedback" className="text-sm text-text-muted hover:text-text-primary transition-colors">Free Pro for Feedback</Link>
               <Link href="/contact" className="text-sm text-text-muted hover:text-text-primary transition-colors">Contact</Link>
               <Link href="/sign-up" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors">Sign Up →</Link>
             </div>

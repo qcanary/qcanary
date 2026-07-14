@@ -15,6 +15,7 @@ type MarketingNavProps = {
 
 const navLinks = [
   { href: "/compare", label: "vs Bull-Board", key: "compare" as const },
+  { href: "/feedback", label: "Free Pro for Feedback", key: "feedback" as const },
   { href: "/blog", label: "Blog", key: "blog" as const },
   { href: "/docs", label: "Docs", key: "docs" as const },
 ];

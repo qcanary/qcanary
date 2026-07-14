@@ -35,6 +35,7 @@ import { alertsRouter } from './routes/alerts';
 import { billingPublicRouter, billingRouter } from './routes/billing';
 import { usageRouter } from './routes/usage';
 import { notificationsRouter } from './routes/notifications';
+import { feedbackRouter } from './routes/feedback';
 import { clerkMiddleware } from '@clerk/express';
 import { requireDashboardAuth } from './middleware/dashboardAuth';
 import { supabase } from './lib/supabase';
@@ -152,6 +153,7 @@ app.get('/v1/health', healthCheckHandler);
 // ── Routes ─────────────────────────────────────────────────
 app.use('/v1/ingest', ingestRouter);
 app.use('/v1/notifications', notificationsRouter);
+app.use('/v1/feedback', feedbackRouter);
 app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, projectsRouter);
 app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, queuesRouter);
 app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, alertsRouter);

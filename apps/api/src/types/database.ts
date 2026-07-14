@@ -19,6 +19,7 @@ export interface Database {
       queue_metrics_hourly: { Row: QueueMetricsHourlyRow; Insert: QueueMetricsHourlyInsert; Update: QueueMetricsHourlyUpdate; Relationships: [] };
       alert_rules:         { Row: AlertRuleRow;    Insert: AlertRuleInsert;    Update: AlertRuleUpdate;         Relationships: [] };
       alert_history:       { Row: AlertHistoryRow;  Insert: AlertHistoryInsert;  Update: AlertHistoryUpdate;       Relationships: [] };
+      feedback_applications: { Row: FeedbackApplicationRow; Insert: FeedbackApplicationInsert; Update: FeedbackApplicationUpdate; Relationships: [] };
     };
     Views: Record<string, never>;
     Functions: {
@@ -333,6 +334,55 @@ export interface AlertHistoryUpdate {
   triggered_at?: string;
   resolved_at?: string | null;
   details?: Record<string, unknown> | null;
+}
+
+// ============================================================
+// FEEDBACK APPLICATION TYPES
+// ============================================================
+
+export interface FeedbackApplicationRow {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  queue_count: number;
+  use_case: string;
+  current_solution: string;
+  reason: string | null;
+  agrees_to_feedback: boolean;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FeedbackApplicationInsert {
+  id?: string;
+  name: string;
+  email: string;
+  company: string;
+  queue_count: number;
+  use_case: string;
+  current_solution: string;
+  reason?: string | null;
+  agrees_to_feedback?: boolean;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface FeedbackApplicationUpdate {
+  id?: string;
+  name?: string;
+  email?: string;
+  company?: string;
+  queue_count?: number;
+  use_case?: string;
+  current_solution?: string;
+  reason?: string | null;
+  agrees_to_feedback?: boolean;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 // ============================================================

@@ -793,10 +793,16 @@ export default async function MarketingPage() {
                 &mdash; the founder, building QCanary in public
               </p>
             </div>
-            <div className="animate-fade-in-up-delay-3 mt-8">
+            <div className="animate-fade-in-up-delay-3 flex flex-wrap items-center gap-3">
               <Link href="/trust">
                 <Button variant="secondary" className="gap-2 group">
                   Read our security architecture
+                  <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </Button>
+              </Link>
+              <Link href="/feedback">
+                <Button variant="ghost" className="gap-2 group">
+                  Want to help us improve? Get free Pro access
                   <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                 </Button>
               </Link>
