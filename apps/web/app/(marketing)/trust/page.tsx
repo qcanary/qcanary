@@ -1,11 +1,8 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import {
   Shield,
   Lock,
   EyeOff,
-  FileCode,
-  Server,
   CheckCircle2,
   Clock,
   AlertTriangle,
