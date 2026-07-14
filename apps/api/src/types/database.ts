@@ -20,6 +20,7 @@ export interface Database {
       alert_rules:         { Row: AlertRuleRow;    Insert: AlertRuleInsert;    Update: AlertRuleUpdate;         Relationships: [] };
       alert_history:       { Row: AlertHistoryRow;  Insert: AlertHistoryInsert;  Update: AlertHistoryUpdate;       Relationships: [] };
       feedback_applications: { Row: FeedbackApplicationRow; Insert: FeedbackApplicationInsert; Update: FeedbackApplicationUpdate; Relationships: [] };
+      testimonials:    { Row: TestimonialRow;    Insert: TestimonialInsert;    Update: TestimonialUpdate;    Relationships: [] };
     };
     Views: Record<string, never>;
     Functions: {
@@ -381,6 +382,61 @@ export interface FeedbackApplicationUpdate {
   reason?: string | null;
   agrees_to_feedback?: boolean;
   status?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// ============================================================
+// TESTIMONIAL TYPES
+// ============================================================
+
+export interface TestimonialRow {
+  id: string;
+  name: string;
+  title: string;
+  company: string;
+  linkedin_url: string | null;
+  testimonial: string;
+  recommendation: 'definitely' | 'probably' | 'maybe' | 'no';
+  can_display: boolean;
+  can_use_logo: boolean;
+  status: 'pending' | 'approved' | 'rejected';
+  rejection_reason: string | null;
+  edited_quote: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TestimonialInsert {
+  id?: string;
+  name: string;
+  title: string;
+  company: string;
+  linkedin_url?: string | null;
+  testimonial: string;
+  recommendation: 'definitely' | 'probably' | 'maybe' | 'no';
+  can_display?: boolean;
+  can_use_logo?: boolean;
+  status?: 'pending' | 'approved' | 'rejected';
+  rejection_reason?: string | null;
+  edited_quote?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface TestimonialUpdate {
+  id?: string;
+  name?: string;
+  title?: string;
+  company?: string;
+  linkedin_url?: string | null;
+  testimonial?: string;
+  recommendation?: 'definitely' | 'probably' | 'maybe' | 'no';
+  can_display?: boolean;
+  can_use_logo?: boolean;
+  status?: 'pending' | 'approved' | 'rejected';
+  rejection_reason?: string | null;
+  edited_quote?: string | null;
   created_at?: string;
   updated_at?: string;
 }

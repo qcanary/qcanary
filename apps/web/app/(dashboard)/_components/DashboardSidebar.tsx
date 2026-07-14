@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import * as React from "react";
-import { Bell, Folder, LayoutDashboard, Menu, Settings, X } from "lucide-react";
+import { Bell, Folder, LayoutDashboard, Menu, MessageSquareHeart, Settings, X } from "lucide-react";
 
 import { BrandLockup } from "@/components/Brand";
 import { cn } from "@/lib/utils";
@@ -106,6 +106,13 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
           active={projectId ? pathname === `/${projectId}/alerts` : false}
           disabled={!projectId || !hasProjects}
           disabledTooltip="Create a project to manage alerts."
+          onClick={onNavClick}
+        />
+        <NavLink
+          href="/testimonials"
+          icon={<MessageSquareHeart className="h-4 w-4" />}
+          label="Testimonials"
+          active={pathname === "/testimonials"}
           onClick={onNavClick}
         />
       </nav>
