@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircle2, XCircle, Eye, Copy, Trash2, Shield } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, XCircle, Eye, Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
