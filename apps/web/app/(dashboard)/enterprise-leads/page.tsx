@@ -14,7 +14,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 
 type InquiryStatus = "new" | "contacted" | "qualified" | "closed-won" | "closed-lost";
 
