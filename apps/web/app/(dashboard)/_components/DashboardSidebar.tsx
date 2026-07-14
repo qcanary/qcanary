@@ -116,10 +116,10 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
           onClick={onNavClick}
         />
         <NavLink
-          href="/enterprise"
+          href="/enterprise-leads"
           icon={<Building className="h-4 w-4" />}
           label="Enterprise Leads"
-          active={pathname === "/enterprise"}
+          active={pathname === "/enterprise-leads"}
           onClick={onNavClick}
         />
       </nav>
