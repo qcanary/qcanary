@@ -21,6 +21,7 @@ export interface Database {
       alert_history:       { Row: AlertHistoryRow;  Insert: AlertHistoryInsert;  Update: AlertHistoryUpdate;       Relationships: [] };
       feedback_applications: { Row: FeedbackApplicationRow; Insert: FeedbackApplicationInsert; Update: FeedbackApplicationUpdate; Relationships: [] };
       testimonials:    { Row: TestimonialRow;    Insert: TestimonialInsert;    Update: TestimonialUpdate;    Relationships: [] };
+      enterprise_inquiries: { Row: EnterpriseInquiryRow; Insert: EnterpriseInquiryInsert; Update: EnterpriseInquiryUpdate; Relationships: [] };
     };
     Views: Record<string, never>;
     Functions: {
@@ -437,6 +438,61 @@ export interface TestimonialUpdate {
   status?: 'pending' | 'approved' | 'rejected';
   rejection_reason?: string | null;
   edited_quote?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// ============================================================
+// ENTERPRISE INQUIRY TYPES
+// ============================================================
+
+export interface EnterpriseInquiryRow {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  team_size: string;
+  industry: string;
+  current_setup: string;
+  reason: string | null;
+  deployment: string | null;
+  timeline: string | null;
+  status: string;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EnterpriseInquiryInsert {
+  id?: string;
+  name: string;
+  email: string;
+  company: string;
+  team_size: string;
+  industry: string;
+  current_setup: string;
+  reason?: string | null;
+  deployment?: string | null;
+  timeline?: string | null;
+  status?: string;
+  notes?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface EnterpriseInquiryUpdate {
+  id?: string;
+  name?: string;
+  email?: string;
+  company?: string;
+  team_size?: string;
+  industry?: string;
+  current_setup?: string;
+  reason?: string | null;
+  deployment?: string | null;
+  timeline?: string | null;
+  status?: string;
+  notes?: string | null;
   created_at?: string;
   updated_at?: string;
 }

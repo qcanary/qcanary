@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import * as React from "react";
-import { Bell, Folder, LayoutDashboard, Menu, MessageSquareHeart, Settings, X } from "lucide-react";
+import { Bell, Building, Folder, LayoutDashboard, Menu, MessageSquareHeart, Settings, X } from "lucide-react";
 
 import { BrandLockup } from "@/components/Brand";
 import { cn } from "@/lib/utils";
@@ -113,6 +113,13 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
           icon={<MessageSquareHeart className="h-4 w-4" />}
           label="Testimonials"
           active={pathname === "/testimonials"}
+          onClick={onNavClick}
+        />
+        <NavLink
+          href="/enterprise"
+          icon={<Building className="h-4 w-4" />}
+          label="Enterprise Leads"
+          active={pathname === "/enterprise"}
           onClick={onNavClick}
         />
       </nav>

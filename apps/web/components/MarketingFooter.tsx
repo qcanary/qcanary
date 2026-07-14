@@ -28,6 +28,7 @@ export default function MarketingFooter() {
             <div className="mt-4 flex flex-col gap-2.5">
               <Link href="/features" className="text-sm text-text-muted hover:text-text-primary transition-colors">Features</Link>
               <Link href="/pricing" className="text-sm text-text-muted hover:text-text-primary transition-colors">Pricing</Link>
+              <Link href="/enterprise" className="text-sm text-text-muted hover:text-text-primary transition-colors">Enterprise</Link>
               <Link href="/docs" className="text-sm text-text-muted hover:text-text-primary transition-colors">Documentation</Link>
               <Link href="/compare" className="text-sm text-text-muted hover:text-text-primary transition-colors">vs Bull-Board</Link>
             </div>
