@@ -9,14 +9,24 @@ import { Button } from "@/components/ui/button";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 export const metadata: Metadata = {
-  title: "Qcanary vs Bull-Board — BullMQ Monitoring Comparison",
+  title: "Compare | QCanary",
   description:
-    "Compare Qcanary with Bull-Board: features, security model, alerting, and pricing. See why teams choose Qcanary for production BullMQ monitoring.",
+    "See how QCanary compares to Bull Board and other queue monitoring tools. Compare features, security model, alerting, and pricing side by side.",
   alternates: {
     canonical: `${siteUrl}/compare`,
   },
   openGraph: {
+    title: "Compare | QCanary",
+    description:
+      "See how QCanary compares to Bull Board and other queue monitoring tools. Compare features, security model, alerting, and pricing side by side.",
     url: `${siteUrl}/compare`,
+    images: ["https://qcanary.dev/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Compare | QCanary",
+    description:
+      "See how QCanary compares to Bull Board — zero-trust BullMQ monitoring vs traditional Redis-based monitoring.",
   },
 };
 

@@ -9,14 +9,24 @@ import { Button } from "@/components/ui/button";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About | QCanary",
   description:
-    "Qcanary helps engineering teams monitor BullMQ queues without sharing Redis credentials. Open-source agent, managed dashboard, zero-trust by design.",
+    "Learn about QCanary's mission to make queue monitoring secure by default. Zero-trust BullMQ monitoring, open-source agent, built for production teams.",
   alternates: {
     canonical: `${siteUrl}/about`,
   },
   openGraph: {
+    title: "About | QCanary",
+    description:
+      "Learn about QCanary's mission to make queue monitoring secure by default. Zero-trust BullMQ monitoring, open-source agent, built for production teams.",
     url: `${siteUrl}/about`,
+    images: ["https://qcanary.dev/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About | QCanary",
+    description:
+      "Learn about QCanary's mission to make queue monitoring secure by default.",
   },
 };
 

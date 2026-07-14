@@ -7,15 +7,8 @@ import { Button } from "@/components/ui/button";
 
 /**
  * Global 404 page.
- *
- * Next.js renders this file (via not-found.tsx convention) for any URL that
- * does not match a page or API route. The framework automatically sets the
- * HTTP response status to 404 when this component is the matched route.
- *
- * Known caveat: If a request is intercepted by Cloudflare's CDN before
- * reaching Vercel (e.g., a non-existent path triggering a WAF rule), the
- * Cloudflare challenge page is served instead of this component. That is
- * a CDN config issue, not a code issue.
+ * Next.js automatically sets HTTP 404 status when this component is rendered.
+ * Title inherits from root layout ("404 | QCanary").
  */
 export default function NotFoundPage() {
   return (

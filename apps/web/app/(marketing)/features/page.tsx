@@ -19,14 +19,24 @@ import { Button } from "@/components/ui/button";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 export const metadata: Metadata = {
-  title: "Features",
+  title: "Features | QCanary",
   description:
-    "Explore Qcanary's features: zero-trust BullMQ monitoring, real-time dashboards, Slack/email/webhook alerts, job debugging, and team collaboration — all without exposing your infrastructure.",
+    "Explore QCanary's zero-trust BullMQ monitoring features: real-time dashboards, Slack/email/webhook alerting, team access controls, job debugging, and more — all without exposing your Redis credentials.",
   alternates: {
     canonical: `${siteUrl}/features`,
   },
   openGraph: {
+    title: "Features | QCanary",
+    description:
+      "Explore QCanary's zero-trust BullMQ monitoring features: real-time dashboards, Slack/email/webhook alerting, team access controls, and more.",
     url: `${siteUrl}/features`,
+    images: ["https://qcanary.dev/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Features | QCanary",
+    description:
+      "Explore QCanary's zero-trust BullMQ monitoring features: real-time dashboards, alerting, team access, and more.",
   },
 };
 

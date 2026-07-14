@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from './dashboardAuth';
+import { errorResponse } from '../lib/responseUtils';
 
 export type PlanName = 'free' | 'starter' | 'pro';
 
@@ -44,13 +45,6 @@ export function getPlanLimits(plan: string | null): PlanLimits {
   return PLAN_LIMITS.free;
 }
 
-function errorResponse(res: Response, code: string, message: string, status = 403): void {
-  res.status(status).json({
-    success: false,
-    error: { code, message },
-  });
-}
-
 async function getTeamPlan(teamId: string): Promise<TeamPlanRow | null> {
   const { data, error } = await supabase
     .from('teams')
@@ -73,13 +67,13 @@ export async function enforceProjectLimit(
   const teamId = typeof (req as DashboardAuthedRequest).teamId === 'string' ? (req as DashboardAuthedRequest).teamId : '';
 
   if (!teamId) {
-    errorResponse(res, 'UNAUTHORIZED', 'Unauthorized', 401);
+    errorResponse(res, 401, 'UNAUTHORIZED', 'Unauthorized');
     return;
   }
 
   const team = await getTeamPlan(teamId);
   if (!team) {
-    errorResponse(res, 'TEAM_NOT_FOUND', 'Team not found', 404);
+    errorResponse(res, 404, 'TEAM_NOT_FOUND', 'Team not found');
     return;
   }
 
@@ -95,13 +89,14 @@ export async function enforceProjectLimit(
     .eq('team_id', teamId);
 
   if (error) {
-    errorResponse(res, 'PLAN_LIMIT_CHECK_FAILED', 'Failed to validate project limit', 500);
+    errorResponse(res, 500, 'PLAN_LIMIT_CHECK_FAILED', 'Failed to validate project limit');
     return;
   }
 
   if ((count ?? 0) >= limits.maxProjects) {
     errorResponse(
       res,
+      403,
       'PLAN_LIMIT_EXCEEDED',
       `Project limit reached for plan ${team.plan}. Upgrade to create more projects.`
     );

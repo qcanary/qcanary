@@ -2,18 +2,12 @@ import type { NextFunction, Request, Response } from 'express';
 import { getAuth } from '@clerk/express';
 import { supabase } from '../lib/supabase';
 import { insertRow } from '../lib/typedSupabase';
+import { errorResponse } from '../lib/responseUtils';
 
 export interface DashboardAuthedRequest extends Request {
   clerkUserId?: string;
   clerkOrgId?: string;
   teamId?: string;
-}
-
-function errorResponse(res: Response, statusCode: number, code: string, message: string): void {
-  res.status(statusCode).json({
-    success: false,
-    error: { code, message },
-  });
 }
 
 async function getOrCreateTeamIdForOrg(orgId: string): Promise<string | null> {

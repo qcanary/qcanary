@@ -9,14 +9,24 @@ import { Button } from "@/components/ui/button";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact | QCanary",
   description:
-    "Get in touch with the Qcanary team. Support, feedback, partnerships — we'd love to hear from you.",
+    "Get in touch with the QCanary team for support, partnerships, or security inquiries. We aim to respond within 24 hours.",
   alternates: {
     canonical: `${siteUrl}/contact`,
   },
   openGraph: {
+    title: "Contact | QCanary",
+    description:
+      "Get in touch with the QCanary team for support, partnerships, or security inquiries.",
     url: `${siteUrl}/contact`,
+    images: ["https://qcanary.dev/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact | QCanary",
+    description:
+      "Get in touch with the QCanary team for support, partnerships, or security inquiries.",
   },
 };
 
