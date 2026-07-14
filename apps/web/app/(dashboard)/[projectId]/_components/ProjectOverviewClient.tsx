@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { createAuthedSupabaseClient } from "@/lib/supabaseClient";
+import { trackEvent } from "@/components/PostHogProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 
@@ -44,9 +45,18 @@ function formatNumber(value: number): string {
 
 function formatPercent(value: number): string {
   return `${value.toFixed(2)}%`;
-}
+}  function DashboardViewTracker({ projectId }: { projectId: string }) {
+    const tracked = React.useRef(false);
+    React.useEffect(() => {
+      if (!tracked.current && queues && queues.length > 0) {
+        tracked.current = true;
+        trackEvent("dashboard_viewed", { projectId, queueCount: queues.length });
+      }
+    }, [queues, projectId]);
+    return null;
+  }
 
-function formatRelativeOrIso(iso: string | null): string {
+  function formatRelativeOrIso(iso: string | null): string {
   if (!iso) return "—";
   const ts = new Date(iso).getTime();
   if (!Number.isFinite(ts)) return iso;
@@ -240,6 +250,10 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
           </p>
         </div>
         <div className="text-xs text-text-muted" aria-live="polite">{loading ? "Loading…" : "Live"}</div>
+      </div>
+
+      {/* Conversion funnel tracking */}
+      <DashboardViewTracker projectId={projectId} />
       </div>
 
       {error && (

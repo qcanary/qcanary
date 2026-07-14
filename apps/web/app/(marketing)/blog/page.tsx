@@ -31,7 +31,7 @@ export default async function BlogPage() {
 
       <section className="mx-auto w-full max-w-5xl px-6 py-14">
         <div className="mb-8 max-w-2xl">
-          <h1 className="text-4xl font-semibold tracking-tight">QCanary Blog</h1>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">QCanary Blog</h1>
           <p className="mt-3 text-text-muted">
             Practical notes on BullMQ monitoring, Redis-safe observability, and production queue operations.
           </p>

@@ -53,7 +53,7 @@ export default function PricingPage() {
           <Badge variant="outline" className="mb-4 border-accent/30 text-accent">
             Pricing
           </Badge>
-          <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
             Simple, usage-based pricing
           </h1>
           <p className="mt-3 max-w-2xl mx-auto text-text-muted">
@@ -97,20 +97,20 @@ export default function PricingPage() {
       <section className="border-b border-border bg-gradient-to-br from-bg via-surface/10 to-code-bg">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
           {/* Starter — highlighted */}
-          <div className="relative mb-5 overflow-hidden rounded-2xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-8 md:p-10">
+          <div className="relative mb-5 overflow-hidden rounded-2xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-6 md:p-10">
             <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-accent/10 blur-2xl" />
             <div className="relative">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-semibold">Starter</h2>
+                    <h2 className="text-xl font-semibold md:text-2xl">Starter</h2>
                     <Badge variant="success">Most Popular</Badge>
                   </div>
                   <p className="mt-1 text-sm text-text-muted">For growing teams that need alerting</p>
                 </div>
                 <div className="text-right">
                   <div>
-                    <span className="text-4xl font-bold">$9</span>
+                    <span className="text-3xl font-bold md:text-4xl">$9</span>
                     <span className="text-text-muted">/mo</span>
                   </div>
                   <div className="mt-1 text-xs text-text-muted">
@@ -151,9 +151,9 @@ export default function PricingPage() {
           {/* Free + Pro side-by-side */}
           <div className="grid gap-4 md:grid-cols-2">
             <div className="relative rounded-xl border border-border bg-surface/30 p-6">
-              <h2 className="text-lg font-semibold">Free</h2>
+              <h2 className="text-base font-semibold md:text-lg">Free</h2>
               <div className="mt-1">
-                <span className="text-2xl font-bold">$0</span>
+                <span className="text-xl font-bold md:text-2xl">$0</span>
                 <span className="text-text-muted">/mo</span>
               </div>
               <p className="mt-0.5 text-xs text-text-muted">Personal projects</p>
@@ -186,9 +186,9 @@ export default function PricingPage() {
                   PH20 = 20% off
                 </Badge>
               </div>
-              <h2 className="text-lg font-semibold">Pro</h2>
+              <h2 className="text-base font-semibold md:text-lg">Pro</h2>
               <div className="mt-1">
-                <span className="text-2xl font-bold">$24</span>
+                <span className="text-xl font-bold md:text-2xl">$24</span>
                 <span className="text-text-muted">/mo</span>
               </div>
               <p className="mt-0.5 text-xs text-text-muted">Production at scale</p>
@@ -306,7 +306,7 @@ export default function PricingPage() {
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_70%)]" />
         <div className="mx-auto flex max-w-6xl flex-col items-center px-6 py-24 text-center md:py-32">
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">
             Start monitoring your queues <span className="text-gradient">in 3 lines</span>
           </h2>
           <p className="mt-4 max-w-xl text-base text-text-muted">

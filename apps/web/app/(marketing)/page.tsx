@@ -143,7 +143,7 @@ export default async function MarketingPage() {
           <div className="pointer-events-none absolute inset-0 bg-dot-grid" />
           <div className="mx-auto mb-14 max-w-2xl text-center animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-red-500/30 text-red-400">The Problem</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Sharing Redis is a Security Risk</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Sharing Redis is a Security Risk</h2>
             <p className="mt-3 text-text-muted">
               Every queue monitoring dashboard that asks for your Redis URL creates an attack
               surface that your security team will flag.
@@ -152,7 +152,7 @@ export default async function MarketingPage() {
 
           {/* Problem — full width with stats-style emphasis */}
           <div className="mx-auto mb-16 max-w-4xl animate-fade-in-up-delay-1">
-            <div className="rounded-2xl border border-red-500/15 bg-gradient-to-br from-red-500/5 to-code-bg p-8 shadow-lg shadow-red-500/5 md:p-10">
+            <div className="rounded-2xl border border-red-500/15 bg-gradient-to-br from-red-500/5 to-code-bg p-5 shadow-lg shadow-red-500/5 md:p-10">
               <div className="mb-2 flex items-center gap-2">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/20">
                   <span className="text-xs font-bold text-red-400">!</span>
@@ -242,7 +242,7 @@ export default async function MarketingPage() {
           <div className="pointer-events-none absolute -right-20 bottom-[-40px] h-60 w-60 rounded-full bg-accent/[0.02] animate-float-delayed blur-3xl" />
           <div className="mb-10 max-w-2xl text-center animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Architecture</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">How It Works</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">How It Works</h2>
             <p className="mt-3 text-text-muted">
               A lightweight agent inside your worker process streams job metadata to QCanary over HTTPS.
               Redis never leaves your network.
@@ -323,7 +323,7 @@ export default async function MarketingPage() {
         <div className="relative mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-10 max-w-2xl animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-amber-500/30 text-amber-400">Comparison</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Why teams choose QCanary over Bull Board</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Why teams choose QCanary over Bull Board</h2>
             <p className="mt-3 text-text-muted">
               Bull Board is great for local debugging, but production monitoring demands
               secure infrastructure, alerting, and zero-config deployments.
@@ -391,7 +391,7 @@ export default async function MarketingPage() {
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-12 max-w-2xl animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Community</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Open source and community driven</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Open source and community driven</h2>
             <p className="mt-3 text-text-muted">
               The agent package is MIT-licensed and available on GitHub and npm.
               Built in the open with contributions from the BullMQ ecosystem.
@@ -467,6 +467,38 @@ export default async function MarketingPage() {
             </div>
           </div>
 
+          {/* Social proof badges */}
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <a
+              href="https://github.com/qcanary/qcanary"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/40 px-3.5 py-1.5 text-xs text-text-muted hover:border-accent/30 hover:text-accent transition-all"
+            >
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.405 1.02.006 2.047.139 3.006.405 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+              GitHub
+              <span className="font-mono text-[10px] opacity-60">@qcanary/qcanary</span>
+            </a>
+            <a
+              href="https://www.npmjs.com/package/@qcanary/agent"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/40 px-3.5 py-1.5 text-xs text-text-muted hover:border-accent/30 hover:text-accent transition-all"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v4.001H12V15H9.999v-.002h-1.33v-.001h-1v.001h-1v.001h-.002v-1.334h1.335v-2.667H9.333V14h1.333v-.002h.002v-4h1.334v4.002zm6.667 0v1.336H16v-5.335h-2.667v-1.33h8v1.33h-2.666v5.335h-1.334v-5.335h-1.333v5.335h-1.334v-6.666H20l.001 5.335h-1.332v1.33h-1v.001h-1.334v-1.334H20V10.668h-2.667z" />
+              </svg>
+              npm
+              <span className="font-mono text-[10px] opacity-60">@qcanary/agent</span>
+            </a>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface/40 px-3.5 py-1.5 text-xs text-text-muted">
+              <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+              MIT License
+            </span>
+          </div>
+
           {/* Quality signals row — no live counters */}
           <div className="mb-8 grid gap-4 sm:grid-cols-3">
             <div className="flex items-center gap-4 rounded-xl border border-border bg-surface/40 px-5 py-4">
@@ -516,7 +548,7 @@ export default async function MarketingPage() {
       <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <div className="mb-10 max-w-2xl">
           <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Dashboard</Badge>
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">See it in action</h2>
+          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">See it in action</h2>
           <p className="mt-3 text-text-muted">
             Monitor queue health, inspect failures, and track trends from one dashboard.
           </p>
@@ -537,7 +569,7 @@ export default async function MarketingPage() {
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-12 max-w-2xl animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Features</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Everything you need to monitor queues</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Everything you need to monitor queues</h2>
             <p className="mt-3 text-text-muted">
               Built for developers who already run BullMQ and need reliable operations visibility.
             </p>
@@ -656,7 +688,7 @@ export default async function MarketingPage() {
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-12 max-w-2xl animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Testimonials</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Loved by engineering teams</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Loved by engineering teams</h2>
             <p className="mt-3 text-text-muted">
               From early-stage startups to production deployments, teams trust QCanary for queue monitoring.
             </p>
@@ -740,7 +772,7 @@ export default async function MarketingPage() {
           <div className="pointer-events-none absolute inset-0 bg-dot-grid" />
           <div className="mb-10 max-w-2xl">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Pricing</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Simple, usage-based pricing</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Simple, usage-based pricing</h2>
             <p className="mt-3 text-text-muted">
               Start free and upgrade when alerting and deeper history become essential.
             </p>
@@ -756,14 +788,14 @@ export default async function MarketingPage() {
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3">
-                      <h3 className="text-2xl font-semibold">Starter</h3>
+                      <h3 className="text-xl font-semibold md:text-2xl">Starter</h3>
                       <Badge variant="success">Most Popular</Badge>
                     </div>
                     <p className="mt-1 text-sm text-text-muted">For growing teams that need alerting</p>
                   </div>
                   <div className="text-right">
                     <div>
-                      <span className="text-4xl font-bold">$9</span>
+                      <span className="text-3xl font-bold md:text-4xl">$9</span>
                       <span className="text-text-muted">/mo</span>
                     </div>
                     <div className="mt-2">
@@ -801,9 +833,9 @@ export default async function MarketingPage() {
             {/* Free + Pro — compact side-by-side */}
             <div className="grid gap-4 md:grid-cols-2">
               <div className="relative rounded-xl border border-border bg-surface/30 p-6">
-                <h3 className="text-lg font-semibold">Free</h3>
+                <h3 className="text-base font-semibold md:text-lg">Free</h3>
                 <div className="mt-1">
-                  <span className="text-2xl font-bold">$0</span>
+                  <span className="text-xl font-bold md:text-2xl">$0</span>
                   <span className="text-text-muted">/mo</span>
                 </div>
                 <p className="mt-0.5 text-xs text-text-muted">Personal projects</p>
@@ -830,9 +862,9 @@ export default async function MarketingPage() {
                 </Link>
               </div>
               <div className="relative rounded-xl border border-border bg-surface/30 p-6">
-                <h3 className="text-lg font-semibold">Pro</h3>
+                <h3 className="text-base font-semibold md:text-lg">Pro</h3>
                 <div className="mt-1">
-                  <span className="text-2xl font-bold">$24</span>
+                  <span className="text-xl font-bold md:text-2xl">$24</span>
                   <span className="text-text-muted">/mo</span>
                 </div>
                 <p className="mt-0.5 text-xs text-text-muted">Production at scale</p>
@@ -906,7 +938,7 @@ export default async function MarketingPage() {
         <div className="mx-auto w-full max-w-3xl px-6 py-16 md:py-20">
           <div className="mb-10 max-w-2xl animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">FAQ</Badge>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Frequently Asked Questions</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Frequently Asked Questions</h2>
             <p className="mt-3 text-text-muted">
               Quick answers to the most common questions about QCanary.
             </p>
@@ -1006,7 +1038,7 @@ export default async function MarketingPage() {
               Get started in 3 lines
             </Badge>
           </div>
-          <h2 className="animate-fade-in-up-delay-1 text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
+          <h2 className="animate-fade-in-up-delay-1 text-[clamp(1.75rem,5vw,3.75rem)] font-semibold tracking-tight md:text-5xl lg:text-6xl">
             Queue monitoring, <span className="text-gradient">reimagined.</span>
           </h2>
           <p className="animate-fade-in-up-delay-2 mt-4 max-w-xl text-base text-text-muted">

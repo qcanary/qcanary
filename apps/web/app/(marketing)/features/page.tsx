@@ -115,7 +115,7 @@ export default function FeaturesPage() {
         <div className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
         <div className="mx-auto max-w-6xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-fade-in-up">Features</Badge>
-          <h1 className="animate-fade-in-up-delay-1 text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
+          <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-6xl">
             Everything you need to <span className="text-gradient">monitor queues</span>
           </h1>
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-2xl text-lg text-text-muted">
@@ -165,7 +165,7 @@ export default function FeaturesPage() {
       <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-[800px] -translate-x-1/2 -translate-y-1/2 animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_70%)]" />
         <div className="mx-auto flex max-w-6xl flex-col items-center px-6 py-20 text-center md:py-24">
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Ready to get started?</h2>
+          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Ready to get started?</h2>
           <p className="mt-3 max-w-lg text-text-muted">No Redis credentials required. 3-line setup. 10 minutes to your first event.</p>
           <div className="mt-8 flex gap-4">
             <Link href="/sign-up"><Button size="lg">Start Free</Button></Link>

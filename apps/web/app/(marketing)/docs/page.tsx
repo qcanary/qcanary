@@ -86,8 +86,7 @@ function CodeBlock({ children }: { children: string }) {
 export default function DocsPage() {
   return (
     <>
-      <MarketingNav showCompare={false} showBlog={false} />
-      <div className="mx-auto w-full max-w-5xl space-y-8 px-6 py-10">
+      <MarketingNav showCompare={false} showBlog={false} />        <div className="mx-auto w-full max-w-5xl space-y-8 px-4 py-10 md:px-6">
       {/* ── Header ───────────────────────────────────────────── */}
       <div className="space-y-3">
         <BrandLockup
@@ -96,7 +95,7 @@ export default function DocsPage() {
           className="w-fit"
           labelClassName="text-sm uppercase tracking-[0.22em] text-text-muted"
         />
-        <h1 className="text-4xl font-semibold tracking-tight">Qcanary Docs</h1>
+        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Qcanary Docs</h1>
         <p className="text-text-muted">
           Monitor BullMQ queues with alerts and historical health data — without sharing Redis credentials.
         </p>

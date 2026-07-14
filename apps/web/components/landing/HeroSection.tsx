@@ -55,11 +55,11 @@ export function HeroSection() {
               Free tier available
             </span>
           </div>
-          <h1 className="animate-fade-in-up-delay-1 text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
+          <h1 className="animate-fade-in-up-delay-1 text-[clamp(1.75rem,5vw,3.75rem)] font-semibold tracking-tight md:text-5xl lg:text-6xl">
             Monitor BullMQ{" "}
             <span className="text-gradient">Without&nbsp;Exposing&nbsp;Redis.</span>
           </h1>
-          <p className="animate-fade-in-up-delay-2 mt-5 text-base leading-relaxed text-text-muted md:text-lg lg:text-xl">
+          <p className="animate-fade-in-up-delay-2 mt-5 text-sm leading-relaxed text-text-muted md:text-base lg:text-xl">
             The lightweight agent runs inside your worker process streaming job metadata over HTTPS.
             <span className="mt-2 block">Your Redis stays private. No firewall changes. Alert-ready in minutes.</span>
           </p>
@@ -78,7 +78,7 @@ export function HeroSection() {
             </Link>
           </div>
           {/* Trust bar */}
-          <div className="animate-fade-in-up-delay-4 mt-10 flex flex-wrap items-center gap-6 text-xs text-text-muted">
+          <div className="animate-fade-in-up-delay-4 mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-text-muted">
             <span className="flex items-center gap-1.5">
               <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
               MIT-licensed open source
@@ -93,7 +93,7 @@ export function HeroSection() {
             </span>
           </div>
           {/* Social proof bar */}
-          <div className="animate-fade-in-up-delay-5 mt-6 flex items-center gap-4 rounded-lg border border-border bg-surface/30 px-4 py-2.5">
+          <div className="animate-fade-in-up-delay-5 mt-6 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface/30 px-4 py-2.5">
             <div className="flex -space-x-2">
               {["R","E","M","J"].map((initial, i) => (
                 <div key={i} className="h-6 w-6 rounded-full border border-border bg-gradient-to-br from-accent/30 to-blue-500/30 flex items-center justify-center text-[8px] font-medium text-text-primary">
@@ -112,7 +112,7 @@ export function HeroSection() {
 
         {/* Right: Terminal code block */}
         <div className="w-full max-w-xl flex-1 md:max-w-none">
-          <div className="animate-scale-in overflow-hidden rounded-xl border border-border bg-[#0C0C0C] shadow-lg shadow-accent/5" translate="no">
+          <div className="animate-scale-in overflow-hidden rounded-xl border border-border bg-[#0C0C0C] shadow-lg shadow-accent/5 overflow-x-auto" translate="no">
             {/* Terminal header */}
             <div className="flex items-center gap-1.5 border-b border-border bg-[#111] px-4 py-2.5">
               <div className="h-3 w-3 rounded-full bg-red-500/70" />

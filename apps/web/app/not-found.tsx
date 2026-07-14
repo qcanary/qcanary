@@ -5,6 +5,18 @@ import Link from "next/link";
 import { BrandLockup } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Global 404 page.
+ *
+ * Next.js renders this file (via not-found.tsx convention) for any URL that
+ * does not match a page or API route. The framework automatically sets the
+ * HTTP response status to 404 when this component is the matched route.
+ *
+ * Known caveat: If a request is intercepted by Cloudflare's CDN before
+ * reaching Vercel (e.g., a non-existent path triggering a WAF rule), the
+ * Cloudflare challenge page is served instead of this component. That is
+ * a CDN config issue, not a code issue.
+ */
 export default function NotFoundPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-bg px-6 text-text-primary">

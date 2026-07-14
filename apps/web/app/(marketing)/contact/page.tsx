@@ -59,7 +59,7 @@ export default function ContactPage() {
       <section className="border-b border-border">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-fade-in-up">Contact</Badge>
-          <h1 className="animate-fade-in-up-delay-1 text-4xl font-semibold tracking-tight md:text-5xl">
+          <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
             Get in touch
           </h1>
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-xl text-lg text-text-muted">

@@ -166,7 +166,7 @@ export default function ComparePage() {
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent">
             Comparison
           </Badge>
-          <h1 className="text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl lg:text-6xl">
             Qcanary vs Bull-Board
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-text-muted">
@@ -192,7 +192,7 @@ export default function ComparePage() {
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {/* Bull-Board column */}
-            <div className="rounded-xl border border-border bg-surface/30 p-6 md:p-8">
+            <div className="rounded-xl border border-border bg-surface/30 p-5 md:p-8">
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
                   <span className="text-lg font-bold text-blue-400">B</span>
@@ -329,7 +329,7 @@ export default function ComparePage() {
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent">
             Get started in 3 lines
           </Badge>
-          <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-2xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
             Ready to upgrade your queue monitoring?
           </h2>
           <p className="mt-4 max-w-xl text-base text-text-muted">

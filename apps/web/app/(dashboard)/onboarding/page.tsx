@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { HelpCircle } from "lucide-react";
 import { useTeamProjects } from "../_providers/TeamProjectProvider";
 import { trackEvent } from "@/components/PostHogProvider";
 
@@ -267,7 +268,16 @@ const monitor = new QueueMonitor({
         <CardContent>
           <form className="grid gap-4" onSubmit={createProjectAndKey}>
             <div className="grid gap-2">
-              <Label htmlFor="projectName">Project name</Label>
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="projectName">Project name</Label>
+                <span
+                  className="inline-flex items-center justify-center rounded-full text-text-muted cursor-help"
+                  title="A descriptive name to identify this project in your dashboard. Example: qcanary-prod"
+                  aria-label="Help: Project name"
+                >
+                  <HelpCircle className="h-3.5 w-3.5" />
+                </span>
+              </div>
               <Input
                 id="projectName"
                 value={projectName}
@@ -277,7 +287,16 @@ const monitor = new QueueMonitor({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="environment">Environment</Label>
+              <div className="flex items-center gap-1.5">
+                <Label htmlFor="environment">Environment</Label>
+                <span
+                  className="inline-flex items-center justify-center rounded-full text-text-muted cursor-help"
+                  title="The deployment stage — typically production, staging, or development. Events are tagged for filtering."
+                  aria-label="Help: Environment"
+                >
+                  <HelpCircle className="h-3.5 w-3.5" />
+                </span>
+              </div>
               <Input
                 id="environment"
                 value={environment}
@@ -304,7 +323,7 @@ const monitor = new QueueMonitor({
           </form>
         </CardContent>
         <CardFooter className="text-sm text-text-muted">
-          You’ll only see the plaintext API key once. Store it as an environment variable.
+          You&rsquo;ll only see the plaintext API key once. Store it as an environment variable.
         </CardFooter>
       </Card>
 

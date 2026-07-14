@@ -46,7 +46,7 @@ export default function AboutPage() {
       <section className="border-b border-border">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-fade-in-up">About</Badge>
-          <h1 className="animate-fade-in-up-delay-1 text-4xl font-semibold tracking-tight md:text-5xl">
+          <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
             Monitoring BullMQ queues,{" "}
             <span className="text-gradient">without the risk.</span>
           </h1>
@@ -98,7 +98,7 @@ export default function AboutPage() {
 
       <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
         <div className="mx-auto flex max-w-6xl flex-col items-center px-6 py-20 text-center md:py-24">
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Built for the BullMQ community</h2>
+          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Built for the BullMQ community</h2>
           <p className="mt-3 max-w-lg text-text-muted">Open source agent. Managed dashboard. No Redis credentials required.</p>
           <div className="mt-8 flex gap-4">
             <Link href="/sign-up"><Button size="lg">Start Free</Button></Link>
