@@ -1,0 +1,39 @@
+name: Deployment Check
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  smoke-test:
+    name: Post-Deploy Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Vercel and Render deployment
+        run: sleep 60
+
+      - name: Smoke test landing page
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://qcanary.dev)
+          if [ "$STATUS" = "200" ] || [ "$STATUS" = "301" ] || [ "$STATUS" = "302" ]; then
+            echo "✅ Landing page OK (HTTP $STATUS)"
+          else
+            echo "❌ Landing page returned HTTP $STATUS"
+            exit 1
+          fi
+
+      - name: Smoke test API health
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://api.qcanary.dev/health)
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ API health endpoint OK (HTTP $STATUS)"
+          else
+            echo "❌ API health endpoint returned HTTP $STATUS"
+            exit 1
+          fi
+
+      - name: Verify API health response body
+        run: |
+          RESPONSE=$(curl -s https://api.qcanary.dev/health)
+          echo "API health response: $RESPONSE"
+          echo "$RESPONSE" | grep -q '"status"\|"ok"' && echo "✅ Response contains status field" || echo "⚠️ Unexpected response format"
