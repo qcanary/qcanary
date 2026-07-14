@@ -65,7 +65,7 @@ function PostCard({ post }: { post: BlogPostMeta }) {
 
 export default async function BlogPage() {
   const posts = await getAllBlogPosts();
-  const allTags = [...new Set(posts.flatMap((p) => p.tags))].sort();
+  const allTags = Array.from(new Set(posts.flatMap((p) => p.tags))).sort();
 
   return (
     <main id="main-content" className="min-h-screen bg-bg text-text-primary">
