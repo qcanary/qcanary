@@ -45,18 +45,9 @@ function formatNumber(value: number): string {
 
 function formatPercent(value: number): string {
   return `${value.toFixed(2)}%`;
-}  function DashboardViewTracker({ projectId }: { projectId: string }) {
-    const tracked = React.useRef(false);
-    React.useEffect(() => {
-      if (!tracked.current && queues && queues.length > 0) {
-        tracked.current = true;
-        trackEvent("dashboard_viewed", { projectId, queueCount: queues.length });
-      }
-    }, [queues, projectId]);
-    return null;
-  }
+}
 
-  function formatRelativeOrIso(iso: string | null): string {
+function formatRelativeOrIso(iso: string | null): string {
   if (!iso) return "—";
   const ts = new Date(iso).getTime();
   if (!Number.isFinite(ts)) return iso;
@@ -98,6 +89,15 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
       router.push("/sign-in");
     }
   }, [isSignedIn, router]);
+
+  // Track dashboard view for conversion funnel
+  const trackedDashboard = React.useRef(false);
+  React.useEffect(() => {
+    if (!trackedDashboard.current && queues && queues.length > 0) {
+      trackedDashboard.current = true;
+      trackEvent("dashboard_viewed", { projectId, queueCount: queues.length });
+    }
+  }, [queues, projectId]);
 
   const refreshQueues = React.useCallback(async () => {
     const res = await fetch(`/api/v1/projects/${projectId}/queues`, { cache: "no-store" });
@@ -250,10 +250,6 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
           </p>
         </div>
         <div className="text-xs text-text-muted" aria-live="polite">{loading ? "Loading…" : "Live"}</div>
-      </div>
-
-      {/* Conversion funnel tracking */}
-      <DashboardViewTracker projectId={projectId} />
       </div>
 
       {error && (
