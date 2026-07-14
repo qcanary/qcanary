@@ -9,36 +9,38 @@ import {
   Text,
 } from "@react-email/components";
 
-export default function UpgradeEmail() {
+export default function FinalNudgeEmail() {
   return (
     <Html>
       <Head />
-      <Preview>Your queues are running smoothly. Ready to upgrade?</Preview>
+      <Preview>Last chance: 50% off your first year</Preview>
       <Body style={body}>
         <Container style={container}>
-          <Heading style={heading}>You've been using QCanary for a week.</Heading>
+          <Heading style={heading}>We're offering 50% off Team or Business for your first year.</Heading>
           <Text style={text}>
-            You've been monitoring your queues with QCanary for 7 days. The free tier is great for
-            evaluation, but production teams need more:
+            You've been using QCanary for 2 weeks. We hope it's been helpful.
           </Text>
           <Text style={text}>
-            → 30-day history (not 7 days)
-            <br />
-            → Slack alerts (not just email)
-            <br />
-            → 10 queues (not 1)
-            <br />
-            → Team access (not solo)
+            We're a small team building this in public. If QCanary has saved you even one hour of
+            debugging, we'd love to have you as a paying customer.
           </Text>
           <Text style={text}>
-            Upgrade to <strong>Team for $39/month</strong> — less than the cost of one hour of
-            engineering time.
+            For the next 7 days, use code <strong>EARLYBIRD</strong> for 50% off your first year:
+          </Text>
+          <Text style={text}>
+            → Team: <strong>$19.50/month</strong> (was $39)
+            <br />
+            → Business: <strong>$74.50/month</strong> (was $149)
+          </Text>
+          <Text style={{ ...text, fontSize: "13px", color: "#71717A" }}>
+            This is a genuine limited offer. We can't afford to run it forever.
           </Text>
           <Button href="https://qcanary.dev/pricing" style={button}>
-            Upgrade to Team →
+            Claim 50% Off →
           </Button>
           <Text style={text}>
-            Questions? Just reply to this email.
+            If QCanary isn't right for you, no hard feelings. Just reply and let us know what we're
+            missing.
           </Text>
         </Container>
       </Body>

@@ -9,37 +9,33 @@ import {
   Text,
 } from "@react-email/components";
 
-export default function UpgradeEmail() {
+export default function UsageAlertEmail() {
   return (
     <Html>
       <Head />
-      <Preview>Your queues are running smoothly. Ready to upgrade?</Preview>
+      <Preview>You're at 90% of your free limit</Preview>
       <Body style={body}>
         <Container style={container}>
-          <Heading style={heading}>You've been using QCanary for a week.</Heading>
+          <Heading style={heading}>Your free queue is almost full.</Heading>
           <Text style={text}>
-            You've been monitoring your queues with QCanary for 7 days. The free tier is great for
-            evaluation, but production teams need more:
+            You're currently using 90% of your free queue limit. In about 24 hours, new events will
+            be dropped until you upgrade or wait for the daily reset.
           </Text>
           <Text style={text}>
-            → 30-day history (not 7 days)
-            <br />
-            → Slack alerts (not just email)
-            <br />
-            → 10 queues (not 1)
-            <br />
-            → Team access (not solo)
+            Upgrade to <strong>Team ($39/month)</strong> for:
           </Text>
           <Text style={text}>
-            Upgrade to <strong>Team for $39/month</strong> — less than the cost of one hour of
-            engineering time.
+            → 100,000 events/day (20x more)
+            <br />
+            → 10 queues (10x more)
+            <br />
+            → 30-day history
+            <br />
+            → Slack alerts
           </Text>
           <Button href="https://qcanary.dev/pricing" style={button}>
-            Upgrade to Team →
+            Upgrade Now →
           </Button>
-          <Text style={text}>
-            Questions? Just reply to this email.
-          </Text>
         </Container>
       </Body>
     </Html>

@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import * as React from "react";
-import { Bell, Building, Folder, LayoutDashboard, Menu, MessageSquareHeart, Settings, X } from "lucide-react";
+import { Bell, Building, Folder, LayoutDashboard, Menu, MessageSquareHeart, Settings, X, Zap } from "lucide-react";
 
 import { BrandLockup } from "@/components/Brand";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { useTeamProjects } from "../_providers/TeamProjectProvider";
+import { useUpgradeModal } from "@/components/dashboard/UpgradeModalContext";
 
 function NavLink({
   href,
@@ -70,6 +72,8 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   const projectId = typeof params?.projectId === "string" ? params.projectId : null;
   const { projects, loading, error } = useTeamProjects();
   const hasProjects = projects.length > 0;
+  const { open: openUpgrade } = useUpgradeModal();
+  const isFreeUser = true; // TODO: Replace with actual plan check
 
   return (
     <>
@@ -123,6 +127,35 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
           onClick={onNavClick}
         />
       </nav>
+
+      {/* Upgrade card — visible for free users */}
+      {isFreeUser && (
+        <div className="rounded-xl border border-accent/20 bg-accent/[0.04] p-4">
+          <div className="flex items-center gap-2">
+            <Zap className="h-4 w-4 text-accent" />
+            <span className="text-sm font-medium text-text-primary">Free plan</span>
+          </div>
+          <p className="mt-1 text-xs text-text-muted">1 queue limit</p>
+          {/* Usage progress bar */}
+          <div className="mt-2">
+            <div className="flex items-center justify-between text-[10px] text-text-muted/70">
+              <span>1 of 1 queue used</span>
+              <span>100%</span>
+            </div>
+            <div className="mt-1 h-1.5 w-full rounded-full bg-border">
+              <div className="h-1.5 rounded-full bg-amber-400" style={{ width: "100%" }} />
+            </div>
+          </div>
+          <Button
+            size="sm"
+            className="mt-3 w-full gap-1.5 text-xs"
+            onClick={openUpgrade}
+          >
+            <Zap className="h-3 w-3" />
+            Upgrade
+          </Button>
+        </div>
+      )}
 
       <Separator />
 
