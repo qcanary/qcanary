@@ -683,85 +683,44 @@ export default async function MarketingPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ──────────────────────────────────────── */}
+      {/* ── Why I Built This ──────────────────────────────────── */}
       <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
-          <div className="mb-12 max-w-2xl animate-fade-in-up">
-            <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Testimonials</Badge>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Loved by engineering teams</h2>
-            <p className="mt-3 text-text-muted">
-              From early-stage startups to production deployments, teams trust QCanary for queue monitoring.
-            </p>
-          </div>
-          <div className="grid gap-5 md:grid-cols-2">
-            {[
-              {
-                quote: "We were using Bull Board and manually checking Redis. QCanary caught a stalled queue before our customers noticed. The zero-trust setup meant our security team approved it in hours, not weeks.",
-                name: "Ravi Patel",
-                title: "Infrastructure Engineer",
-                company: "Laylo",
-                companyUrl: "https://laylo.com",
-              },
-              {
-                quote: "Setting up alerting for worker failures used to require custom scripts and a separate Redis instance. QCanary took 10 minutes to configure. The Slack alerts alone saved us from two production incidents.",
-                name: "Emily Chen",
-                title: "Senior Backend Engineer",
-                company: "TidyHQ",
-                companyUrl: "https://tidyhq.com",
-              },
-              {
-                quote: "Debugging a production worker failure used to mean SSH-ing into boxes and tailing logs. Now I open QCanary, see the exact stack trace, queue state, and event history — all in one place. It saved us hours on our last incident investigation.",
-                name: "Marcus Johansson",
-                title: "CTO",
-                company: "Sync Labs",
-                companyUrl: "https://sync.so",
-              },
-              {
-                quote: "We evaluated three queue monitoring tools. QCanary was the only one that didn't ask for our Redis URL. That single decision point made it the winner for our SOC 2 compliance.",
-                name: "Sarah Park",
-                title: "DevOps Lead",
-                company: "a Series B fintech company",
-                companyUrl: null,
-              },
-            ].map((t, idx) => (
-              <div key={t.name} className={`card-hover group flex flex-col rounded-xl border border-border bg-surface/30 p-6 ${
-                idx === 0 ? 'animate-fade-in-up' : idx === 1 ? 'animate-fade-in-up-delay-1' : idx === 2 ? 'animate-fade-in-up-delay-2' : 'animate-fade-in-up-delay-3'
-              }`}>
-                {/* Stars */}
-                <div className="mb-3 flex items-center gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="h-3.5 w-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                {/* Quote */}
-                <div className="mb-4 text-sm leading-relaxed text-text-primary">
-                  <span className="text-accent/30">{"\u201c"}</span>
-                  {t.quote}
-                  <span className="text-accent/30">{"\u201d"}</span>
-                </div>
-                {/* Author */}
-                <div className="mt-auto flex items-center gap-3 pt-4 border-t border-border/50">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-accent/30 to-accent/10 text-xs font-medium text-accent ring-1 ring-accent/20">
-                    {t.name.split(" ").map((n) => n[0]).join("")}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">{t.name}</div>
-                    <div className="text-xs text-text-muted">
-                      {t.title}
-                      {t.company ? (
-                        t.companyUrl ? (
-                          <> at <a href={t.companyUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">{t.company}</a></>
-                        ) : (
-                          <> at {t.company}</>
-                        )
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="mx-auto max-w-3xl">
+            <div className="mb-8 animate-fade-in-up">
+              <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Why I Built This</Badge>
+              <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">I got tired of security teams saying no.</h2>
+            </div>
+            <div className="animate-fade-in-up-delay-1 space-y-4 text-base leading-relaxed text-text-primary md:text-lg">
+              <p>
+                Every queue monitoring tool I wanted to use required handing over our Redis URL.
+                That&rsquo;s full database access. My security team flagged it every time. Bull Board
+                was great for local development, but production needed something that didn&rsquo;t
+                require a third party to touch our infrastructure.
+              </p>
+              <p>
+                So I built QCanary. The agent runs inside your own worker process. Your Redis
+                credentials never leave your network. We only see metadata — never your job payloads,
+                never your data, never your keys.
+              </p>
+              <p>
+                It&rsquo;s not revolutionary. It&rsquo;s just the bare minimum that security-conscious
+                teams should expect from infrastructure monitoring.
+              </p>
+            </div>
+            <div className="animate-fade-in-up-delay-2 mt-6 flex items-center gap-4">
+              <p className="text-sm text-text-muted italic">
+                &mdash; the founder, building QCanary in public
+              </p>
+            </div>
+            <div className="animate-fade-in-up-delay-3 mt-8">
+              <Link href="/trust">
+                <Button variant="secondary" className="gap-2 group">
+                  Read our security architecture
+                  <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

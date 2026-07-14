@@ -93,19 +93,9 @@ export function HeroSection() {
             </span>
           </div>
           {/* Social proof bar */}
-          <div className="animate-fade-in-up-delay-5 mt-6 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface/30 px-4 py-2.5">
-            <div className="flex -space-x-2">
-              {["R","E","M","J"].map((initial, i) => (
-                <div key={i} className="h-6 w-6 rounded-full border border-border bg-gradient-to-br from-accent/30 to-blue-500/30 flex items-center justify-center text-[8px] font-medium text-text-primary">
-                  {initial}
-                </div>
-              ))}
-            </div>
+          <div className="animate-fade-in-up-delay-5 mt-6 flex items-center gap-2 rounded-lg border border-border bg-surface/30 px-4 py-2.5">
             <span className="text-xs text-text-muted">
-              Loved by engineering teams at{" "}
-              <a href="https://laylo.com" target="_blank" rel="noopener noreferrer" className="font-medium text-text-primary hover:text-accent transition-colors">Laylo</a>,{" "}
-              <a href="https://tidyhq.com" target="_blank" rel="noopener noreferrer" className="font-medium text-text-primary hover:text-accent transition-colors">TidyHQ</a>,{" "}
-              <a href="https://sync.so" target="_blank" rel="noopener noreferrer" className="font-medium text-text-primary hover:text-accent transition-colors">Sync Labs</a> + more
+              Built for teams where security isn&rsquo;t optional.
             </span>
           </div>
         </div>
