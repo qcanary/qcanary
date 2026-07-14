@@ -9,11 +9,22 @@ export type BlogPostMeta = {
   description: string;
   date: string;
   slug: string;
+  tags: string[];
+  author: string;
+  readingTime: number;
 };
 
 export type BlogPost = BlogPostMeta & {
   contentHtml: string;
 };
+
+/**
+ * Estimate reading time from word count.
+ */
+function estimateReadingTime(content: string): number {
+  const wordCount = content.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(wordCount / 200));
+}
 
 const postsDirectory = path.join(process.cwd(), "marketing");
 
@@ -35,8 +46,18 @@ async function readPostFile(filename: string): Promise<{ meta: BlogPostMeta; con
     throw new Error(`Invalid blog frontmatter in ${filename}`);
   }
 
+  const meta: BlogPostMeta = {
+    title: parsed.data.title,
+    description: parsed.data.description,
+    date: parsed.data.date,
+    slug: parsed.data.slug,
+    tags: Array.isArray(parsed.data.tags) ? parsed.data.tags.map(String) : [],
+    author: typeof parsed.data.author === "string" ? parsed.data.author : "QCanary Engineering",
+    readingTime: typeof parsed.data.readingTime === "number" ? parsed.data.readingTime : estimateReadingTime(parsed.content),
+  };
+
   return {
-    meta: parsed.data,
+    meta,
     content: parsed.content,
   };
 }
