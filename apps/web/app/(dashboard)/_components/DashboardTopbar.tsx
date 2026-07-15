@@ -31,7 +31,7 @@ export function DashboardTopbar() {
           {isFreeUser && (
             <Button size="sm" onClick={openUpgrade} className="gap-1.5">
               <Zap className="h-3.5 w-3.5" />
-              Upgrade to Team
+              Upgrade
             </Button>
           )}
           <OrganizationSwitcher

@@ -35,13 +35,13 @@ function evaluateUsage(usage: UsageResponse["data"]["usage"]): NudgeReasons | nu
       triggers.push({
         isNearLimit: false,
         isAtLimit: true,
-        message: `Project limit reached (${usage.projectsUsed}/${usage.projectsLimit}). Upgrade to create more projects.`,
+        message: `Project limit reached (${usage.projectsUsed}/${usage.projectsLimit}). Upgrade to Solo (\$15/mo) for more queues and 14-day history.`,
       });
     } else if (projectPercent > 80) {
       triggers.push({
         isNearLimit: true,
         isAtLimit: false,
-        message: `You've used ${usage.projectsUsed} of ${usage.projectsLimit} projects (${Math.round(projectPercent)}%).`,
+        message: `You've used ${usage.projectsUsed} of ${usage.projectsLimit} projects (${Math.round(projectPercent)}%). Upgrade to Solo (\$15/mo) for 5x more queues.`,
       });
     }
   }
@@ -52,13 +52,13 @@ function evaluateUsage(usage: UsageResponse["data"]["usage"]): NudgeReasons | nu
       triggers.push({
         isNearLimit: false,
         isAtLimit: true,
-        message: `Daily event limit reached (${usage.eventsUsedToday.toLocaleString()}/${usage.eventsLimit.toLocaleString()}). Events are being rejected until the limit resets.`,
+        message: `Daily event limit reached (${usage.eventsUsedToday.toLocaleString()}/${usage.eventsLimit.toLocaleString()}). Upgrade to Solo (\$15/mo) to keep monitoring.`,
       });
     } else if (eventPercent > 80) {
       triggers.push({
         isNearLimit: true,
         isAtLimit: false,
-        message: `You've used ${Math.round(eventPercent)}% of your daily event budget (${usage.eventsUsedToday.toLocaleString()}/${usage.eventsLimit.toLocaleString()}).`,
+        message: `You've used ${Math.round(eventPercent)}% of your daily event budget (${usage.eventsUsedToday.toLocaleString()}/${usage.eventsLimit.toLocaleString()}). Upgrade to Solo (\$15/mo) for 5x more events.`,
       });
     }
   }

@@ -16,7 +16,7 @@ export default function FinalNudgeEmail() {
       <Preview>Last chance: 50% off your first year</Preview>
       <Body style={body}>
         <Container style={container}>
-          <Heading style={heading}>We're offering 50% off Team or Business for your first year.</Heading>
+          <Heading style={heading}>We're offering 50% off Solo, Team, or Business for your first year.</Heading>
           <Text style={text}>
             You've been using QCanary for 2 weeks. We hope it's been helpful.
           </Text>
@@ -28,6 +28,8 @@ export default function FinalNudgeEmail() {
             For the next 7 days, use code <strong>EARLYBIRD</strong> for 50% off your first year:
           </Text>
           <Text style={text}>
+            → Solo: <strong>$7.50/month</strong> (was $15)
+            <br />
             → Team: <strong>$19.50/month</strong> (was $39)
             <br />
             → Business: <strong>$74.50/month</strong> (was $149)

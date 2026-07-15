@@ -19,23 +19,23 @@ export default function UpgradeEmail() {
           <Heading style={heading}>You've been using QCanary for a week.</Heading>
           <Text style={text}>
             You've been monitoring your queues with QCanary for 7 days. The free tier is great for
-            evaluation, but production teams need more:
+            evaluation, but production apps need more:
           </Text>
           <Text style={text}>
-            → 30-day history (not 7 days)
+            → 5 queues (not 1) with Solo at <strong>$15/month</strong>
+            <br />
+            → 14-day history (not 24 hours)
             <br />
             → Slack alerts (not just email)
             <br />
-            → 10 queues (not 1)
-            <br />
-            → Team access (not solo)
+            → Unlimited alert rules with Team ($39/month)
           </Text>
           <Text style={text}>
-            Upgrade to <strong>Team for $39/month</strong> — less than the cost of one hour of
-            engineering time.
+            Solo is perfect for indie hackers going to production. Team adds team access, webhooks,
+            and API access for growing teams.
           </Text>
           <Button href="https://qcanary.dev/pricing" style={button}>
-            Upgrade to Team →
+            Compare Plans →
           </Button>
           <Text style={text}>
             Questions? Just reply to this email.

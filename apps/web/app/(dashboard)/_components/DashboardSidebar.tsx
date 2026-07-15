@@ -135,7 +135,7 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             <Zap className="h-4 w-4 text-accent" />
             <span className="text-sm font-medium text-text-primary">Free plan</span>
           </div>
-          <p className="mt-1 text-xs text-text-muted">1 queue limit</p>
+          <p className="mt-1 text-xs text-text-muted">1 queue limit — Upgrade to Solo for $15/mo</p>
           {/* Usage progress bar */}
           <div className="mt-2">
             <div className="flex items-center justify-between text-[10px] text-text-muted/70">
@@ -152,7 +152,7 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             onClick={openUpgrade}
           >
             <Zap className="h-3 w-3" />
-            Upgrade
+            Upgrade to Solo
           </Button>
         </div>
       )}

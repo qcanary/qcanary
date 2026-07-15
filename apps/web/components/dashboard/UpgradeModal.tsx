@@ -15,6 +15,23 @@ import { useUpgradeModal } from "./UpgradeModalContext";
 
 const PLANS = [
   {
+    name: "Solo",
+    price: 15,
+    period: "/month",
+    badge: null,
+    description: "For solo founders and side projects going to production.",
+    cta: "Start Solo",
+    ctaHref: "/sign-up",
+    highlighted: false,
+    features: [
+      "1 project",
+      "5 queues",
+      "25,000 events/day",
+      "14-day history",
+      "Email + Slack alerts (2 rules)",
+    ],
+  },
+  {
     name: "Team",
     price: 39,
     period: "/month",
@@ -29,8 +46,10 @@ const PLANS = [
       "100,000 events/day",
       "30-day history",
       "5 team members",
-      "Slack + Email alerts",
+      "Slack + Email + Webhook alerts",
       "Unlimited alert rules",
+      "Auto-resolution",
+      "API access",
     ],
   },
   {
@@ -86,7 +105,7 @@ export function UpgradeModal() {
           </DialogClose>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4 md:grid-cols-3">
+        <div className="grid gap-4 py-4 md:grid-cols-4">
           {PLANS.map((plan) => (
             <div
               key={plan.name}
