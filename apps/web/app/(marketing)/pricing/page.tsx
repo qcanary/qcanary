@@ -41,37 +41,6 @@ export default function PricingPage() {
             You don&apos;t care how many events we process. You care that your queue doesn&apos;t stall
             at 2am on a Saturday. Our pricing reflects that.
           </p>
-          <div className="mt-8 mx-auto max-w-lg rounded-2xl border-2 border-orange-400/30 bg-gradient-to-r from-orange-500/10 via-yellow-500/10 to-orange-500/10 p-5">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500/20">
-                <span className="text-lg">🚀</span>
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-orange-300">
-                  Product Hunt Launch Special
-                </div>
-                <div className="text-xs text-orange-400/70">
-                  Limited time offer for our PH community
-                </div>
-              </div>
-            </div>
-            <p className="text-sm text-text-primary mb-3">
-              <span className="font-bold text-accent">20% off Pro for life</span> — use code{" "}
-              <code className="rounded-md bg-code-bg px-2 py-0.5 font-mono text-sm text-accent ring-1 ring-accent/20">
-                PH20
-              </code>{" "}
-              at checkout.
-            </p>
-            <Link href="/sign-up">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-medium text-bg hover:bg-accent/90 transition-colors"
-              >
-                Claim Discount
-                <span className="text-xs opacity-70">→</span>
-              </button>
-            </Link>
-          </div>
         </div>
       </section>
 

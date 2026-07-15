@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useUpgradeModal } from "./UpgradeModalContext";
+import { ComingSoonModal } from "@/components/pricing/ComingSoonModal";
 
 const PLANS = [
   {
@@ -94,96 +96,117 @@ const PLANS = [
 
 export function UpgradeModal() {
   const { isOpen, close } = useUpgradeModal();
+  const [showComingSoon, setShowComingSoon] = React.useState(false);
+
+  /**
+   * TODO: Once Dodo Payments is updated with the new Solo ($15), Team ($39), and
+   * Business ($149) products, remove this handler and re-link all paid tier CTAs
+   * directly to the billing flow (/sign-up or /settings).
+   */
+  function handlePaidClick() {
+    close();
+    setShowComingSoon(true);
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) close(); }}>
-      <DialogContent className="max-w-4xl">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Choose your plan</DialogTitle>
-          <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 transition-opacity">
-            <X className="h-4 w-4" />
-          </DialogClose>
-        </DialogHeader>
+    <>
+      <ComingSoonModal
+        isOpen={showComingSoon}
+        onClose={() => setShowComingSoon(false)}
+      />
+      <Dialog open={isOpen} onOpenChange={(open) => { if (!open) close(); }}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">Choose your plan</DialogTitle>
+            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 transition-opacity">
+              <X className="h-4 w-4" />
+            </DialogClose>
+          </DialogHeader>
 
-        <div className="grid gap-4 py-4 md:grid-cols-4">
-          {PLANS.map((plan) => (
-            <div
-              key={plan.name}
-              className={`relative flex flex-col rounded-xl border p-5 transition-all ${
-                plan.highlighted
-                  ? "border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg shadow-lg shadow-accent/5 scale-[1.02]"
-                  : "border-border bg-surface/30"
-              }`}
-            >
-              {/* Badge */}
-              {plan.badge && (
-                <Badge
-                  variant={plan.highlighted ? "success" : "outline"}
-                  className={`mb-2 ${
-                    plan.highlighted ? "" : "border-accent/20 text-accent bg-accent/[0.05]"
-                  }`}
-                >
-                  {plan.badge}
-                </Badge>
-              )}
-
-              <h3 className="text-base font-semibold">{plan.name}</h3>
-
-              <div className="mt-1">
-                {plan.price !== null ? (
-                  <>
-                    <span className="text-2xl font-bold">${plan.price}</span>
-                    <span className="text-text-muted text-sm">{plan.period}</span>
-                  </>
-                ) : (
-                  <span className="text-2xl font-bold">Custom</span>
+          <div className="grid gap-4 py-4 md:grid-cols-4">
+            {PLANS.map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative flex flex-col rounded-xl border p-5 transition-all ${
+                  plan.highlighted
+                    ? "border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg shadow-lg shadow-accent/5 scale-[1.02]"
+                    : "border-border bg-surface/30"
+                }`}
+              >
+                {/* Badge */}
+                {plan.badge && (
+                  <Badge
+                    variant={plan.highlighted ? "success" : "outline"}
+                    className={`mb-2 ${
+                      plan.highlighted ? "" : "border-accent/20 text-accent bg-accent/[0.05]"
+                    }`}
+                  >
+                    {plan.badge}
+                  </Badge>
                 )}
-              </div>
 
-              <p className="mt-2 text-xs leading-relaxed text-text-muted">
-                {plan.description}
-              </p>
+                <h3 className="text-base font-semibold">{plan.name}</h3>
 
-              <ul className="mt-4 flex-1 space-y-1.5">
-                {plan.features.map((feat) => (
-                  <li key={feat} className="flex items-start gap-2 text-xs">
-                    <svg className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-text-primary">{feat}</span>
-                  </li>
-                ))}
-              </ul>
+                <div className="mt-1">
+                  {plan.price !== null ? (
+                    <>
+                      <span className="text-2xl font-bold">${plan.price}</span>
+                      <span className="text-text-muted text-sm">{plan.period}</span>
+                    </>
+                  ) : (
+                    <span className="text-2xl font-bold">Custom</span>
+                  )}
+                </div>
 
-              <div className="mt-5">
-                {plan.highlighted ? (
-                  <Link href={plan.ctaHref} onClick={close}>
-                    <Button className="w-full text-sm">{plan.cta}</Button>
-                  </Link>
-                ) : (
-                  <Link href={plan.ctaHref} onClick={close}>
-                    <Button variant="secondary" className="w-full text-sm">
+                <p className="mt-2 text-xs leading-relaxed text-text-muted">
+                  {plan.description}
+                </p>
+
+                <ul className="mt-4 flex-1 space-y-1.5">
+                  {plan.features.map((feat) => (
+                    <li key={feat} className="flex items-start gap-2 text-xs">
+                      <svg className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-text-primary">{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-5">
+                  {plan.name === "Enterprise" ? (
+                    <Link href={plan.ctaHref} onClick={close}>
+                      <Button variant="secondary" className="w-full text-sm">
+                        {plan.cta}
+                      </Button>
+                    </Link>
+                  ) : plan.highlighted ? (
+                    <Button className="w-full text-sm" onClick={handlePaidClick}>
                       {plan.cta}
                     </Button>
-                  </Link>
-                )}
-                {plan.highlighted && (
-                  <p className="mt-2 text-center text-[10px] text-text-muted/60">
-                    No credit card required for trial
-                  </p>
-                )}
+                  ) : (
+                    <Button variant="secondary" className="w-full text-sm" onClick={handlePaidClick}>
+                      {plan.cta}
+                    </Button>
+                  )}
+                  {plan.highlighted && (
+                    <p className="mt-2 text-center text-[10px] text-text-muted/60">
+                      No credit card required for trial
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <p className="text-center text-xs text-text-muted/60">
-          Questions? Email us at{" "}
-          <a href="mailto:founder@qcanary.dev" className="text-accent hover:underline">
-            founder@qcanary.dev
-          </a>
-        </p>
-      </DialogContent>
-    </Dialog>
+          <p className="text-center text-xs text-text-muted/60">
+            Questions? Email us at{" "}
+            <a href="mailto:founder@qcanary.dev" className="text-accent hover:underline">
+              founder@qcanary.dev
+            </a>
+          </p>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

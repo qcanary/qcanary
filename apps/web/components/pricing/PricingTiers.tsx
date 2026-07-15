@@ -5,6 +5,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ComingSoonModal } from "@/components/pricing/ComingSoonModal";
 
 // ── Data ────────────────────────────────────────────────────
 
@@ -209,9 +210,23 @@ function CheckIcon({ className }: { className?: string }) {
 
 export function PricingTiers() {
   const [annual, setAnnual] = useState(false);
+  const [comingSoonTier, setComingSoonTier] = useState<string | null>(null);
+
+  /**
+   * TODO: Once Dodo Payments is updated with the new Solo ($15), Team ($39), and
+   * Business ($149) products, remove this handler and the ComingSoonModal.
+   * Re-link all paid tier CTAs directly to the billing flow (/sign-up or /settings).
+   */
+  function handlePaidCta(tierName: string) {
+    setComingSoonTier(tierName);
+  }
 
   return (
     <>
+      <ComingSoonModal
+        isOpen={comingSoonTier !== null}
+        onClose={() => setComingSoonTier(null)}
+      />
       {/* ── Annual Toggle ──────────────────────────────────── */}
       <section className="border-b border-border bg-gradient-to-br from-bg via-surface/10 to-code-bg">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
@@ -313,14 +328,24 @@ export function PricingTiers() {
 
                   {/* CTA */}
                   <div className="mt-6">
-                    <Link href={tier.ctaHref}>
+                    {tier.name === "Free" || tier.name === "Enterprise" ? (
+                      <Link href={tier.ctaHref}>
+                        <Button
+                          variant={tier.ctaVariant}
+                          className="w-full"
+                        >
+                          {tier.cta}
+                        </Button>
+                      </Link>
+                    ) : (
                       <Button
                         variant={tier.ctaVariant}
-                        className={`w-full ${tier.highlighted ? "" : ""}`}
+                        className="w-full"
+                        onClick={() => handlePaidCta(tier.name)}
                       >
                         {tier.cta}
                       </Button>
-                    </Link>
+                    )}
                   </div>
                 </div>
               </div>
