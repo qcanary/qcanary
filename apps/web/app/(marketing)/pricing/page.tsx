@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import MarketingNav from "@/components/MarketingNav";
 import { Badge } from "@/components/ui/badge";
