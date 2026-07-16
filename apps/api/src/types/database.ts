@@ -25,6 +25,7 @@ export interface Database {
       newsletter_subscribers: { Row: NewsletterSubscriberRow; Insert: NewsletterSubscriberInsert; Update: NewsletterSubscriberUpdate; Relationships: [] };
       anomaly_baselines: { Row: AnomalyBaselineRow; Insert: AnomalyBaselineInsert; Update: Record<string, never>; Relationships: [] };
       queue_benchmarks: { Row: QueueBenchmarkRow; Insert: QueueBenchmarkInsert; Update: QueueBenchmarkUpdate; Relationships: [] };
+      team_invites: { Row: TeamInviteRow; Insert: TeamInviteInsert; Update: TeamInviteUpdate; Relationships: [] };
     };
     Views: Record<string, never>;
     Functions: {
@@ -678,6 +679,46 @@ export interface QueueBenchmarkUpdate {
   stddev?: number | null;
   sample_size?: number;
   calculated_at?: string;
+}
+
+// ============================================================
+// TEAM INVITES TYPES
+// ============================================================
+
+export interface TeamInviteRow {
+  id: string;
+  team_id: string;
+  email: string;
+  role: string;
+  invited_by: string;
+  token: string;
+  expires_at: string;
+  accepted_at: string | null;
+  created_at: string;
+}
+
+export interface TeamInviteInsert {
+  id?: string;
+  team_id: string;
+  email: string;
+  role?: string;
+  invited_by: string;
+  token: string;
+  expires_at: string;
+  accepted_at?: string | null;
+  created_at?: string;
+}
+
+export interface TeamInviteUpdate {
+  id?: string;
+  team_id?: string;
+  email?: string;
+  role?: string;
+  invited_by?: string;
+  token?: string;
+  expires_at?: string;
+  accepted_at?: string | null;
+  created_at?: string;
 }
 
 // ============================================================

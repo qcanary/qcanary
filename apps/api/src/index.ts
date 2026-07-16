@@ -56,6 +56,7 @@ import { healthRouter } from './routes/health';
 import { auditRouter } from './routes/audit';
 import { exportRouter } from './routes/export';
 import { sendDailyDigest } from './lib/digest';
+import { ssoRouter } from './routes/sso';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -250,6 +251,7 @@ app.use('/v1/anomalies', requireDashboardAuth, dashboardRateLimit, anomaliesRout
 app.use('/v1/health-scores', requireDashboardAuth, dashboardRateLimit, healthRouter);
 app.use('/v1/audit', requireDashboardAuth, dashboardRateLimit, auditRouter);
 app.use('/v1/export', requireDashboardAuth, dashboardRateLimit, exportRouter);
+app.use('/v1/sso', requireDashboardAuth, dashboardRateLimit, ssoRouter);
 
 // ── Sentry Error Handler ───────────────────────────────────
 if (process.env.SENTRY_DSN) {
