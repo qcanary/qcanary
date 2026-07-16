@@ -38,7 +38,7 @@ const SEVERITY_CONFIG = {
   },
   warning: {
     label: "Warning",
-    variant: "warning" as const,
+    variant: "default" as const,
     icon: "⚠️",
     bg: "bg-yellow-500/5",
     border: "border-yellow-500/20",
