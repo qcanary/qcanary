@@ -5,6 +5,8 @@ import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ScrollReveal } from "@/components/ScrollReveal";
+import { ParallaxSection } from "@/components/ParallaxSection";
 
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ProblemSection } from "@/components/landing/ProblemSection";
@@ -144,15 +146,17 @@ export default async function MarketingPage() {
       <SocialProofSection />
 
       {/* ── Dashboard Preview ──────────────────────────────────── */}
-      <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
-        <div className="mb-10 max-w-2xl">
-          <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Dashboard</Badge>
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">See it in action</h2>
-          <p className="mt-3 text-text-muted">
-            Monitor queue health, inspect failures, and track trends from one dashboard.
-          </p>
-        </div>
-        <div className="relative overflow-hidden rounded-xl border border-border bg-surface/80 shadow-card">            <Image
+      <ParallaxSection>
+        <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
+          <div className="mb-10 max-w-2xl">
+            <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Dashboard</Badge>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">See it in action</h2>
+            <p className="mt-3 text-text-muted">
+              Monitor queue health, inspect failures, and track trends from one dashboard.
+            </p>
+          </div>
+          <div className="relative overflow-hidden rounded-xl border border-border bg-surface/80 shadow-card">
+            <Image
               src="/screenshots/dashboard-overview.png"
               alt="Qcanary dashboard showing queue overview, job history, and health metrics"
               width={1918}
@@ -161,14 +165,16 @@ export default async function MarketingPage() {
               className="h-auto w-full"
               sizes="(max-width: 768px) 100vw, 1152px"
             />
-        </div>
-      </section>
+          </div>
+        </section>
+      </ParallaxSection>
 
       <FeaturesSection />
       <SecuritySection />
 
       {/* ── Why I Built This ──────────────────────────────────── */}
-      <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
+      <ScrollReveal>
+        <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mx-auto max-w-3xl">
             <div className="mb-8 animate-fade-in-up">
@@ -214,7 +220,9 @@ export default async function MarketingPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
+      <ScrollReveal>
       <section className="border-y border-border bg-gradient-to-br from-bg via-surface/20 to-code-bg">
         <div className="relative mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
 
@@ -368,12 +376,14 @@ export default async function MarketingPage() {
           </p>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* ── Latest from the Blog ───────────────────────────────── */}
       <LatestBlogSection posts={posts} />
 
       {/* ── FAQ ────────────────────────────────────────────────── */}
-      <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
+      <ScrollReveal>
+        <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto w-full max-w-3xl px-6 py-16 md:py-20">
           <div className="mb-10 max-w-2xl animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">FAQ</Badge>
@@ -420,6 +430,7 @@ export default async function MarketingPage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* FAQPage JSON-LD Structured Data */}
       <Script
@@ -468,7 +479,8 @@ export default async function MarketingPage() {
       />
 
       {/* ── CTA ────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
+      <ScrollReveal>
+        <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
         {/* Background glow */}
 
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-24 text-center md:py-32">
@@ -503,6 +515,7 @@ export default async function MarketingPage() {
           </p>
         </div>
       </section>
+      </ScrollReveal>
 
       <MarketingFooter />
     </main>
