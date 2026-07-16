@@ -11,9 +11,11 @@ import {
   deliverWebhook,
   escapeHtml,
 } from '../lib/alertDelivery';
-import type { AlertChannel, AlertDetails, AlertRuleRow, ConditionType, JobEventRow } from '../types/database';
+import type { AlertChannel, AlertDetails, AlertRuleRow, ConditionType, JobEventRow, AnomalySettings, SensitivityLevel } from '../types/database';
 import { insertRows, updateRows } from '../lib/typedSupabase';
 import { logger } from '../lib/logger';
+import { detectAnomalies, logAnomalyAlerts, ANOMALY_SENTINEL_RULE_ID } from '../lib/anomalies';
+import type { AnomalyDetectionResult, QueueAnomalyStatus } from '../types/database';
 
 interface EvaluateAlertsJobData {
   projectId: string;
@@ -296,6 +298,18 @@ async function resolveActiveAlert(projectId: string, rule: RuleRow): Promise<voi
   await deliverResolvedNotification(rule);
 }
 
+/**
+ * Default anomaly settings used for teams that haven't configured custom settings.
+ * In production, these should be stored per-team in the database.
+ */
+function getDefaultAnomalySettings(): AnomalySettings {
+  return {
+    enabled: true,
+    sensitivity: 'normal' as SensitivityLevel,
+    min_sample_days: 3,
+  };
+}
+
 async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promise<void> {
   const { projectId, queueNames } = job.data;
 
@@ -303,6 +317,7 @@ async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promis
     return;
   }
 
+  // ── Step 1: Evaluate user-configured alert rules ────────────
   const { data: rulesRaw, error: rulesError } = await supabase
     .from('alert_rules')
     .select(
@@ -341,6 +356,108 @@ async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promis
       await logAndDeliver(projectId, rule, actualValue, threshold);
     } catch (ruleError) {
       logger.error({ err: ruleError, ruleId: rule.id, projectId }, 'Failed to evaluate alert rule');
+    }
+  }
+
+  // ── Step 2: Run anomaly detection for each queue ──────────
+  // Anomalies are auto-generated alerts (not user-configured)
+  // They use the same delivery channels but are logged separately
+  const anomalySettings = getDefaultAnomalySettings();
+  if (anomalySettings.enabled) {
+    for (const queueName of queueNames) {
+      try {
+        const { status, anomalies } = await detectAnomalies(projectId, queueName, anomalySettings);
+
+        if (anomalies.length > 0) {
+          const payloads = await logAnomalyAlerts(projectId, queueName, anomalies, anomalySettings);
+          logger.info(
+            { projectId, queueName, anomalyCount: payloads.length, status },
+            '[Anomaly] Detected anomalies during alert evaluation'
+          );
+          
+          // Check if any anomaly-alert rules exist for this project to deliver
+          // via user-configured channels. Otherwise, anomalies are only logged
+          // to alert_history (visible in the dashboard).
+          for (const payload of payloads) {
+            try {
+              await deliverAnomalyViaRules(rules, projectId, queueName, payload.anomaly);
+            } catch (deliveryErr) {
+              logger.error({ err: deliveryErr, projectId, queueName }, '[Anomaly] Failed to deliver anomaly alert via rules');
+            }
+          }
+        }
+      } catch (anomalyErr) {
+        logger.error({ err: anomalyErr, projectId, queueName }, '[Anomaly] Failed to run anomaly detection');
+      }
+    }
+  }
+}
+
+/**
+ * Deliver anomaly alerts via matching user-configured alert rules.
+ * Finds rules that match the queue and channel, then sends the anomaly
+ * message through that channel (Slack, email, webhook).
+ */
+async function deliverAnomalyViaRules(
+  rules: RuleRow[],
+  projectId: string,
+  queueName: string,
+  anomaly: AnomalyDetectionResult
+): Promise<void> {
+  // Find rules that apply to this queue (or all queues) and are active
+  const matchingRules = rules.filter((r) => {
+    if (!r.is_active) return false;
+    // Match if rule applies to all queues or specifically this queue
+    if (!r.queue_name || r.queue_name.trim().length === 0) return true;
+    return r.queue_name === queueName;
+  });
+
+  if (matchingRules.length === 0) return;
+
+  const messageText = [
+    `*[Anomaly] ${anomaly.rule_name}*`,
+    `Queue: *${anomaly.queue_name}*`,
+    `Severity: *${anomaly.severity.toUpperCase()}*`,
+    `Current: *${anomaly.current_value}* (baseline: ${anomaly.baseline_value})`,
+    `Deviation: *${anomaly.threshold_multiplier}x* normal`,
+    `Description: ${anomaly.rule_description}`,
+  ].join('\n');
+
+  const subject = `[Qcanary Anomaly] ${anomaly.rule_name} on ${anomaly.queue_name}`;
+
+  const htmlBody = [
+    '<div style="font-family: Inter, Arial, sans-serif; max-width: 560px; margin: 0 auto;">',
+    `<h2 style="color: ${anomaly.severity === 'critical' ? '#EF4444' : '#F59E0B'};">${anomaly.rule_name}</h2>`,
+    `<p>Queue: <strong>${escapeHtml(anomaly.queue_name)}</strong></p>`,
+    `<p>Severity: <strong>${anomaly.severity.toUpperCase()}</strong></p>`,
+    `<p>Current value: <strong>${anomaly.current_value}</strong> (baseline: ${anomaly.baseline_value})</p>`,
+    `<p>Deviation: <strong>${anomaly.threshold_multiplier}x normal</strong></p>`,
+    `<p>${escapeHtml(anomaly.rule_description)}</p>`,
+    '</div>',
+  ].join('\n');
+
+  for (const rule of matchingRules) {
+    const channel = rule.channel as AlertChannel;
+    try {
+      if (channel === 'slack') {
+        await deliverSlack(rule.destination, messageText);
+      } else if (channel === 'email') {
+        await deliverEmail(rule.destination, subject, htmlBody);
+      } else if (channel === 'webhook') {
+        await deliverWebhook(rule.destination, {
+          type: 'anomaly',
+          rule_name: anomaly.rule_name,
+          queue_name: anomaly.queue_name,
+          severity: anomaly.severity,
+          current_value: anomaly.current_value,
+          baseline_value: anomaly.baseline_value,
+          deviation: anomaly.threshold_multiplier,
+          description: anomaly.rule_description,
+          triggered_at: new Date().toISOString(),
+        });
+      }
+    } catch (deliveryErr) {
+      logger.error({ err: deliveryErr, ruleId: rule.id, channel }, '[Anomaly] Failed to deliver anomaly via rule');
     }
   }
 }

@@ -3,7 +3,10 @@ import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { errorResponse, requireTeamContext } from '../lib/responseUtils';
+import { logger } from '../lib/logger';
 import { getBenchmarkForQueue } from '../lib/benchmarks';
+import { detectAnomalies } from '../lib/anomalies';
+import type { AnomalySettings, SensitivityLevel } from '../types/database';
 
 const router = express.Router();
 
@@ -519,6 +522,50 @@ router.get('/:id/queues/:name/benchmark', async (req: Request, res: Response) =>
       ...result,
     },
   });
+});
+
+// ── Anomaly Detection Status ────────────────────────────────
+router.get('/:id/queues/:name/anomalies', async (req: Request, res: Response) => {
+  const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
+  if (!teamId) {
+    return;
+  }
+
+  const projectId = typeof req.params.id === 'string' ? req.params.id : '';
+  const queueName = typeof req.params.name === 'string' ? req.params.name : '';
+  if (!projectId || !queueName) {
+    errorResponse(res, 400, 'INVALID_PATH_PARAMS', 'Invalid project id or queue name');
+    return;
+  }
+
+  const projectCheck = await ensureProjectOwnership(projectId, teamId);
+  if (!projectCheck.ok) {
+    errorResponse(res, projectCheck.statusCode, projectCheck.code, projectCheck.message);
+    return;
+  }
+
+  try {
+    const settings: AnomalySettings = {
+      enabled: true,
+      sensitivity: (req.query.sensitivity as SensitivityLevel) ?? 'normal',
+      min_sample_days: 3,
+    };
+
+    const result = await detectAnomalies(projectId, queueName, settings);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        status: result.status,
+        anomalyCount: result.anomalies.length,
+        anomalies: result.anomalies,
+        buildingBaseline: result.building_baseline,
+      },
+    });
+  } catch (err) {
+    logger.error({ err, projectId, queueName }, 'Anomaly detection failed');
+    errorResponse(res, 500, 'ANOMALY_DETECTION_FAILED', 'Failed to run anomaly detection');
+  }
 });
 
 export { router as queuesRouter };

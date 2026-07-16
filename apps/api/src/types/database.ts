@@ -22,6 +22,7 @@ export interface Database {
       feedback_applications: { Row: FeedbackApplicationRow; Insert: FeedbackApplicationInsert; Update: FeedbackApplicationUpdate; Relationships: [] };
       testimonials:    { Row: TestimonialRow;    Insert: TestimonialInsert;    Update: TestimonialUpdate;    Relationships: [] };
       enterprise_inquiries: { Row: EnterpriseInquiryRow; Insert: EnterpriseInquiryInsert; Update: EnterpriseInquiryUpdate; Relationships: [] };
+      anomaly_baselines: { Row: AnomalyBaselineRow; Insert: AnomalyBaselineInsert; Update: Record<string, never>; Relationships: [] };
       queue_benchmarks: { Row: QueueBenchmarkRow; Insert: QueueBenchmarkInsert; Update: QueueBenchmarkUpdate; Relationships: [] };
     };
     Views: Record<string, never>;
@@ -496,6 +497,106 @@ export interface EnterpriseInquiryUpdate {
   notes?: string | null;
   created_at?: string;
   updated_at?: string;
+}
+
+// ============================================================
+// ANOMALY DETECTION TYPES
+// ============================================================
+
+export type AnomalyMetricName = 'throughput' | 'failure_rate' | 'queue_depth' | 'avg_duration' | 'retry_rate';
+
+export type AnomalySeverity = 'critical' | 'warning';
+
+export type AnomalyStatus = 'healthy' | 'warning' | 'critical' | 'building_baseline';
+
+export interface AnomalyBaselineRow {
+  id: string;
+  project_id: string;
+  queue_name: string;
+  hour: number;
+  metric_name: AnomalyMetricName;
+  mean_value: number;
+  median_value: number;
+  max_value: number;
+  min_value: number;
+  sample_size: number;
+  calculated_at: string;
+}
+
+export interface AnomalyBaselineInsert {
+  id?: string;
+  project_id: string;
+  queue_name: string;
+  hour: number;
+  metric_name: AnomalyMetricName;
+  mean_value: number;
+  median_value: number;
+  max_value: number;
+  min_value: number;
+  sample_size?: number;
+  calculated_at?: string;
+}
+
+export interface AnomalyDetectionResult {
+  rule_name: string;
+  rule_description: string;
+  severity: AnomalySeverity;
+  metric_name: AnomalyMetricName;
+  current_value: number;
+  baseline_value: number;
+  threshold_multiplier: number;
+  queue_name: string;
+}
+
+export interface QueueAnomalyStatus {
+  status: AnomalyStatus;
+  anomalies: AnomalyDetectionResult[];
+  building_baseline: boolean;
+}
+
+export type SensitivityLevel = 'relaxed' | 'normal' | 'aggressive';
+
+export interface AnomalySettings {
+  enabled: boolean;
+  sensitivity: SensitivityLevel;
+  min_sample_days: number;
+}
+
+export const DEFAULT_ANOMALY_SETTINGS: AnomalySettings = {
+  enabled: true,
+  sensitivity: 'normal',
+  min_sample_days: 3,
+};
+
+export function getSensitivityMultiplier(sensitivity: SensitivityLevel): number {
+  switch (sensitivity) {
+    case 'relaxed': return 2.0;
+    case 'normal': return 1.5;
+    case 'aggressive': return 1.2;
+  }
+}
+
+// Anomaly rule definitions (used by the detection engine)
+export interface AnomalyRule {
+  name: string;
+  description: string;
+  metric: AnomalyMetricName;
+  severity: AnomalySeverity;
+  min_jobs_threshold: number;
+  /**
+   * Check if an anomaly exists.
+   * @param current current metric value
+   * @param baseline baseline metric values
+   * @param sensitivity multiplier to scale thresholds
+   * @returns true if anomalous
+   */
+  check: (current: number, baseline: {
+    mean: number;
+    median: number;
+    max: number;
+    min: number;
+    sample_size: number;
+  }, sensitivity: number) => { anomalous: boolean; baseline_value: number };
 }
 
 // ============================================================

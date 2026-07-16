@@ -47,6 +47,7 @@ import { pruneOldJobEvents } from './lib/retention';
 import { sendOnboardingEmails } from './lib/onboarding';
 import { dashboardRateLimit } from './middleware/rateLimit';
 import { calculateBenchmarks } from './lib/benchmarks';
+import { calculateBaselinesForAllQueues } from './lib/anomalies';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -71,6 +72,20 @@ cron.schedule('0 3 * * *', () => {
     })
     .catch((err) => {
       logger.error({ err }, 'Queue health benchmark calculation failed');
+    });
+}, {
+  timezone: 'UTC',
+});
+
+// Hourly anomaly baseline calculation — runs at :15 past the hour
+// (15 min after the benchmark cron to give metrics time to settle)
+cron.schedule('15 * * * *', () => {
+  void calculateBaselinesForAllQueues()
+    .then(() => {
+      logger.info('Anomaly baseline calculation completed');
+    })
+    .catch((err) => {
+      logger.error({ err }, 'Anomaly baseline calculation failed');
     });
 }, {
   timezone: 'UTC',
