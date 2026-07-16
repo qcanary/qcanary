@@ -100,3 +100,50 @@ describe('Plan limits configuration', () => {
     expect(classifyEventUsage(100, null)).toBe('ok');
   });
 });
+
+describe('Plan limits — behavioral tests', () => {
+  it('classifyEventUsage returns ok when under limit', async () => {
+    const { classifyEventUsage } = await import('../middleware/planLimits');
+    expect(classifyEventUsage(4999, 5000)).toBe('ok');
+    expect(classifyEventUsage(0, 5000)).toBe('ok');
+  });
+
+  it('classifyEventUsage returns ok at exact limit', async () => {
+    const { classifyEventUsage } = await import('../middleware/planLimits');
+    expect(classifyEventUsage(5000, 5000)).toBe('ok');
+  });
+
+  it('classifyEventUsage returns grace within 20% overage', async () => {
+    const { classifyEventUsage } = await import('../middleware/planLimits');
+    expect(classifyEventUsage(5500, 5000)).toBe('grace');
+    expect(classifyEventUsage(6000, 5000)).toBe('grace');
+  });
+
+  it('classifyEventUsage returns hard_capped above 20% overage', async () => {
+    const { classifyEventUsage } = await import('../middleware/planLimits');
+    expect(classifyEventUsage(6001, 5000)).toBe('hard_capped');
+    expect(classifyEventUsage(10000, 5000)).toBe('hard_capped');
+  });
+
+  it('classifyEventUsage returns ok for unlimited plans (null limit)', async () => {
+    const { classifyEventUsage } = await import('../middleware/planLimits');
+    expect(classifyEventUsage(999999, null)).toBe('ok');
+  });
+
+  it('getPlanLimits returns free for any unknown plan name', async () => {
+    const { getPlanLimits, PLAN_LIMITS } = await import('../middleware/planLimits');
+    expect(getPlanLimits('nonexistent')).toEqual(PLAN_LIMITS.free);
+    expect(getPlanLimits('')).toEqual(PLAN_LIMITS.free);
+    expect(getPlanLimits('FREE')).toEqual(PLAN_LIMITS.free);
+  });
+
+  it('normalizePlan maps all legacy names correctly', async () => {
+    const { normalizePlan } = await import('../middleware/planLimits');
+    expect(normalizePlan('starter')).toBe('team');
+    expect(normalizePlan('pro')).toBe('business');
+    expect(normalizePlan('free')).toBe('free');
+    expect(normalizePlan('solo')).toBe('solo');
+    expect(normalizePlan('team')).toBe('team');
+    expect(normalizePlan('business')).toBe('business');
+  });
+});
