@@ -5,7 +5,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ComingSoonModal } from "./ComingSoonModal";
+
 
 // ── Data ────────────────────────────────────────────────────
 
@@ -210,20 +210,8 @@ function CheckIcon({ className }: { className?: string }) {
 
 export function PricingTiers() {
   const [annual, setAnnual] = useState(false);
-  const [comingSoonTier, setComingSoonTier] = useState<string | null>(null);
-
-  const handlePaidCta = (tierName: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    setComingSoonTier(tierName);
-  };
-
   return (
     <>
-      <ComingSoonModal
-        isOpen={comingSoonTier !== null}
-        tierName={comingSoonTier ?? ""}
-        onClose={() => setComingSoonTier(null)}
-      />
       {/* ── Annual Toggle ──────────────────────────────────── */}
       <section className="border-b border-border bg-gradient-to-br from-bg via-surface/10 to-code-bg">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
@@ -325,21 +313,11 @@ export function PricingTiers() {
 
                   {/* CTA */}
                   <div className="mt-6">
-                    {tier.name !== "Free" && tier.name !== "Enterprise" ? (
-                      <Button
-                        variant={tier.ctaVariant}
-                        className="w-full"
-                        onClick={(e) => handlePaidCta(tier.name, e)}
-                      >
+                    <Link href={tier.ctaHref}>
+                      <Button variant={tier.ctaVariant} className="w-full">
                         {tier.cta}
                       </Button>
-                    ) : (
-                      <Link href={tier.ctaHref}>
-                        <Button variant={tier.ctaVariant} className="w-full">
-                          {tier.cta}
-                        </Button>
-                      </Link>
-                    )}
+                    </Link>
                   </div>
                 </div>
               </div>

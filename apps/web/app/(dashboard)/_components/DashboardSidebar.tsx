@@ -290,14 +290,14 @@ export function DashboardSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          // Desktop
-          "hidden md:flex md:flex-col md:gap-4 md:py-5 md:border-r md:border-border md:bg-surface md:relative md:z-0",
-          "transition-all duration-300 ease-spring",
-          collapsed ? "md:w-16 md:px-3" : "md:w-64 md:px-5",
-          // Mobile
+          // Mobile first (applied everywhere)
           "fixed inset-y-0 left-0 z-50 flex w-72 flex-col gap-4 border-r border-border bg-surface p-5 shadow-2xl shadow-black/20",
           "transition-transform duration-300 ease-in-out",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
+          // Desktop overrides (must come AFTER mobile to win specificity)
+          "md:relative md:z-0 md:translate-x-0 md:flex-col md:gap-4 md:py-5 md:border-r md:border-border md:bg-surface md:p-5",
+          "transition-all duration-300 ease-spring",
+          collapsed ? "md:w-16 md:px-3" : "md:w-64 md:px-5"
         )}
       >
         {/* Collapse toggle — desktop only */}

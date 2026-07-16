@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,6 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useUpgradeModal } from "./UpgradeModalContext";
-import { ComingSoonModal } from "@/components/pricing/ComingSoonModal";
 
 const PLANS = [
   {
@@ -21,9 +20,9 @@ const PLANS = [
     price: 15,
     period: "/month",
     badge: null,
+    planSlug: "solo",
     description: "For solo founders and side projects going to production.",
     cta: "Start Solo",
-    ctaHref: "/sign-up",
     highlighted: false,
     features: [
       "1 project",
@@ -31,6 +30,7 @@ const PLANS = [
       "25,000 events/day",
       "14-day history",
       "Email + Slack alerts (2 rules)",
+      "Basic support (48h response)",
     ],
   },
   {
@@ -38,9 +38,9 @@ const PLANS = [
     price: 39,
     period: "/month",
     badge: "Most Popular",
+    planSlug: "team",
     description: "For production teams that need reliable queue monitoring.",
     cta: "Start Team Trial",
-    ctaHref: "/sign-up",
     highlighted: true,
     features: [
       "3 projects",
@@ -50,8 +50,8 @@ const PLANS = [
       "5 team members",
       "Slack + Email + Webhook alerts",
       "Unlimited alert rules",
-      "Auto-resolution",
-      "API access",
+      "Auto-resolution (coming soon)",
+      "API access (coming soon)",
     ],
   },
   {
@@ -59,18 +59,19 @@ const PLANS = [
     price: 149,
     period: "/month",
     badge: null,
+    planSlug: "business",
     description: "For teams with compliance needs and scale requirements.",
     cta: "Start Business Trial",
-    ctaHref: "/sign-up",
     highlighted: false,
     features: [
       "Unlimited projects & queues",
       "Unlimited events",
       "90-day history",
       "20 team members",
-      "SSO (SAML/OIDC)",
-      "Role-based access control",
-      "PagerDuty + OpsGenie webhooks",
+      "SSO (SAML/OIDC) (coming soon)",
+      "Role-based access control (coming soon)",
+      "PagerDuty + OpsGenie webhooks (coming soon)",
+      "Priority support (24h response, Slack channel)",
     ],
   },
   {
@@ -78,9 +79,9 @@ const PLANS = [
     price: null,
     period: "",
     badge: "Self-Hosted",
+    planSlug: null,
     description: "For regulated industries and teams that need full control.",
     cta: "Contact Sales",
-    ctaHref: "/enterprise",
     highlighted: false,
     features: [
       "Everything in Business",
@@ -94,26 +95,47 @@ const PLANS = [
   },
 ];
 
+function useCheckout() {
+  const [loading, setLoading] = React.useState<string | null>(null);
+
+  const checkout = React.useCallback(
+    async (planSlug: string) => {
+      setLoading(planSlug);
+      try {
+        const res = await fetch("/api/v1/billing/checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: planSlug, interval: "month" }),
+        });
+        const json = await res.json();
+        if (!json.success) {
+          throw new Error(json.error?.message ?? "Failed to create checkout");
+        }
+        // Redirect to Dodo Payments checkout
+        window.location.href = json.data.checkoutUrl;
+      } catch (err) {
+        console.error("Checkout error:", err);
+        alert(
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. Please try again."
+        );
+      } finally {
+        setLoading(null);
+      }
+    },
+    []
+  );
+
+  return { loading, checkout };
+}
+
 export function UpgradeModal() {
   const { isOpen, close } = useUpgradeModal();
-  const [showComingSoon, setShowComingSoon] = React.useState(false);
-
-  /**
-   * TODO: Once Dodo Payments is updated with the new Solo ($15), Team ($39), and
-   * Business ($149) products, remove this handler and re-link all paid tier CTAs
-   * directly to the billing flow (/sign-up or /settings).
-   */
-  function handlePaidClick() {
-    close();
-    setShowComingSoon(true);
-  }
+  const { loading, checkout } = useCheckout();
 
   return (
     <>
-      <ComingSoonModal
-        isOpen={showComingSoon}
-        onClose={() => setShowComingSoon(false)}
-      />
       <Dialog open={isOpen} onOpenChange={(open) => { if (!open) close(); }}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
@@ -174,25 +196,31 @@ export function UpgradeModal() {
                 </ul>
 
                 <div className="mt-5">
-                  {plan.name === "Enterprise" ? (
-                    <Link href={plan.ctaHref} onClick={close}>
+                  {plan.planSlug && plan.name !== "Enterprise" ? (
+                    <Button
+                      variant={plan.highlighted ? "default" : "secondary"}
+                      className="w-full text-sm gap-2"
+                      disabled={loading === plan.planSlug}
+                      onClick={() => {
+                        close();
+                        void checkout(plan.planSlug!);
+                      }}
+                    >
+                      {loading === plan.planSlug ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          Redirecting…
+                        </>
+                      ) : (
+                        plan.cta
+                      )}
+                    </Button>
+                  ) : (
+                    <Link href="/enterprise" onClick={close}>
                       <Button variant="secondary" className="w-full text-sm">
                         {plan.cta}
                       </Button>
                     </Link>
-                  ) : plan.highlighted ? (
-                    <Button className="w-full text-sm" onClick={handlePaidClick}>
-                      {plan.cta}
-                    </Button>
-                  ) : (
-                    <Button variant="secondary" className="w-full text-sm" onClick={handlePaidClick}>
-                      {plan.cta}
-                    </Button>
-                  )}
-                  {plan.highlighted && (
-                    <p className="mt-2 text-center text-[10px] text-text-muted/60">
-                      No credit card required for trial
-                    </p>
                   )}
                 </div>
               </div>
