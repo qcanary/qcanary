@@ -5,15 +5,15 @@
 /* ── Design Tokens ──────────────────────────────────── */
 :root {
   /* Light theme (default) — refined for premium look */
-  --color-bg: #F3F4F6;
+  --color-bg: #EEF0F2;
   --color-surface: #FFFFFF;
-  --color-border: #D1D5DB;
+  --color-border: #C8CBD0;
   --color-text-primary: #0A0A0A;
-  --color-text-muted: #6B7280;
+  --color-text-muted: #5B6778;
   --color-accent: #059669;
   --color-accent-hover: #047857;
-  --color-accent-muted: rgba(5, 150, 105, 0.08);
-  --color-code-bg: #E5E7EB;
+  --color-accent-muted: rgba(5, 150, 105, 0.10);
+  --color-code-bg: #E2E5E9;
   --color-success: #059669;
   --color-warning: #D97706;
   --color-danger: #DC2626;
@@ -470,6 +470,26 @@ p, li, figcaption {
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* ── Mobile Table Scroll ───────────────────────────── */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* ── Print styles ──────────────────────────────────── */

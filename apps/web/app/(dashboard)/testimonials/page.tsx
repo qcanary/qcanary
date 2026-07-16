@@ -209,7 +209,7 @@ export default function TestimonialsDashboard() {
       </div>
 
       {/* Testimonial Table */}
-      <div className="rounded-xl border border-border">
+      <div className="table-scroll rounded-xl border border-border">
         <Table>
           <TableHeader>
             <TableRow>

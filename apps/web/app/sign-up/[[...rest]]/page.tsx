@@ -13,17 +13,17 @@ export default function SignUpPage() {
       <SignUp
         appearance={{
           variables: {
-            colorPrimary: "#22C55E",
-            colorBackground: "#111111",
-            colorText: "#FAFAFA",
-            colorTextSecondary: "#71717A",
-            colorInputBackground: "#0F0F0F",
-            colorInputText: "#FAFAFA",
+            colorPrimary: "var(--color-accent)",
+            colorBackground: "var(--color-surface)",
+            colorText: "var(--color-text-primary)",
+            colorTextSecondary: "var(--color-text-muted)",
+            colorInputBackground: "var(--color-code-bg)",
+            colorInputText: "var(--color-text-primary)",
             borderRadius: "0.5rem",
             fontFamily: "var(--font-inter)",
           },
           elements: {
-            card: "bg-surface border border-border",
+            card: "bg-surface border border-border shadow-lg",
             headerTitle: "text-text-primary",
             headerSubtitle: "text-text-muted",
             formButtonPrimary: "bg-accent text-black hover:bg-accent/90",

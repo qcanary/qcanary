@@ -333,7 +333,7 @@ export function PricingTiers() {
           <p className="text-sm text-text-muted mb-8">See exactly what you get with each plan.</p>
 
           <div className="overflow-hidden rounded-xl border border-border">
-            <div className="overflow-x-auto">
+            <div className="table-scroll">
               <table className="w-full min-w-[700px] border-collapse">
                 <thead>
                   <tr className="border-b border-border bg-code-bg text-left text-sm">
