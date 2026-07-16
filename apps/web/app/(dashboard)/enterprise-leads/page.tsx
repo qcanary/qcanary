@@ -15,6 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/Toast";
 
 type InquiryStatus = "new" | "contacted" | "qualified" | "closed-won" | "closed-lost";
 
@@ -75,7 +76,7 @@ export default function EnterpriseDashboard() {
   const [error, setError] = React.useState<string | null>(null);
   const [viewInquiry, setViewInquiry] = React.useState<EnterpriseInquiry | null>(null);
   const [filter, setFilter] = React.useState<InquiryStatus | "all">("all");
-  const [actionMsg, setActionMsg] = React.useState<string | null>(null);
+  const { toast } = useToast();
   const [editNotes, setEditNotes] = React.useState("");
   const [savingNotes, setSavingNotes] = React.useState(false);
   const { getToken } = useAuth();
@@ -116,7 +117,7 @@ export default function EnterpriseDashboard() {
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error?.message || "Failed to update");
-      setActionMsg(`Status updated to "${status}".`);
+      toast(`Status updated to "${status}".`, "success");
       if (viewInquiry?.id === id) setViewInquiry((prev) => prev ? { ...prev, status } : null);
       await loadInquiries();
     } catch (e) {
@@ -134,7 +135,7 @@ export default function EnterpriseDashboard() {
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error?.message || "Failed to save");
-      setActionMsg("Notes saved.");
+      toast("Notes saved.", "success");
       if (viewInquiry?.id === id) setViewInquiry((prev) => prev ? { ...prev, notes: editNotes } : null);
       await loadInquiries();
     } catch (e) {
@@ -150,7 +151,7 @@ export default function EnterpriseDashboard() {
       const res = await fetch(`/api/v1/enterprise/${id}`, { method: "DELETE" });
       const json = await res.json();
       if (!json.success) throw new Error(json.error?.message || "Failed to delete");
-      setActionMsg("Inquiry deleted.");
+      toast("Inquiry deleted.", "success");
       setViewInquiry(null);
       await loadInquiries();
     } catch (e) {
@@ -164,13 +165,6 @@ export default function EnterpriseDashboard() {
   }
 
   React.useEffect(() => { void loadInquiries(); }, [loadInquiries]);
-
-  // Clear action message after 3s
-  React.useEffect(() => {
-    if (!actionMsg) return;
-    const timer = setTimeout(() => setActionMsg(null), 3000);
-    return () => clearTimeout(timer);
-  }, [actionMsg]);
 
   const filteredList = filter === "all" ? inquiries : inquiries.filter((i) => i.status === filter);
 
@@ -188,13 +182,6 @@ export default function EnterpriseDashboard() {
         <h1 className="text-3xl font-semibold tracking-tight">Enterprise Leads</h1>
         <p className="mt-2 text-text-muted">Review, manage, and track enterprise inquiries.</p>
       </div>
-
-      {/* Action toast */}
-      {actionMsg && (
-        <div className="animate-slide-in-right rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
-          {actionMsg}
-        </div>
-      )}
 
       {error && (
         <Card>

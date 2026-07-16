@@ -14,6 +14,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useToast } from "@/components/Toast";
 
 type TestimonialStatus = "pending" | "approved" | "rejected";
 
@@ -74,7 +75,7 @@ export default function TestimonialsDashboard() {
   const [error, setError] = React.useState<string | null>(null);
   const [viewTestimonial, setViewTestimonial] = React.useState<Testimonial | null>(null);
   const [filter, setFilter] = React.useState<TestimonialStatus | "all">("all");
-  const [actionMsg, setActionMsg] = React.useState<string | null>(null);
+  const { toast } = useToast();
   const { getToken } = useAuth();
 
   const loadTestimonials = React.useCallback(async function loadTestimonials() {
@@ -107,7 +108,7 @@ export default function TestimonialsDashboard() {
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error?.message || "Failed to update");
-      setActionMsg(`Testimonial ${status}.`);
+      toast(`Testimonial ${status}.`, "success");
       setViewTestimonial(null);
       await loadTestimonials();
     } catch (e) {
@@ -121,7 +122,7 @@ export default function TestimonialsDashboard() {
       const res = await fetch(`/api/v1/testimonials/${id}`, { method: "DELETE" });
       const json = await res.json();
       if (!json.success) throw new Error(json.error?.message || "Failed to delete");
-      setActionMsg("Testimonial deleted.");
+      toast("Testimonial deleted.", "success");
       setViewTestimonial(null);
       await loadTestimonials();
     } catch (e) {
@@ -132,17 +133,10 @@ export default function TestimonialsDashboard() {
   function copyAsHtml(t: Testimonial) {
     const quote = t.edited_quote || t.testimonial;
     const html = `<div className="testimonial">\n  <p>"${quote}"</p>\n  <p class="author">— ${t.name}, ${t.title} at ${t.company}</p>\n</div>`;
-    navigator.clipboard.writeText(html).then(() => setActionMsg("HTML copied!")).catch(() => setActionMsg("Failed to copy"));
+    navigator.clipboard.writeText(html).then(() => toast("HTML copied!", "success")).catch(() => toast("Failed to copy", "error"));
   }
 
   React.useEffect(() => { void loadTestimonials(); }, [loadTestimonials]);
-
-  // Clear action message after 3s
-  React.useEffect(() => {
-    if (!actionMsg) return;
-    const timer = setTimeout(() => setActionMsg(null), 3000);
-    return () => clearTimeout(timer);
-  }, [actionMsg]);
 
   const filteredList = filter === "all" ? testimonials : testimonials.filter((t) => t.status === filter);
 
@@ -152,13 +146,6 @@ export default function TestimonialsDashboard() {
         <h1 className="text-3xl font-semibold tracking-tight">Testimonials</h1>
         <p className="mt-2 text-text-muted">Review, approve, and manage user testimonials.</p>
       </div>
-
-      {/* Action toast */}
-      {actionMsg && (
-        <div className="animate-slide-in-right rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
-          {actionMsg}
-        </div>
-      )}
 
       {error && (
         <Card>

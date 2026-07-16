@@ -12,6 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 import { createAuthedSupabaseClient } from "@/lib/supabaseClient";
 import { trackEvent } from "@/components/PostHogProvider";
+import { EmptyState } from "@/components/EmptyState";
+import { Folder } from "lucide-react";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 
@@ -328,25 +330,22 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
           </CardHeader>
           <CardContent>
             {!queues || queues.length === 0 ? (
-              <div className="flex flex-col items-center gap-4 py-12 text-center">
-                <div className="text-4xl">📡</div>
-                <div>
-                  <p className="text-sm font-medium text-text-primary">No queues detected yet</p>
-                  <p className="mt-1 text-xs text-text-muted">
-                    Install the Qcanary agent in your BullMQ service and start sending events.
-                    Once events arrive, your queues will show up here in real-time.
-                  </p>
-                </div>
-                <a
-                  href="https://github.com/qcanary/qcanary#quickstart"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-xs font-medium text-text-primary hover:bg-surface/80 transition-colors"
-                >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                  View setup guide
-                </a>
-              </div>
+              <EmptyState
+                icon={Folder}
+                title="No queues yet"
+                description="Install @qcanary/agent in your worker process and send your first events."
+                action={
+                  <a
+                    href="https://github.com/qcanary/qcanary#quickstart"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-surface px-4 text-xs font-medium text-text-primary hover:bg-surface/80 transition-colors"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    View setup guide
+                  </a>
+                }
+              />
             ) : (
               <Table>
                 <TableHeader>
