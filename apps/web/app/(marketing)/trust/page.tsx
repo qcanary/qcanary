@@ -306,8 +306,8 @@ export default function TrustPage() {
           <div className="mt-8 rounded-lg border border-border bg-surface/20 px-5 py-4 text-center">
             <p className="text-sm text-text-muted">
               Want to be notified when we complete these?{" "}
-              <a href="mailto:security@qcanary.dev" className="text-accent hover:underline">
-                Email us at security@qcanary.dev
+              <a href="mailto:hello@qcanary.dev" className="text-accent hover:underline">
+                Email us at hello@qcanary.dev
               </a>
             </p>
           </div>
@@ -389,10 +389,10 @@ export default function TrustPage() {
             If you have security questions, need a compliance questionnaire filled out, or want to review our architecture.
           </p>
           <div className="mt-8">
-            <a href="mailto:security@qcanary.dev">
+            <a href="mailto:hello@qcanary.dev">
               <Button size="lg" className="gap-2">
                 <Shield className="h-4 w-4" />
-                Contact security@qcanary.dev
+                Contact hello@qcanary.dev
               </Button>
             </a>
           </div>
