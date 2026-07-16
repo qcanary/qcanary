@@ -20,6 +20,9 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trackEvent } from "@/components/PostHogProvider";
+import { EmptyState } from "@/components/EmptyState";
+import { Bell } from "lucide-react";
+import { useToast } from "@/components/Toast";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 
@@ -171,7 +174,6 @@ export function AlertsClient({ projectId }: { projectId: string }) {
   const [history, setHistory] = React.useState<AlertHistory[] | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [message, setMessage] = React.useState<string | null>(null);
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
@@ -179,6 +181,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
   const [formErrors, setFormErrors] = React.useState<FormErrors>({});
   const [submitting, setSubmitting] = React.useState(false);
   const [deletingRuleId, setDeletingRuleId] = React.useState<string | null>(null);
+  const { toast } = useToast();
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -239,7 +242,6 @@ export function AlertsClient({ projectId }: { projectId: string }) {
 
     setSubmitting(true);
     setError(null);
-    setMessage(null);
     try {
       const payload = {
         name: form.name.trim(),
@@ -274,7 +276,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
         conditionType: form.conditionType,
         channel: form.channel,
       });
-      setMessage(isEdit ? "Rule updated." : "Rule created.");
+      toast(isEdit ? "Rule updated." : "Rule created.", "success");
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to save rule.");
@@ -285,7 +287,6 @@ export function AlertsClient({ projectId }: { projectId: string }) {
 
   async function toggleRule(rule: AlertRule, isActive: boolean) {
     setError(null);
-    setMessage(null);
     try {
       const res = await fetch(`/api/v1/projects/${projectId}/alerts/${rule.id}`, {
         method: "PATCH",
@@ -300,7 +301,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
           return { ...r, isActive };
         })
       );
-      setMessage(`Rule ${isActive ? "enabled" : "disabled"}.`);
+      toast(`Rule ${isActive ? "enabled" : "disabled"}.`, "success");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to update rule.");
     }
@@ -308,7 +309,6 @@ export function AlertsClient({ projectId }: { projectId: string }) {
 
   async function sendTest(ruleId: string) {
     setError(null);
-    setMessage(null);
     try {
       const res = await fetch(`/api/v1/projects/${projectId}/alerts/test`, {
         method: "POST",
@@ -317,7 +317,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
       });
       const json = (await res.json()) as { success: true } | ApiError;
       if (!json.success) throw new Error(json.error.message);
-      setMessage("Test alert sent.");
+      toast("Test alert sent.", "success");
       await load();
     } catch (e) {
       const message = e instanceof Error ? friendlyTestError(e.message) : "Failed to send test alert.";
@@ -329,7 +329,6 @@ export function AlertsClient({ projectId }: { projectId: string }) {
     const ruleId = confirmDeleteId;
     if (!ruleId) return;
     setError(null);
-    setMessage(null);
     setDeletingRuleId(ruleId);
     try {
       const res = await fetch(`/api/v1/projects/${projectId}/alerts/${ruleId}`, {
@@ -338,7 +337,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
       const json = (await res.json()) as { success: true; data: { deleted: true; id: string } } | ApiError;
       if (!json.success) throw new Error(json.error.message);
       setRules((prev) => (prev ?? []).filter((rule) => rule.id !== ruleId));
-      setMessage("Rule deleted.");
+      toast("Rule deleted.", "success");
       setConfirmDeleteId(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to delete rule.");
@@ -385,12 +384,6 @@ export function AlertsClient({ projectId }: { projectId: string }) {
         </Card>
       )}
 
-      {message && !error && (
-        <Card>
-          <CardContent className="pt-6 text-sm text-text-primary">{message}</CardContent>
-        </Card>
-      )}
-
       <Card>
         <CardHeader>
           <CardTitle>Alert rules</CardTitle>
@@ -404,22 +397,12 @@ export function AlertsClient({ projectId }: { projectId: string }) {
               <Skeleton className="h-14 w-full" />
             </div>
           ) : !rules || rules.length === 0 ? (
-            <div className="flex flex-col items-center gap-4 py-12 text-center">
-              <div className="text-4xl">🔔</div>
-              <div>
-                <p className="text-sm font-medium text-text-primary">No alert rules yet</p>
-                <p className="mt-1 text-xs text-text-muted">
-                  Alert rules notify your team via Slack, email, or webhook when things go wrong.
-                  Create your first rule to get notified about failures, queue depth, or no activity.
-                </p>
-              </div>
-              <button
-                onClick={openCreateDialog}
-                className="inline-flex h-9 items-center gap-2 rounded-lg bg-accent px-4 text-xs font-medium text-black hover:bg-accent/90 transition-colors"
-              >
-                Create your first rule
-              </button>
-            </div>
+            <EmptyState
+              icon={Bell}
+              title="No alert rules"
+              description="Create your first alert rule to get notified when something goes wrong."
+              action={<Button size="sm" onClick={openCreateDialog}>Create alert rule</Button>}
+            />
           ) : (
             <Table>
               <TableHeader>

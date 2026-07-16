@@ -4,6 +4,7 @@ import { UsageNudge } from "./_components/UsageNudge";
 import { TeamProjectProvider } from "./_providers/TeamProjectProvider";
 import { UpgradeModalProvider } from "@/components/dashboard/UpgradeModalContext";
 import { UpgradeModal } from "@/components/dashboard/UpgradeModal";
+import { ToastProvider } from "@/components/Toast";
 import { PageTransition } from "@/components/PageTransition";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
@@ -15,24 +16,26 @@ export default function DashboardLayout({
   return (
     <TeamProjectProvider>
       <UpgradeModalProvider>
-        <div className="flex min-h-screen">
-          <DashboardSidebar />
-          <main id="main-content" className="flex-1 min-w-0">
-            <DashboardTopbar />
-            <UsageNudge />
-            <div className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6">
-              {/* Mobile padding to avoid hamburger overlap */}
-              <div className="pt-14 md:pt-0">
-                <ErrorBoundary>
-                  <PageTransition variant="fade-slide">
-                    {children}
-                  </PageTransition>
-                </ErrorBoundary>
+        <ToastProvider>
+          <div className="flex min-h-screen">
+            <DashboardSidebar />
+            <main id="main-content" className="flex-1 min-w-0">
+              <DashboardTopbar />
+              <UsageNudge />
+              <div className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6">
+                {/* Mobile padding to avoid hamburger overlap */}
+                <div className="pt-14 md:pt-0">
+                  <ErrorBoundary>
+                    <PageTransition variant="fade-slide">
+                      {children}
+                    </PageTransition>
+                  </ErrorBoundary>
+                </div>
               </div>
-            </div>
-          </main>
-        </div>
-        <UpgradeModal />
+            </main>
+          </div>
+          <UpgradeModal />
+        </ToastProvider>
       </UpgradeModalProvider>
     </TeamProjectProvider>
   );
