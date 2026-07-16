@@ -13,6 +13,7 @@ import { ingestRateLimit } from '../middleware/rateLimit';
 import { enforceDailyEventLimitForProject, enforceQueueLimitForProject } from '../middleware/planLimits';
 import { insertRows, callRpc } from '../lib/typedSupabase';
 import { logger } from '../lib/logger';
+import { IngestBodySchema } from '../lib/validations';
 
 const MAX_BATCH_SIZE = 500;
 
@@ -60,20 +61,20 @@ router.post(
       return;
     }
 
-    const parseResult = parseIngestBody(req.body);
+    const parseResult = IngestBodySchema.safeParse(req.body);
 
-    if (!parseResult.ok) {
+    if (!parseResult.success) {
       res.status(400).json({
         success: false,
         error: {
           code: 'INVALID_PAYLOAD',
-          message: parseResult.error,
+          message: parseResult.error.errors[0]?.message ?? 'Invalid payload',
         },
       });
       return;
     }
 
-    const events = parseResult.value.events;
+    const events = parseResult.data.events;
 
     if (events.length > MAX_BATCH_SIZE) {
       res.status(400).json({

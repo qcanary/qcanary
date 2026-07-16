@@ -300,13 +300,40 @@ async function resolveActiveAlert(projectId: string, rule: RuleRow): Promise<voi
 
 /**
  * Default anomaly settings used for teams that haven't configured custom settings.
- * In production, these should be stored per-team in the database.
  */
 function getDefaultAnomalySettings(): AnomalySettings {
   return {
     enabled: true,
     sensitivity: 'normal' as SensitivityLevel,
     min_sample_days: 3,
+  };
+}
+
+async function getAnomalySettings(projectId: string): Promise<AnomalySettings> {
+  const { data: project, error: projectError } = await supabase
+    .from('projects')
+    .select('team_id')
+    .eq('id', projectId)
+    .single();
+
+  if (projectError || !project) {
+    return getDefaultAnomalySettings();
+  }
+
+  const { data: settings } = await supabase
+    .from('anomaly_settings')
+    .select('enabled, sensitivity, min_sample_days')
+    .eq('team_id', project.team_id)
+    .single();
+
+  if (!settings) {
+    return getDefaultAnomalySettings();
+  }
+
+  return {
+    enabled: settings.enabled,
+    sensitivity: settings.sensitivity as SensitivityLevel,
+    min_sample_days: settings.min_sample_days,
   };
 }
 
@@ -362,7 +389,7 @@ async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promis
   // ── Step 2: Run anomaly detection for each queue ──────────
   // Anomalies are auto-generated alerts (not user-configured)
   // They use the same delivery channels but are logged separately
-  const anomalySettings = getDefaultAnomalySettings();
+  const anomalySettings = await getAnomalySettings(projectId);
   if (anomalySettings.enabled) {
     for (const queueName of queueNames) {
       try {
