@@ -1,143 +1,163 @@
-/**
- * Tests for ingest endpoint body validation — parseIngestBody.
- * We export parseIngestBody by re-importing the route module structure.
- */
-
 import { describe, it, expect } from 'vitest';
+import { parseIngestBody } from '../routes/ingest';
 
-// We'll test the validation logic by importing the route module
-// The parseIngestBody function is module-scoped, so we test the route behavior
+describe('parseIngestBody — actual code validation', () => {
+  const validEvent = {
+    queueName: 'testQueue',
+    jobId: 'job-123',
+    eventType: 'completed',
+    status: 'completed',
+    environment: 'production',
+    timestamp: '2026-07-10T12:00:00.000Z',
+  };
 
-describe('Ingest validation — field constraints', () => {
-  it('should reject non-object body', () => {
-    // Simulate parseIngestBody logic
-    const body = 'not an object';
-    const result = typeof body !== 'object' || body === null;
-    expect(result).toBe(true);
+  it('rejects non-object body', () => {
+    const result = parseIngestBody('not an object');
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('JSON object');
+    }
   });
 
-  it('should reject missing events array', () => {
-    const body = { notEvents: [] };
-    const result = !Array.isArray((body as Record<string, unknown>).events);
-    expect(result).toBe(true);
+  it('rejects null body', () => {
+    const result = parseIngestBody(null);
+    expect(result.ok).toBe(false);
   });
 
-  it('should reject empty events array', () => {
-    const body = { events: [] };
-    const hasEvents = Array.isArray((body as Record<string, unknown>).events);
-    const isEmpty = hasEvents && (body as { events: unknown[] }).events.length === 0;
-    expect(hasEvents).toBe(true);
-    expect(isEmpty).toBe(true);
+  it('rejects missing events array', () => {
+    const result = parseIngestBody({ notEvents: [] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('events');
+    }
   });
 
-  it('should validate required string fields in each event', () => {
-    const validEvent = {
-      queueName: 'testQueue',
-      jobId: 'job-123',
-      eventType: 'completed',
-      status: 'completed',
-      environment: 'production',
-      timestamp: '2026-07-10T12:00:00.000Z',
-    };
-
-    expect(typeof validEvent.queueName).toBe('string');
-    expect(validEvent.queueName.length).toBeGreaterThan(0);
-    expect(typeof validEvent.jobId).toBe('string');
-    expect(typeof validEvent.eventType).toBe('string');
-    expect(validEvent.eventType.length).toBeGreaterThan(0);
-    expect(typeof validEvent.status).toBe('string');
-    expect(typeof validEvent.environment).toBe('string');
-    expect(typeof validEvent.timestamp).toBe('string');
-    expect(Number.isNaN(Date.parse(validEvent.timestamp))).toBe(false);
+  it('rejects empty events array', () => {
+    const result = parseIngestBody({ events: [] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('empty');
+    }
   });
 
-  it('should enforce max lengths on string fields', () => {
-    const longQueueName = 'a'.repeat(101);
-    expect(longQueueName.length > 100).toBe(true);
-
-    const longJobId = 'a'.repeat(101);
-    expect(longJobId.length > 100).toBe(true);
-
-    const longEventType = 'a'.repeat(51);
-    expect(longEventType.length > 50).toBe(true);
+  it('accepts valid single event', () => {
+    const result = parseIngestBody({ events: [validEvent] });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.events).toHaveLength(1);
+      expect(result.value.events[0].queueName).toBe('testQueue');
+    }
   });
 
-  it('should accept optional numeric fields', () => {
-    const event = {
-      queueName: 'q',
-      jobId: 'j',
-      eventType: 'completed',
-      status: 'completed',
-      environment: 'prod',
-      timestamp: '2026-07-10T12:00:00.000Z',
-      durationMs: 150,
-      attempts: 3,
-    };
-
-    expect(typeof event.durationMs).toBe('number');
-    expect(typeof event.attempts).toBe('number');
+  it('rejects event with missing queueName', () => {
+    const event = { ...validEvent, queueName: undefined };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('queueName');
+    }
   });
 
-  it('should reject max batch size exceeded', () => {
-    const MAX_BATCH_SIZE = 500;
-    const lotsOfEvents = Array.from({ length: 501 }, (_, i) => ({
-      queueName: `q${i}`,
-      jobId: `j${i}`,
-      eventType: 'completed',
-      status: 'completed',
-      environment: 'prod',
-      timestamp: '2026-07-10T12:00:00.000Z',
-    }));
-
-    expect(lotsOfEvents.length > MAX_BATCH_SIZE).toBe(true);
+  it('rejects event with empty queueName', () => {
+    const event = { ...validEvent, queueName: '' };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
   });
 
-  it('should accept valid batch within limit', () => {
-    const MAX_BATCH_SIZE = 500;
+  it('rejects queueName exceeding 100 chars', () => {
+    const event = { ...validEvent, queueName: 'a'.repeat(101) };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('100');
+    }
+  });
+
+  it('rejects event with missing jobId', () => {
+    const event = { ...validEvent, jobId: undefined };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+  });
+
+  it('rejects jobId exceeding 100 chars', () => {
+    const event = { ...validEvent, jobId: 'a'.repeat(101) };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+  });
+
+  it('rejects event with missing eventType', () => {
+    const event = { ...validEvent, eventType: undefined };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+  });
+
+  it('rejects eventType exceeding 50 chars', () => {
+    const event = { ...validEvent, eventType: 'a'.repeat(51) };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+  });
+
+  it('rejects event with missing status', () => {
+    const event = { ...validEvent, status: undefined };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+  });
+
+  it('rejects event with invalid timestamp', () => {
+    const event = { ...validEvent, timestamp: 'not-a-date' };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+  });
+
+  it('accepts optional durationMs', () => {
+    const event = { ...validEvent, durationMs: 150 };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.events[0].durationMs).toBe(150);
+    }
+  });
+
+  it('rejects non-number durationMs', () => {
+    const event = { ...validEvent, durationMs: 'fast' };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(false);
+  });
+
+  it('accepts optional attempts', () => {
+    const event = { ...validEvent, attempts: 3 };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(true);
+  });
+
+  it('truncates jobName to 255 chars', () => {
+    const event = { ...validEvent, jobName: 'a'.repeat(300) };
+    const result = parseIngestBody({ events: [event] });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.events[0].jobName!.length).toBe(255);
+    }
+  });
+
+  it('accepts multiple events', () => {
     const events = Array.from({ length: 5 }, (_, i) => ({
-      queueName: `q${i}`,
-      jobId: `j${i}`,
-      eventType: 'completed',
-      status: 'completed',
-      environment: 'prod',
-      timestamp: '2026-07-10T12:00:00.000Z',
+      ...validEvent,
+      jobId: `job-${i}`,
     }));
-
-    expect(events.length).toBeLessThanOrEqual(MAX_BATCH_SIZE);
-    expect(events.length).toBe(5);
-  });
-});
-
-describe('Ingest timestamp validation', () => {
-  it('should accept ISO 8601 timestamps', () => {
-    const timestamps = [
-      '2026-07-10T12:00:00.000Z',
-      '2026-07-10T12:00:00Z',
-      '2026-07-10T12:00:00+00:00',
-      '2026-01-01T00:00:00.000Z',
-    ];
-
-    for (const ts of timestamps) {
-      expect(Number.isNaN(Date.parse(ts))).toBe(false);
+    const result = parseIngestBody({ events });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.events).toHaveLength(5);
     }
   });
 
-  it('should reject invalid timestamps', () => {
-    const invalidTimestamps = [
-      'not-a-date',
-      '',
-      '2026-13-01T00:00:00Z', // month 13
-      undefined,
-      null,
-      12345,
-    ];
+  it('rejects event with null value', () => {
+    const result = parseIngestBody({ events: [null] });
+    expect(result.ok).toBe(false);
+  });
 
-    for (const ts of invalidTimestamps) {
-      if (typeof ts === 'string') {
-        const parsed = Date.parse(ts);
-        // month 13 actually may be parsed by some engines, so just verify the behavior
-        expect(typeof ts === 'string').toBe(true);
-      }
-    }
+  it('rejects event with non-object value', () => {
+    const result = parseIngestBody({ events: ['string'] });
+    expect(result.ok).toBe(false);
   });
 });

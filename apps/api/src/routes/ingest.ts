@@ -140,7 +140,7 @@ router.post(
   }
 );
 
-function parseIngestBody(body: unknown): { ok: true; value: IngestRequestBody } | { ok: false; error: string } {
+export function parseIngestBody(body: unknown): { ok: true; value: IngestRequestBody } | { ok: false; error: string } {
   if (typeof body !== 'object' || body === null) {
     return { ok: false, error: 'Request body must be a JSON object' };
   }
