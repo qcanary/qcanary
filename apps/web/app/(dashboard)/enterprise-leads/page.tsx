@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useAuth } from "@clerk/nextjs";
 import { Eye, Trash2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -77,13 +78,17 @@ export default function EnterpriseDashboard() {
   const [actionMsg, setActionMsg] = React.useState<string | null>(null);
   const [editNotes, setEditNotes] = React.useState("");
   const [savingNotes, setSavingNotes] = React.useState(false);
+  const { getToken } = useAuth();
 
   const loadInquiries = React.useCallback(async function loadInquiries() {
     setLoading(true);
     setError(null);
     try {
       const params = filter !== "all" ? `?status=${filter}` : "";
-      const res = await fetch(`/api/v1/enterprise${params}`);
+      const token = await getToken();
+      const res = await fetch(`/api/v1/enterprise${params}`, {
+        headers: token ? { authorization: `Bearer ${token}` } : {},
+      });
       const json = (await res.json()) as ListResponse;
       if (!json.success) throw new Error("Failed to load");
       setInquiries(json.data.inquiries);
@@ -100,7 +105,7 @@ export default function EnterpriseDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, getToken]);
 
   async function updateStatus(id: string, status: InquiryStatus) {
     try {

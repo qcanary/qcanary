@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useAuth } from "@clerk/nextjs";
 import { CheckCircle2, XCircle, Eye, Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,13 +75,18 @@ export default function TestimonialsDashboard() {
   const [viewTestimonial, setViewTestimonial] = React.useState<Testimonial | null>(null);
   const [filter, setFilter] = React.useState<TestimonialStatus | "all">("all");
   const [actionMsg, setActionMsg] = React.useState<string | null>(null);
+  const { getToken } = useAuth();
 
   const loadTestimonials = React.useCallback(async function loadTestimonials() {
     setLoading(true);
     setError(null);
     try {
       const params = filter !== "all" ? `?status=${filter}` : "";
-      const res = await fetch(`/api/v1/testimonials${params}`);
+      const token = await getToken();
+      const res = await fetch(`/api/v1/testimonials${params}`, {
+        headers: token ? { authorization: `Bearer ${token}` } : {},
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
       const json = (await res.json()) as ListResponse;
       if (!json.success) throw new Error("Failed to load");
       setTestimonials(json.data.testimonials);
@@ -90,7 +96,7 @@ export default function TestimonialsDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, getToken]);
 
   async function updateStatus(id: string, status: TestimonialStatus) {
     try {
