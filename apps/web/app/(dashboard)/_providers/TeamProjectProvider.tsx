@@ -100,7 +100,7 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
     }
     const match = pathname.match(/^\/([^/]+)/);
     const projectIdInPath = match?.[1];
-    if (!projectIdInPath || projectIdInPath === "onboarding" || projectIdInPath === "settings" || projectIdInPath === "sign-up" || projectIdInPath === "sign-in") {
+    if (!projectIdInPath || projectIdInPath === "onboarding" || projectIdInPath === "settings" || projectIdInPath === "sign-up" || projectIdInPath === "sign-in" || projectIdInPath === "testimonials" || projectIdInPath === "enterprise-leads") {
       return;
     }
     const exists = projects.some((project) => project.id === projectIdInPath);

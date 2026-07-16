@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { X, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { useUpgradeModal } from "./UpgradeModalContext";
 
@@ -140,9 +139,6 @@ export function UpgradeModal() {
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Choose your plan</DialogTitle>
-            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 transition-opacity">
-              <X className="h-4 w-4" />
-            </DialogClose>
           </DialogHeader>
 
           <div className="grid gap-4 py-4 md:grid-cols-4">
