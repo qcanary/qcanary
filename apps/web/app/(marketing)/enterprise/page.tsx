@@ -159,6 +159,21 @@ export default function EnterprisePage() {
         </div>
       </section>
 
+      {/* ── Book a Demo ────────────────────────────────────── */}
+      <section className="border-b border-border bg-gradient-to-b from-surface/10 to-bg">
+        <div className="mx-auto max-w-3xl px-6 py-16 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight">Prefer to talk?</h2>
+          <p className="mt-2 text-text-muted">
+            Book a 30-minute technical walkthrough. No sales pitch — just a demo of the self-hosted deployment.
+          </p>
+          <div className="mt-6">
+            <a href="https://calendly.com/qcanary/enterprise-demo" target="_blank" rel="noopener noreferrer">
+              <Button size="lg">Book a Demo <ArrowRight className="ml-1 h-4 w-4" /></Button>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ── Why Self-Hosted ────────────────────────────────── */}
       <section className="border-b border-border bg-gradient-to-b from-bg via-surface/[0.02] to-bg">
         <div className="mx-auto max-w-5xl px-6 py-20 md:py-24">

@@ -28,42 +28,18 @@ const TIERS = [
       "1 queue",
       "5,000 events/day",
       "24-hour history",
-      "1 user",
-      "Email alerts (1 rule)",
+      "1 email alert rule",
       "Community support",
     ],
   },
   {
-    name: "Solo",
-    price: 15,
-    period: "/month",
-    badge: "For Indie Hackers",
-    description: "For solo founders and side projects going to production.",
-    cta: "Start Solo →",
-    ctaHref: "/sign-up",
-    ctaVariant: "default" as const,
-    highlighted: false,
-    enterprise: false,
-    annualMonthly: 15,
-    annualYearly: 144,
-    features: [
-      "1 project",
-      "5 queues",
-      "25,000 events/day",
-      "14-day history",
-      "1 user",
-      "Email + Slack alerts (2 rules)",
-      "Basic support (48h response)",
-    ],
-  },
-  {
-    name: "Team",
+    name: "Pro",
     price: 39,
     period: "/month",
     badge: "Most Popular",
     description: "For production teams that need reliable queue monitoring.",
-    cta: "Start Team Trial →",
-    ctaHref: "/sign-up",
+    cta: "Start 14-Day Free Trial",
+    ctaHref: "/sign-up?plan=pro",
     ctaVariant: "default" as const,
     highlighted: true,
     enterprise: false,
@@ -75,36 +51,8 @@ const TIERS = [
       "100,000 events/day",
       "30-day history",
       "5 team members",
-      "Slack + Email + Webhook alerts (unlimited rules)",
-      "Auto-resolution (coming soon)",
-      "API access (coming soon)",
-      "Basic support (48h response)",
-    ],
-  },
-  {
-    name: "Business",
-    price: 149,
-    period: "/month",
-    badge: "For Organizations",
-    description: "For teams with compliance needs and scale requirements.",
-    cta: "Start Business Trial →",
-    ctaHref: "/sign-up",
-    ctaVariant: "default" as const,
-    highlighted: false,
-    enterprise: false,
-    annualMonthly: 149,
-    annualYearly: 1430,
-    features: [
-      "Unlimited projects",
-      "Unlimited queues",
-      "Unlimited events",
-      "90-day history",
-      "20 team members",
-      "SSO (SAML/OIDC) (coming soon)",
-      "Role-based access control (coming soon)",
-      "PagerDuty + OpsGenie webhooks (coming soon)",
-      "Priority support (24h response, Slack channel)",
-      "Usage analytics & reporting",
+      "Slack + Email + Webhook alerts",
+      "Unlimited alert rules",
     ],
   },
   {
@@ -121,48 +69,41 @@ const TIERS = [
     annualMonthly: undefined,
     annualYearly: undefined,
     features: [
-      "Everything in Business",
       "Self-hosted deployment",
-      "Unlimited team members",
-      "Unlimited history",
-      "Custom SLA (99.9% uptime)",
+      "SSO (SAML/OIDC)",
+      "Unlimited everything",
       "Dedicated support engineer",
+      "Custom SLA (99.9% uptime)",
       "SOC 2 Type II report",
-      "Annual security audits",
       "White-glove onboarding",
-      "Custom integrations",
     ],
   },
 ] as const;
 
 const COMPARISON_ROWS = [
-  { feature: "Projects", free: "1", solo: "1", team: "3", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Queues", free: "1", solo: "5", team: "10/project", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Events/day", free: "5,000", solo: "25,000", team: "100,000", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "History", free: "24h", solo: "14 days", team: "30 days", business: "90 days", enterprise: "Unlimited" },
-  { feature: "Team members", free: "1", solo: "1", team: "5", business: "20", enterprise: "Unlimited" },
-  { feature: "Email alerts", free: "1 rule", solo: "2 rules", team: "Unlimited", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Slack alerts", free: "—", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
-  { feature: "Webhook alerts", free: "—", solo: "—", team: "✓", business: "✓", enterprise: "✓" },
-  { feature: "Auto-resolution", free: "—", solo: "—", team: "Coming soon", business: "Coming soon", enterprise: "Coming soon" },
-  { feature: "SSO/SAML", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
-  { feature: "Role-based access", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
-  { feature: "API access", free: "—", solo: "—", team: "Coming soon", business: "Coming soon", enterprise: "Coming soon" },
-  { feature: "PagerDuty/OpsGenie", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
-  { feature: "Support", free: "Community", solo: "48h", team: "48h", business: "24h + Slack", enterprise: "Dedicated engineer" },
-  { feature: "Self-hosted", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
-  { feature: "Custom SLA", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
-  { feature: "SOC 2 report", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
+  { feature: "Projects", free: "1", pro: "3", enterprise: "Unlimited" },
+  { feature: "Queues", free: "1", pro: "10/project", enterprise: "Unlimited" },
+  { feature: "Events/day", free: "5,000", pro: "100,000", enterprise: "Unlimited" },
+  { feature: "History", free: "24h", pro: "30 days", enterprise: "Unlimited" },
+  { feature: "Team members", free: "1", pro: "5", enterprise: "Unlimited" },
+  { feature: "Email alerts", free: "1 rule", pro: "Unlimited", enterprise: "Unlimited" },
+  { feature: "Slack alerts", free: "—", pro: "✓", enterprise: "✓" },
+  { feature: "Webhook alerts", free: "—", pro: "✓", enterprise: "✓" },
+  { feature: "SSO/SAML", free: "—", pro: "—", enterprise: "✓" },
+  { feature: "Support", free: "Community", pro: "48h", enterprise: "Dedicated engineer" },
+  { feature: "Self-hosted", free: "—", pro: "—", enterprise: "✓" },
+  { feature: "Custom SLA", free: "—", pro: "—", enterprise: "✓" },
+  { feature: "SOC 2 report", free: "—", pro: "—", enterprise: "✓" },
 ];
 
 const FAQS = [
   {
-    q: "What's the difference between Free and Solo?",
-    a: "Solo gives you 5 queues (vs. 1), 14-day history (vs. 24 hours), Slack alerts, and 25,000 events/day (vs. 5,000). It's for solo founders who need production monitoring without the team features.",
+    q: "What's the difference between Free and Pro?",
+    a: "Pro gives you 3 projects (vs. 1), 10 queues per project (vs. 1), 30-day history (vs. 24 hours), 100,000 events/day (vs. 5,000), 5 team members, and Slack + Email + Webhook alerts with unlimited rules.",
   },
   {
     q: "Can I try before I buy?",
-    a: "Yes. The Free tier is free forever for personal projects. Use it to evaluate QCanary. When you're ready for production, upgrade to Solo or Team.",
+    a: "Yes. Start a 14-day free trial of Pro with full access — no credit card required. If you don't love it, you stay on Free.",
   },
   {
     q: "What happens if I exceed my plan limits?",
@@ -177,12 +118,8 @@ const FAQS = [
     a: "Yes. You can switch at any time from your dashboard. Annual plans save 20%.",
   },
   {
-    q: "What's the difference between Solo and Team?",
-    a: "Team adds multiple projects, team member access (5 people), unlimited alert rules, webhooks, and API access. Solo is for one person. Team is for a group.",
-  },
-  {
-    q: "What's the difference between Team and Business?",
-    a: "Business adds SSO (SAML/OIDC), role-based access control, PagerDuty/OpsGenie integrations, priority support with a Slack channel, and usage analytics. If you have a dedicated DevOps or SRE team, Business is the right fit.",
+    q: "What's the difference between Pro and Enterprise?",
+    a: "Enterprise adds self-hosted deployment, SSO (SAML/OIDC), unlimited everything, a dedicated support engineer, custom SLA, and SOC 2 Type II reports. It's for regulated industries and teams that need full control.",
   },
   {
     q: "Do you offer refunds?",
@@ -194,7 +131,7 @@ const FAQS = [
   },
   {
     q: "Is there a discount for startups or non-profits?",
-    a: "Yes. Startups under 2 years old and non-profits get 50% off Solo, Team, or Business for the first year. Contact us with proof of status.",
+    a: "Yes. Startups under 2 years old and non-profits get 50% off Pro for the first year. Contact us with proof of status.",
   },
 ];
 
@@ -240,7 +177,7 @@ export function PricingTiers() {
           </div>
 
           {/* ── Tier Cards ──────────────────────────────────── */}
-          <div className="grid gap-5 md:grid-cols-5">
+          <div className="grid gap-5 md:grid-cols-3">
             {TIERS.map((tier) => (
               <div
                 key={tier.name}
@@ -336,9 +273,7 @@ export function PricingTiers() {
                   <tr className="border-b border-border bg-code-bg text-left text-sm">
                     <th className="px-4 py-3 font-medium text-text-primary">Feature</th>
                     <th className="px-4 py-3 font-medium text-text-muted">Free</th>
-                    <th className="px-4 py-3 font-medium text-text-primary">Solo</th>
-                    <th className="px-4 py-3 font-medium text-accent">Team</th>
-                    <th className="px-4 py-3 font-medium text-text-primary">Business</th>
+                    <th className="px-4 py-3 font-medium text-accent">Pro</th>
                     <th className="px-4 py-3 font-medium text-text-primary">Enterprise</th>
                   </tr>
                 </thead>
@@ -347,9 +282,7 @@ export function PricingTiers() {
                     <tr key={row.feature} className="border-b border-border/70 text-sm">
                       <td className="px-4 py-3 text-text-primary">{row.feature}</td>
                       <td className="px-4 py-3 text-text-muted">{row.free}</td>
-                      <td className="px-4 py-3 text-text-muted">{row.solo}</td>
-                      <td className="px-4 py-3 text-text-muted">{row.team}</td>
-                      <td className="px-4 py-3 text-text-muted">{row.business}</td>
+                      <td className="px-4 py-3 text-text-muted">{row.pro}</td>
                       <td className="px-4 py-3 text-text-muted">{row.enterprise}</td>
                     </tr>
                   ))}
@@ -438,19 +371,11 @@ export function PricingTiers() {
                 name: "Free",
                 price: "0",
                 priceCurrency: "USD",
-                description: "1 project, 1 queue, 5K events/day, 24-hour history, email alerts (1 rule).",
+                description: "1 project, 1 queue, 5K events/day, 24-hour history, 1 email alert rule.",
               },
               {
                 "@type": "Offer",
-                name: "Solo",
-                price: "15",
-                priceCurrency: "USD",
-                priceInterval: "Monthly",
-                description: "1 project, 5 queues, 25K events/day, 14-day history, Slack + Email alerts.",
-              },
-              {
-                "@type": "Offer",
-                name: "Team",
+                name: "Pro",
                 price: "39",
                 priceCurrency: "USD",
                 priceInterval: "Monthly",
@@ -458,19 +383,11 @@ export function PricingTiers() {
               },
               {
                 "@type": "Offer",
-                name: "Business",
-                price: "149",
-                priceCurrency: "USD",
-                priceInterval: "Monthly",
-                description: "Unlimited projects & queues, unlimited events, 90-day history, SSO, RBAC, priority support.",
-              },
-              {
-                "@type": "Offer",
                 name: "Enterprise",
                 price: "12000",
                 priceCurrency: "USD",
                 priceInterval: "Yearly",
-                description: "Self-hosted deployment, unlimited everything, dedicated support, SOC 2, custom SLA.",
+                description: "Self-hosted deployment, SSO, unlimited everything, dedicated support, SOC 2, custom SLA.",
               },
             ],
           }),

@@ -9,14 +9,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Start free, upgrade when you need alerts and history. Solo $15, Team $39, Business $149.",
+    "Start free, upgrade when you need alerts and history. Pro $39/mo, Enterprise custom.",
   alternates: {
     canonical: `${siteUrl}/pricing`,
   },
   openGraph: {
     title: "QCanary Pricing — Monitor BullMQ Without Exposing Redis",
     description:
-      "Start free, upgrade when you need alerts. Solo $15/mo, Team $39/mo, Business $149/mo.",
+      "Start free, upgrade when you need alerts. Pro $39/mo, Enterprise custom.",
     url: `${siteUrl}/pricing`,
   },
 };
@@ -34,11 +34,10 @@ export default function PricingPage() {
             Pricing
           </Badge>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
-            Pay for peace of mind. <span className="text-accent">Not events.</span>
+            Try Pro free for 14 days. <span className="text-accent">No credit card.</span>
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-text-muted">
-            You don&apos;t care how many events we process. You care that your queue doesn&apos;t stall
-            at 2am on a Saturday. Our pricing reflects that.
+            Full access to Pro features. If you don&apos;t love it, you stay on Free. No questions asked.
           </p>
         </div>
       </section>
