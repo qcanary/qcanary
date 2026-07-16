@@ -39,6 +39,7 @@ import { feedbackRouter } from './routes/feedback';
 import { testimonialsPublicRouter, testimonialsRouter } from './routes/testimonials';
 import { enterprisePublicRouter, enterpriseRouter } from './routes/enterprise';
 import { newsletterRouter } from './routes/newsletter';
+import { anomaliesRouter } from './routes/anomalies';
 import { clerkMiddleware } from '@clerk/express';
 import { requireDashboardAuth } from './middleware/dashboardAuth';
 import { requireBearerAuth } from './middleware/bearerAuth';
@@ -50,6 +51,9 @@ import { sendOnboardingEmails } from './lib/onboarding';
 import { dashboardRateLimit } from './middleware/rateLimit';
 import { calculateBenchmarks } from './lib/benchmarks';
 import { calculateBaselinesForAllQueues } from './lib/anomalies';
+import { detectAnomalies } from './lib/anomalyDetection';
+import { healthRouter } from './routes/health';
+import { sendDailyDigest } from './lib/digest';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -93,6 +97,28 @@ cron.schedule('15 * * * *', () => {
   timezone: 'UTC',
 });
 
+// Anomaly detection cron — runs every 15 minutes
+cron.schedule('*/15 * * * *', () => {
+  void (async () => {
+    try {
+      const { data: projects } = await supabase.from('projects').select('id');
+      if (!projects) return;
+
+      for (const project of projects as Array<{ id: string }>) {
+        const anomalies = await detectAnomalies(project.id);
+        if (anomalies.length > 0) {
+          logger.info({ projectId: project.id, count: anomalies.length }, 'Anomalies detected');
+          // TODO: Send alerts for detected anomalies
+        }
+      }
+    } catch (err) {
+      logger.error({ err }, 'Anomaly detection cron failed');
+    }
+  })();
+}, {
+  timezone: 'UTC',
+});
+
 // Daily onboarding email cron — runs at 10:00 UTC to catch business hours
 cron.schedule('0 10 * * *', () => {
   void sendOnboardingEmails()
@@ -101,6 +127,19 @@ cron.schedule('0 10 * * *', () => {
     })
     .catch((err) => {
       logger.error({ err }, 'Onboarding email cron failed');
+    });
+}, {
+  timezone: 'UTC',
+});
+
+// Daily digest cron — runs at 08:00 UTC
+cron.schedule('0 8 * * *', () => {
+  void sendDailyDigest()
+    .then((result) => {
+      logger.info(result, 'Daily digest cron completed');
+    })
+    .catch((err) => {
+      logger.error({ err }, 'Daily digest cron failed');
     });
 }, {
   timezone: 'UTC',
@@ -205,6 +244,8 @@ app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, queuesRouter);
 app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, alertsRouter);
 app.use('/v1/billing', requireDashboardAuth, dashboardRateLimit, billingRouter);
 app.use('/v1/usage', requireDashboardAuth, dashboardRateLimit, usageRouter);
+app.use('/v1/anomalies', requireDashboardAuth, dashboardRateLimit, anomaliesRouter);
+app.use('/v1/health-scores', requireDashboardAuth, dashboardRateLimit, healthRouter);
 
 // ── Sentry Error Handler ───────────────────────────────────
 if (process.env.SENTRY_DSN) {
