@@ -36,10 +36,11 @@ import { billingPublicRouter, billingRouter } from './routes/billing';
 import { usageRouter } from './routes/usage';
 import { notificationsRouter } from './routes/notifications';
 import { feedbackRouter } from './routes/feedback';
-import { testimonialsRouter } from './routes/testimonials';
-import { enterpriseRouter } from './routes/enterprise';
+import { testimonialsPublicRouter, testimonialsRouter } from './routes/testimonials';
+import { enterprisePublicRouter, enterpriseRouter } from './routes/enterprise';
 import { clerkMiddleware } from '@clerk/express';
 import { requireDashboardAuth } from './middleware/dashboardAuth';
+import { requireBearerAuth } from './middleware/bearerAuth';
 import { supabase } from './lib/supabase';
 import { redis } from './lib/redis';
 import { httpLogger, logger } from './lib/logger';
@@ -188,13 +189,18 @@ app.get('/v1/health', healthCheckHandler);
 app.use('/v1/ingest', ingestRouter);
 app.use('/v1/notifications', notificationsRouter);
 app.use('/v1/feedback', feedbackRouter);
-app.use('/v1/testimonials', testimonialsRouter);
-app.use('/v1/enterprise', enterpriseRouter);
+
+// Public submission endpoints (no auth)
+app.use('/v1/testimonials', testimonialsPublicRouter);
+app.use('/v1/enterprise', enterprisePublicRouter);
+
+// Protected management endpoints (Bearer auth via API proxy)
+app.use('/v1/testimonials', requireBearerAuth, dashboardRateLimit, testimonialsRouter);
+app.use('/v1/enterprise', requireBearerAuth, dashboardRateLimit, enterpriseRouter);
+
 app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, projectsRouter);
 app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, queuesRouter);
 app.use('/v1/projects', requireDashboardAuth, dashboardRateLimit, alertsRouter);
-app.use('/v1/testimonials', requireDashboardAuth, dashboardRateLimit, testimonialsRouter);
-app.use('/v1/enterprise', requireDashboardAuth, dashboardRateLimit, enterpriseRouter);
 app.use('/v1/billing', requireDashboardAuth, dashboardRateLimit, billingRouter);
 app.use('/v1/usage', requireDashboardAuth, dashboardRateLimit, usageRouter);
 

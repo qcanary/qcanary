@@ -6,7 +6,8 @@ import { getResend, getResendFromAddress } from '../lib/resend';
 import { errorResponse } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
 
-const router = express.Router();
+const publicRouter = express.Router();
+const protectedRouter = express.Router();
 
 // ── Rate limiting (in-memory, public endpoint only) ──────────
 const rateLimitMap = new Map<string, number[]>();
@@ -36,10 +37,11 @@ const VALID_TEAM_SIZES = ['1-10', '11-50', '51-200', '200+'] as const;
 const VALID_DEPLOYMENTS = ['Docker Compose', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'On-premise', 'Not sure yet'] as const;
 const VALID_TIMELINES = ['ASAP', 'This quarter', 'Next quarter', 'Just exploring'] as const;
 
-router.use(express.json({ limit: '256kb' }));
+publicRouter.use(express.json({ limit: '256kb' }));
+protectedRouter.use(express.json({ limit: '256kb' }));
 
 // ── POST /inquiry — Public enterprise inquiry submission ─────
-router.post('/inquiry', async (req: Request, res: Response): Promise<void> => {
+publicRouter.post('/inquiry', async (req: Request, res: Response): Promise<void> => {
   try {
     const clientIp = req.ip ?? req.socket.remoteAddress ?? 'unknown';
     if (isRateLimited(clientIp)) {
@@ -151,7 +153,7 @@ router.post('/inquiry', async (req: Request, res: Response): Promise<void> => {
 });
 
 // ── GET / — List inquiries (protected, admin only) ───────────
-router.get('/', async (req: Request, res: Response): Promise<void> => {
+protectedRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const status = typeof req.query.status === 'string' ? req.query.status : undefined;
     const limit = Math.min(Math.max(Number(req.query.limit) || 50, 1), 200);
@@ -200,7 +202,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
 });
 
 // ── PATCH /:id — Update inquiry status/notes (protected) ─────
-router.patch('/:id', async (req: Request, res: Response): Promise<void> => {
+protectedRouter.patch('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const body = req.body as Record<string, unknown>;
@@ -240,7 +242,7 @@ router.patch('/:id', async (req: Request, res: Response): Promise<void> => {
 });
 
 // ── DELETE /:id — Delete inquiry (protected) ────────────────
-router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
+protectedRouter.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { error } = await supabase.from('enterprise_inquiries').delete().eq('id', id);
@@ -258,4 +260,4 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-export { router as enterpriseRouter };
+export { publicRouter as enterprisePublicRouter, protectedRouter as enterpriseRouter };

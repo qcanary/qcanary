@@ -65,34 +65,30 @@ function NavLink({
       aria-current={active ? "page" : undefined}
       title={collapsed ? label : undefined}
       className={cn(
-        "group flex items-center gap-3 rounded-lg text-sm transition-all duration-150",
+        "group relative flex items-center gap-3 rounded-lg text-sm transition-colors duration-150",
         collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2",
-        active
-          ? "border-l-[3px] border-l-accent bg-gradient-to-r from-accent/[0.06] to-transparent text-text-primary font-medium"
-          : "border-l-[3px] border-l-transparent text-text-muted hover:bg-surface/70 hover:text-text-primary"
+        active ? "text-text-primary font-medium" : "text-text-muted hover:text-text-primary"
       )}
     >
+      {active && (
+        <motion.div
+          layoutId="sidebar-active-bg"
+          className="absolute inset-0 rounded-lg bg-accent/[0.08] border-l-[3px] border-l-accent"
+          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+        />
+      )}
       <span
         className={cn(
-          "shrink-0 transition-all duration-200",
+          "relative z-10 shrink-0 transition-all duration-200",
           active
             ? "text-accent"
-            : "text-text-muted group-hover:text-text-primary group-hover:scale-110"
+            : "text-text-muted group-hover:text-text-primary"
         )}
       >
         {icon}
       </span>
       {!collapsed && (
-        <>
-          <span className="truncate">{label}</span>
-          {active && (
-            <motion.span
-              layoutId="sidebar-active-dot"
-              className="ml-auto h-1.5 w-1.5 rounded-full bg-accent"
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            />
-          )}
-        </>
+        <span className="relative z-10 truncate">{label}</span>
       )}
     </Link>
   );

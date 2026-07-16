@@ -17,9 +17,9 @@ const variants = {
     exit: { opacity: 0 },
   },
   "fade-slide": {
-    initial: { opacity: 0, y: 12 },
+    initial: { opacity: 0, y: 8 },
     animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -12 },
+    exit: { opacity: 0, y: -8 },
   },
   "fade-scale": {
     initial: { opacity: 0, scale: 0.98 },

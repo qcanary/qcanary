@@ -7,7 +7,8 @@ import { errorResponse } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
-const router = express.Router();
+const publicRouter = express.Router();
+const protectedRouter = express.Router();
 
 // ── Rate limiting (in-memory, public endpoint only) ──────────
 const rateLimitMap = new Map<string, number[]>();
@@ -35,10 +36,11 @@ function sanitizeString(value: unknown, maxLength = 500): string {
 
 const VALID_RECOMMENDATIONS = ['definitely', 'probably', 'maybe', 'no'] as const;
 
-router.use(express.json({ limit: '256kb' }));
+publicRouter.use(express.json({ limit: '256kb' }));
+protectedRouter.use(express.json({ limit: '256kb' }));
 
 // ── POST /submit — Public testimonial submission ─────────────
-router.post('/submit', async (req: Request, res: Response): Promise<void> => {
+publicRouter.post('/submit', async (req: Request, res: Response): Promise<void> => {
   try {
     const clientIp = req.ip ?? req.socket.remoteAddress ?? 'unknown';
     if (isRateLimited(clientIp)) {
@@ -129,7 +131,7 @@ router.post('/submit', async (req: Request, res: Response): Promise<void> => {
 });
 
 // ── GET / — List testimonials (protected, admin only) ────────
-router.get('/', async (req: Request, res: Response): Promise<void> => {
+protectedRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const status = typeof req.query.status === 'string' ? req.query.status : undefined;
     const limit = Math.min(Math.max(Number(req.query.limit) || 50, 1), 200);
@@ -180,7 +182,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
 });
 
 // ── PATCH /:id — Update testimonial status (protected) ───────
-router.patch('/:id', async (req: Request, res: Response): Promise<void> => {
+protectedRouter.patch('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const body = req.body as Record<string, unknown>;
@@ -225,7 +227,7 @@ router.patch('/:id', async (req: Request, res: Response): Promise<void> => {
 });
 
 // ── DELETE /:id — Delete testimonial (protected) ─────────────
-router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
+protectedRouter.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -244,4 +246,4 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-export { router as testimonialsRouter };
+export { publicRouter as testimonialsPublicRouter, protectedRouter as testimonialsRouter };
