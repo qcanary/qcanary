@@ -26,8 +26,10 @@ function sanitizeUpstreamError(status: number, upstreamText: string): { message:
   return { message: "Request failed", code: "REQUEST_ERROR" };
 }
 
-async function handler(req: NextRequest, context: { params: { path: string[] } }) {
+async function handler(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   try {
+    const resolvedParams = await context.params;
+
     const base = apiBaseUrl();
     if (!base) {
       return NextResponse.json(
@@ -37,7 +39,7 @@ async function handler(req: NextRequest, context: { params: { path: string[] } }
     }
 
     // Defense-in-depth: reject requests containing Clerk auth route segments
-    if (Array.isArray(context.params.path) && context.params.path.some((segment) => EXCLUDED_PROJECT_IDS.has(segment))) {
+    if (Array.isArray(resolvedParams.path) && resolvedParams.path.some((segment) => EXCLUDED_PROJECT_IDS.has(segment))) {
       return NextResponse.json(
         { success: false, error: { code: "NOT_FOUND", message: "Not found" } },
         { status: 404 }
@@ -59,7 +61,7 @@ async function handler(req: NextRequest, context: { params: { path: string[] } }
       );
     }
 
-    const path = Array.isArray(context.params.path) ? context.params.path.join("/") : "";
+    const path = Array.isArray(resolvedParams.path) ? resolvedParams.path.join("/") : "";
     const targetUrl = new URL(`${base}/v1/${path}`);
     req.nextUrl.searchParams.forEach((value, key) => {
       targetUrl.searchParams.set(key, value);
@@ -134,15 +136,15 @@ async function handler(req: NextRequest, context: { params: { path: string[] } }
   }
 }
 
-export async function GET(req: NextRequest, context: { params: { path: string[] } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   return handler(req, context);
 }
-export async function POST(req: NextRequest, context: { params: { path: string[] } }) {
+export async function POST(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   return handler(req, context);
 }
-export async function PATCH(req: NextRequest, context: { params: { path: string[] } }) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   return handler(req, context);
 }
-export async function DELETE(req: NextRequest, context: { params: { path: string[] } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   return handler(req, context);
 }

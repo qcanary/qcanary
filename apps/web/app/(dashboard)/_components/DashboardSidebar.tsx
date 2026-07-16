@@ -135,21 +135,21 @@ function SidebarContent({ collapsed, onNavClick }: { collapsed?: boolean; onNavC
       <nav className="flex flex-col gap-1">
         <NavLink href="/onboarding" icon={<Folder className="h-4 w-4" />} label="Onboarding" active={pathname === "/onboarding"} collapsed={collapsed} onClick={onNavClick} />
         <NavLink
-          href={projectId ? `/${projectId}` : "/onboarding"}
+          href={projectId ? `/${projectId}` : (projects.length > 0 ? `/${projects[0].id}` : "/onboarding")}
           icon={<LayoutDashboard className="h-4 w-4" />}
           label="Overview"
           active={projectId ? pathname === `/${projectId}` : false}
-          disabled={!projectId || !hasProjects}
+          disabled={!hasProjects}
           disabledTooltip="Create a project to view overview."
           collapsed={collapsed}
           onClick={onNavClick}
         />
         <NavLink
-          href={projectId ? `/${projectId}/alerts` : "/onboarding"}
+          href={projectId ? `/${projectId}/alerts` : (projects.length > 0 ? `/${projects[0].id}/alerts` : "/onboarding")}
           icon={<Bell className="h-4 w-4" />}
           label="Alerts"
           active={projectId ? pathname === `/${projectId}/alerts` : false}
-          disabled={!projectId || !hasProjects}
+          disabled={!hasProjects}
           disabledTooltip="Create a project to manage alerts."
           collapsed={collapsed}
           onClick={onNavClick}

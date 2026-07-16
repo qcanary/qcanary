@@ -126,7 +126,10 @@ app.use(cors(corsOptions));
 app.use(httpLogger);
 app.use('/v1/billing', billingPublicRouter);
 app.use(express.json({ limit: '1mb' }));
-app.use(clerkMiddleware());
+app.use(clerkMiddleware({
+  secretKey: process.env.CLERK_SECRET_KEY,
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+}));
 
 // ── Cached health check ────────────────────────────────────
 // Cached for 5 seconds to reduce load on Supabase/Redis from load balancer pings
