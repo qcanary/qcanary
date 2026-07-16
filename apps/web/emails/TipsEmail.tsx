@@ -19,7 +19,7 @@ export default function TipsEmail() {
           <Heading style={heading}>Turn queue events into alerts</Heading>
           <Text style={text}>
             Once events are flowing, create alert rules for failure rate, no activity, queue depth,
-            and long-running jobs. Starter plans include Slack and email alerts; Pro adds webhooks.
+            and long-running jobs. Solo plans include Slack and email alerts; Team and Business add webhooks.
           </Text>
           <Text style={text}>
             A good first rule: alert when the failure rate is above 5% over the last 10 minutes for

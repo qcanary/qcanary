@@ -140,8 +140,9 @@ const STEPS: OnboardingStep[] = [
     buildHtml: (_teamName: string) => [
       '<h1>Scale your monitoring</h1>',
       '<p>You\'re processing a healthy volume of queue events. Consider upgrading to keep more history and unlock additional features.</p>',
-      '<p><strong>Starter ($9/mo)</strong> — Slack/email alerts, 3 projects, 30-day history</p>',
-      '<p><strong>Pro ($24/mo)</strong> — Unlimited projects, unlimited daily events, webhooks, 90-day history</p>',
+      '<p><strong>Solo ($15/mo)</strong> — Slack/email alerts, 5 queues, 14-day history</p>',
+      '<p><strong>Team ($39/mo)</strong> — 3 projects, webhooks, 100K events/day, 30-day history</p>',
+      '<p><strong>Business ($149/mo)</strong> — Unlimited projects/events, 90-day history</p>',
       `<p><a href="${getAppUrl()}/settings">Review plans →</a></p>`,
       '<p>Questions? Reply to this email — we read every message.</p>',
     ].join('\n'),

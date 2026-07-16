@@ -53,14 +53,18 @@ services:
         value: test_mode          # switch to 'live' for production
       - key: DODO_WEBHOOK_SECRET
         sync: false
-      - key: DODO_STARTER_PRODUCT_ID
-        sync: false              # monthly product
-      - key: DODO_STARTER_YEARLY_PRODUCT_ID
-        sync: false              # yearly product
-      - key: DODO_PRO_PRODUCT_ID
-        sync: false              # monthly product
-      - key: DODO_PRO_YEARLY_PRODUCT_ID
-        sync: false              # yearly product
+      - key: DODO_SOLO_PRODUCT_ID
+        sync: false
+      - key: DODO_SOLO_YEARLY_PRODUCT_ID
+        sync: false
+      - key: DODO_TEAM_PRODUCT_ID
+        sync: false
+      - key: DODO_TEAM_YEARLY_PRODUCT_ID
+        sync: false
+      - key: DODO_BUSINESS_PRODUCT_ID
+        sync: false
+      - key: DODO_BUSINESS_YEARLY_PRODUCT_ID
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_FROM_EMAIL

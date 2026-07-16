@@ -59,7 +59,7 @@ export default function ProductHuntPage() {
 
           <h1 className="text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl max-w-4xl mx-auto">
             Monitor BullMQ Queues Without{" "}
-            <span className="text-gradient">Sharing Redis Credentials</span>
+            <span className="text-highlight">Sharing Redis Credentials</span>
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-base text-text-muted">
             A lightweight agent hooks into BullMQ&apos;s QueueEvents — no Redis URL ever leaves your worker process.
@@ -99,19 +99,19 @@ export default function ProductHuntPage() {
               </Badge>
             </div>
             <h2 className="text-2xl font-semibold md:text-3xl">
-              20% Off <span className="text-accent">Pro</span> for Life
+              20% Off <span className="text-accent">Business</span> for Life
             </h2>
             <p className="mt-2 max-w-lg mx-auto text-text-muted text-sm">
               As a thank you to the Product Hunt community, use code{" "}
               <code className="rounded-md bg-code-bg px-2.5 py-1 font-mono text-accent ring-1 ring-accent/20">
                 PH20
               </code>{" "}
-              at checkout to lock in 20% off Pro forever. Unlimited projects, queues, and webhook alerts.
+              at checkout to lock in 20% off Business forever. Unlimited projects, queues, and webhook alerts.
             </p>
             <div className="mt-5 flex flex-col items-center gap-2">
               <div className="text-lg font-semibold">
-                <span className="text-text-muted line-through">$24/mo</span>
-                <span className="ml-3 text-accent">$19.20/mo</span>
+                <span className="text-text-muted line-through">$149/mo</span>
+                <span className="ml-3 text-accent">$119.20/mo</span>
                 <span className="text-text-muted text-sm ml-1">with PH20</span>
               </div>
               <Link href="/sign-up?utm_source=producthunt&utm_medium=ph_page&utm_campaign=launch&coupon=PH20">
@@ -216,7 +216,7 @@ export default function ProductHuntPage() {
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_70%)]" />
         <div className="mx-auto flex max-w-6xl flex-col items-center px-6 py-20 text-center md:py-28">
           <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
-            Start monitoring in <span className="text-gradient">3 lines of code</span>
+            Start monitoring in <span className="text-highlight">3 lines of code</span>
           </h2>
           <p className="mt-4 max-w-xl text-base text-text-muted">
             No Redis credentials. No firewall changes. Just install, connect, and monitor.

@@ -46,7 +46,7 @@ export interface Database {
 }
 
 // ── Plan type ──────────────────────────────────────────────
-export type Plan = 'free' | 'starter' | 'pro';
+export type Plan = 'free' | 'solo' | 'team' | 'business';
 
 // ── Condition type for alerts ──────────────────────────────
 export type ConditionType = 'failure_rate' | 'no_activity' | 'queue_depth' | 'job_duration';

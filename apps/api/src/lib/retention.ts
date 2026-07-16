@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { getPlanLimits, type PlanName } from '../middleware/planLimits';
+import { getPlanLimits, normalizePlan, type PlanName } from '../middleware/planLimits';
 import { logger } from './logger';
 
 interface TeamPlanRow {
@@ -15,16 +15,12 @@ interface RetentionPruneResult {
 
 const BATCH_SIZE = 10_000;
 
-function normalizePlan(plan: string | null): PlanName {
-  if (plan === 'starter' || plan === 'pro') {
-    return plan;
-  }
-  return 'free';
-}
-
 /**
  * Prune old job events in batches of BATCH_SIZE per team to avoid
  * long-running table locks for teams with millions of events.
+ *
+ * All plans including business are pruned at their historyDays cutoff.
+ * (Previously `pro` was skipped entirely — that was a bug.)
  */
 export async function pruneOldJobEvents(): Promise<RetentionPruneResult> {
   const { data: teams, error: teamsError } = await supabase
@@ -41,11 +37,7 @@ export async function pruneOldJobEvents(): Promise<RetentionPruneResult> {
   const teamRows = (teams ?? []) as TeamPlanRow[];
 
   for (const team of teamRows) {
-    const plan = normalizePlan(team.plan);
-    if (plan === 'pro') {
-      continue;
-    }
-
+    const plan: PlanName = normalizePlan(team.plan);
     const limits = getPlanLimits(plan);
     const cutoff = new Date(Date.now() - limits.historyDays * 24 * 60 * 60 * 1000).toISOString();
 

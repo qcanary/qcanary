@@ -8,12 +8,13 @@ import { trackEvent } from "@/components/PostHogProvider";
 type UsageResponse = {
   success: true;
   data: {
-    plan: "free" | "starter" | "pro";
+    plan: "free" | "solo" | "team" | "business";
     usage: {
       projectsUsed: number;
       projectsLimit: number | null;
       eventsUsedToday: number;
       eventsLimit: number | null;
+      eventsStatus?: "ok" | "grace" | "hard_capped";
     };
   };
 };
@@ -28,6 +29,22 @@ type NudgeReasons = {
 
 function evaluateUsage(usage: UsageResponse["data"]["usage"]): NudgeReasons | null {
   const triggers: NudgeReasons[] = [];
+
+  if (usage.eventsStatus === "hard_capped") {
+    return {
+      isNearLimit: false,
+      isAtLimit: true,
+      message: `Daily event grace period exhausted (${usage.eventsUsedToday.toLocaleString()}/${(usage.eventsLimit ?? 0).toLocaleString()} + 20%). New events are rejected until reset or upgrade.`,
+    };
+  }
+
+  if (usage.eventsStatus === "grace") {
+    return {
+      isNearLimit: true,
+      isAtLimit: false,
+      message: `Over daily event limit but within 20% grace (${usage.eventsUsedToday.toLocaleString()}/${(usage.eventsLimit ?? 0).toLocaleString()}). Upgrade soon to avoid a hard cut.`,
+    };
+  }
 
   if (usage.projectsLimit !== null) {
     const projectPercent = (usage.projectsUsed / usage.projectsLimit) * 100;

@@ -67,14 +67,14 @@ export default function FeedbackPage() {
 
       {/* ── Section A: Hero ────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
+
         <div className="mx-auto max-w-4xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-amber-500/40 text-amber-400 animate-fade-in-up">
             Limited spots — 20 teams max
           </Badge>
           <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
             Use QCanary Pro for free.{" "}
-            <span className="text-gradient">Tell us what sucks.</span>
+            <span className="text-highlight">Tell us what sucks.</span>
           </h1>
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-2xl text-base leading-relaxed text-text-muted md:text-lg">
             We&rsquo;re a small team building the queue monitoring tool we wish existed.
@@ -102,7 +102,7 @@ export default function FeedbackPage() {
           <div className="grid gap-5 md:grid-cols-3">
             {/* Card 1 */}
             <div className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-              <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
                 <Crown className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-semibold text-text-primary">3 Months of Pro</h3>
@@ -114,7 +114,7 @@ export default function FeedbackPage() {
 
             {/* Card 2 */}
             <div className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-              <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <MessageSquare className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-semibold text-text-primary">Direct Access to the Founder</h3>
@@ -126,7 +126,7 @@ export default function FeedbackPage() {
 
             {/* Card 3 */}
             <div className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-              <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <Heart className="h-5 w-5" />
               </div>
               <h3 className="text-lg font-semibold text-text-primary">15 Minutes of Your Time</h3>

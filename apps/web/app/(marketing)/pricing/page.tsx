@@ -9,14 +9,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Start free, upgrade when you need alerts and history. Product Hunt launch special: 20% off Pro for life with code PH20.",
+    "Start free, upgrade when you need alerts and history. Solo $15, Team $39, Business $149.",
   alternates: {
     canonical: `${siteUrl}/pricing`,
   },
   openGraph: {
     title: "QCanary Pricing — Monitor BullMQ Without Exposing Redis",
     description:
-      "Start free, upgrade when you need alerts. Product Hunt special: 20% off Pro for life.",
+      "Start free, upgrade when you need alerts. Solo $15/mo, Team $39/mo, Business $149/mo.",
     url: `${siteUrl}/pricing`,
   },
 };

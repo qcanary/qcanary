@@ -34,7 +34,7 @@ export default function MarketingNav({
   });
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 border-b border-border bg-bg">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
         <BrandLockup href="/" size="md" />
 
@@ -83,7 +83,7 @@ export default function MarketingNav({
       {/* Mobile menu overlay */}
       {menuOpen && (
         <div
-          className="absolute inset-0 z-40 h-screen bg-bg/60 backdrop-blur-sm md:hidden"
+          className="absolute inset-0 z-40 h-screen bg-bg/80 md:hidden"
           onClick={() => setMenuOpen(false)}
           aria-hidden="true"
         />

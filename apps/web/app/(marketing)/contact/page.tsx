@@ -89,7 +89,7 @@ export default function ContactPage() {
                 rel={method.href.startsWith("http") ? "noopener noreferrer" : undefined}
                 className="card-hover group flex items-start gap-4 rounded-xl border border-border bg-surface/40 p-6 transition-all hover:border-accent/30"
               >
-                <div className="icon-glow flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
                   <method.icon className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0">

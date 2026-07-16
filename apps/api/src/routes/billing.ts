@@ -8,13 +8,35 @@ import { updateRows } from '../lib/typedSupabase';
 import { deliverEmail, escapeHtml } from '../lib/alertDelivery';
 import { errorResponse, requireTeamContext } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
+import { normalizePlan, type PlanName } from '../middleware/planLimits';
 
 const router = express.Router();
 const publicRouter = express.Router();
 
+const PAID_PLANS = new Set<PlanName>(['solo', 'team', 'business']);
+
+function resolvePaidPlan(raw: unknown): PlanName | null {
+  if (typeof raw !== 'string') {
+    return null;
+  }
+  const plan = normalizePlan(raw);
+  return PAID_PLANS.has(plan) ? plan : null;
+}
+
+function dodoProductEnvForPlan(plan: PlanName, yearly: boolean): { envVar: string; productId: string | undefined } {
+  const map: Record<'solo' | 'team' | 'business', { month: string; year: string }> = {
+    solo: { month: 'DODO_SOLO_PRODUCT_ID', year: 'DODO_SOLO_YEARLY_PRODUCT_ID' },
+    team: { month: 'DODO_TEAM_PRODUCT_ID', year: 'DODO_TEAM_YEARLY_PRODUCT_ID' },
+    business: { month: 'DODO_BUSINESS_PRODUCT_ID', year: 'DODO_BUSINESS_YEARLY_PRODUCT_ID' },
+  };
+  const keys = map[plan as 'solo' | 'team' | 'business'];
+  const envVar = yearly ? keys.year : keys.month;
+  return { envVar, productId: process.env[envVar] };
+}
+
 async function updateTeamPlanById(
   teamId: string,
-  plan: 'free' | 'starter' | 'pro',
+  plan: PlanName,
   planExpiresAt: string | null,
   dodoSubscriptionId?: string | null
 ): Promise<void> {
@@ -111,9 +133,7 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json', limit: '50
           [key: string]: unknown;
         };
         const teamId = typeof subscription.metadata?.teamId === 'string' ? subscription.metadata.teamId : '';
-        const plan = subscription.metadata?.plan === 'starter' || subscription.metadata?.plan === 'pro'
-          ? subscription.metadata.plan as 'starter' | 'pro'
-          : null;
+        const plan = resolvePaidPlan(subscription.metadata?.plan);
 
         if (teamId && plan) {
           const periodEnd = subscription.next_billing_date
@@ -210,22 +230,17 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
   const { plan, interval } = body;
   const coupon = typeof body.coupon === 'string' && body.coupon.trim().length > 0 ? body.coupon.trim() : null;
 
-  if (plan !== 'starter' && plan !== 'pro') {
-    errorResponse(res, 400, 'INVALID_PAYLOAD', 'plan must be starter or pro');
+  if (plan !== 'solo' && plan !== 'team' && plan !== 'business') {
+    errorResponse(res, 400, 'INVALID_PAYLOAD', 'plan must be solo, team, or business');
     return;
   }
 
   const billingInterval = interval === 'year' ? 'year' : 'month';
 
   const isYearly = billingInterval === 'year';
-  const dodoProductId = plan === 'starter'
-    ? (isYearly ? process.env.DODO_STARTER_YEARLY_PRODUCT_ID : process.env.DODO_STARTER_PRODUCT_ID)
-    : (isYearly ? process.env.DODO_PRO_YEARLY_PRODUCT_ID : process.env.DODO_PRO_PRODUCT_ID);
+  const { envVar: envVarName, productId: dodoProductId } = dodoProductEnvForPlan(plan, isYearly);
 
   if (!dodoProductId) {
-    const envVarName = plan === 'starter'
-      ? (isYearly ? 'DODO_STARTER_YEARLY_PRODUCT_ID' : 'DODO_STARTER_PRODUCT_ID')
-      : (isYearly ? 'DODO_PRO_YEARLY_PRODUCT_ID' : 'DODO_PRO_PRODUCT_ID');
     errorResponse(res, 500, 'CONFIG_ERROR', `${envVarName} is not configured`);
     return;
   }
@@ -375,11 +390,11 @@ router.get('/plan', async (req: Request, res: Response) => {
     return;
   }
 
-  const row = data as { plan: 'free' | 'starter' | 'pro'; plan_expires_at: string | null };
+  const row = data as { plan: string; plan_expires_at: string | null };
   res.status(200).json({
     success: true,
     data: {
-      plan: row.plan,
+      plan: normalizePlan(row.plan),
       planExpiresAt: row.plan_expires_at,
     },
   });

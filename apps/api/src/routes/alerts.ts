@@ -12,6 +12,7 @@ import type { AlertRuleInsert, AlertRuleRow, AlertRuleUpdate } from '../types/da
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { insertRow, updateRows } from '../lib/typedSupabase';
 import { errorResponse, requireTeamContext } from '../lib/responseUtils';
+import { getTeamPlanLimitsByTeamId } from '../middleware/planLimits';
 
 const router = express.Router();
 
@@ -506,6 +507,44 @@ router.post('/:id/alerts', async (req: Request, res: Response) => {
     return;
   }
 
+  const planInfo = await getTeamPlanLimitsByTeamId(teamId);
+  if (!planInfo) {
+    errorResponse(res, 404, 'TEAM_NOT_FOUND', 'Team not found');
+    return;
+  }
+
+  if (parsed.value.channel === 'webhook' && !planInfo.limits.allowWebhook) {
+    errorResponse(
+      res,
+      403,
+      'PLAN_FEATURE_REQUIRED',
+      `Webhook alerts require Team plan or higher. Current plan: ${planInfo.plan}.`
+    );
+    return;
+  }
+
+  if (planInfo.limits.maxAlertRules !== null) {
+    const { count: ruleCount, error: countError } = await supabase
+      .from('alert_rules')
+      .select('id', { head: true, count: 'exact' })
+      .eq('project_id', projectId);
+
+    if (countError) {
+      errorResponse(res, 500, 'RULE_COUNT_FAILED', 'Failed to validate alert rule limit');
+      return;
+    }
+
+    if ((ruleCount ?? 0) >= planInfo.limits.maxAlertRules) {
+      errorResponse(
+        res,
+        403,
+        'PLAN_LIMIT_EXCEEDED',
+        `Alert rule limit reached for plan ${planInfo.plan} (${planInfo.limits.maxAlertRules}). Upgrade for more rules.`
+      );
+      return;
+    }
+  }
+
   const insertPayload: AlertRuleInsert = {
     ...parsed.value,
     project_id: projectId,
@@ -603,6 +642,23 @@ router.patch('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
   if (!parsed.ok) {
     errorResponse(res, 400, 'INVALID_PAYLOAD', parsed.message);
     return;
+  }
+
+  if (parsed.value.channel === 'webhook') {
+    const planInfo = await getTeamPlanLimitsByTeamId(teamId);
+    if (!planInfo) {
+      errorResponse(res, 404, 'TEAM_NOT_FOUND', 'Team not found');
+      return;
+    }
+    if (!planInfo.limits.allowWebhook) {
+      errorResponse(
+        res,
+        403,
+        'PLAN_FEATURE_REQUIRED',
+        `Webhook alerts require Team plan or higher. Current plan: ${planInfo.plan}.`
+      );
+      return;
+    }
   }
 
   const { data, error } = await updateRows('alert_rules', parsed.value)

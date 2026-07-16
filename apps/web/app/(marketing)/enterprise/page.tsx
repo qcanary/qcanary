@@ -60,7 +60,7 @@ const FAQS = [
   },
   {
     q: "What's the pricing?",
-    a: "Enterprise starts at $12,000/year for self-hosted. Custom pricing for managed deployments, custom SLAs, and dedicated infrastructure. Contact us for a quote tailored to your team size and requirements.",
+    a: "Enterprise is custom-priced based on team size, deployment model (self-hosted vs managed), and SLA needs. Contact us for a quote tailored to your requirements.",
   },
 ];
 

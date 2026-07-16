@@ -63,13 +63,13 @@ export default function TestimonialPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
+
         <div className="mx-auto max-w-3xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-fade-in-up">
             Share Your Experience
           </Badge>
           <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
-            How has QCanary worked <span className="text-gradient">for you?</span>
+            How has QCanary worked <span className="text-highlight">for you?</span>
           </h1>
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-xl text-base text-text-muted md:text-lg">
             Your feedback helps us improve and helps other teams decide if QCanary is right for them.

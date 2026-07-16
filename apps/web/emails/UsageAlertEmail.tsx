@@ -18,8 +18,9 @@ export default function UsageAlertEmail() {
         <Container style={container}>
           <Heading style={heading}>Your free queue is almost full.</Heading>
           <Text style={text}>
-            You're currently using 90% of your free queue limit. In about 24 hours, new events will
-            be dropped until you upgrade or wait for the daily reset.
+            You&apos;re currently using 90% of your free daily event limit. After you hit 100%, a 20%
+            grace band keeps events flowing. Once that grace is used, new events are rejected until
+            the daily reset or you upgrade.
           </Text>
           <Text style={text}>
             Upgrade to <strong>Team ($39/month)</strong> for:

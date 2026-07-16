@@ -53,13 +53,13 @@ export default function TrustPage() {
 
       {/* ── Section A: Hero ──────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
+
         <div className="mx-auto max-w-6xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-fade-in-up">
             Trust & Security
           </Badge>
           <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-6xl">
-            Trust &amp; <span className="text-gradient">Security</span>
+            Trust &amp; <span className="text-highlight">Security</span>
           </h1>
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-2xl text-lg text-text-muted">
             Everything you need to know about how QCanary handles your data,

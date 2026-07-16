@@ -18,11 +18,13 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@playwright/mcp": "^0.0.78",
+    "@reticlehq/server": "^2.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
     "turbo": "^2.5.0",
     "typescript": "^5.7.0",
-    "vitest": "^4.1.10",
-    "@types/express": "^5.0.0",
-    "@types/cors": "^2.8.17"
+    "vitest": "^4.1.10"
   },
   "engines": {
     "node": ">=22.0.0"

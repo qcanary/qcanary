@@ -10,7 +10,7 @@ import type { Database, JobEventInsert } from '../types/database';
 import type { AuthenticatedRequest } from '../middleware/auth';
 import { validateApiKey } from '../middleware/auth';
 import { ingestRateLimit } from '../middleware/rateLimit';
-import { enforceDailyEventLimitForProject } from '../middleware/planLimits';
+import { enforceDailyEventLimitForProject, enforceQueueLimitForProject } from '../middleware/planLimits';
 import { insertRows, callRpc } from '../lib/typedSupabase';
 import { logger } from '../lib/logger';
 
@@ -86,6 +86,19 @@ router.post(
       return;
     }
 
+    const queueNames = events.map((e) => e.queueName);
+    const queueLimit = await enforceQueueLimitForProject(projectId, queueNames);
+    if (!queueLimit.allowed) {
+      res.status(403).json({
+        success: false,
+        error: {
+          code: queueLimit.code ?? 'QUEUE_LIMIT_EXCEEDED',
+          message: queueLimit.message ?? 'Queue limit exceeded',
+        },
+      });
+      return;
+    }
+
     const planLimit = await enforceDailyEventLimitForProject(projectId, events.length);
     if (!planLimit.allowed) {
       res.status(403).json({
@@ -98,11 +111,24 @@ router.post(
       return;
     }
 
+    if (planLimit.status === 'grace') {
+      logger.warn(
+        {
+          projectId,
+          plan: planLimit.plan,
+          eventsUsedToday: planLimit.eventsUsedToday,
+          eventsLimit: planLimit.eventsLimit,
+        },
+        'Project ingesting within daily event grace period (20% overage)'
+      );
+    }
+
     // Respond immediately, then process asynchronously
     res.status(200).json({
       success: true,
       data: {
         accepted: events.length,
+        eventLimitStatus: planLimit.status,
       },
     });
 

@@ -99,26 +99,9 @@ p, li, figcaption {
   text-wrap: pretty;
 }
 
-/* Text gradient variants */
-.text-gradient {
-  background: linear-gradient(135deg, var(--color-accent), #34D399, #22D3EE);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, #F59E0B, #FBBF24, #FCD34D);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-aurora {
-  background: linear-gradient(135deg, #22C55E, #3B82F6, #8B5CF6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Accent highlight text — clean, no gradient */
+.text-highlight {
+  color: var(--color-accent);
 }
 
 /* ── Theme transition ──────────────────────────────── */
@@ -126,10 +109,6 @@ p, li, figcaption {
 .theme-transition nav,
 .theme-transition footer,
 .theme-transition .card-hover,
-.theme-transition .glass,
-.theme-transition .glass-strong,
-.theme-transition .glass-card,
-.theme-transition .icon-glow,
 .theme-transition button,
 .theme-transition input,
 .theme-transition select,
@@ -171,30 +150,6 @@ p, li, figcaption {
   animation: scale-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
 }
 
-/* Pulse glow */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50%      { opacity: 0.8; transform: scale(1.05); }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-/* Float */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float 4s ease-in-out 1s infinite;
-}
-
 /* Shimmer loading */
 @keyframes shimmer {
   0%   { transform: translateX(-100%); }
@@ -214,16 +169,6 @@ p, li, figcaption {
   animation: shimmer 2s infinite;
 }
 
-/* Border glow */
-@keyframes border-glow {
-  0%, 100% { border-color: color-mix(in srgb, var(--color-accent) 30%, transparent); }
-  50%      { border-color: color-mix(in srgb, var(--color-accent) 60%, transparent); }
-}
-
-.animate-border-glow {
-  animation: border-glow 3s ease-in-out infinite;
-}
-
 /* Slide in right (toast) */
 @keyframes slide-in-right {
   from { opacity: 0; transform: translateX(24px); }
@@ -234,91 +179,7 @@ p, li, figcaption {
   animation: slide-in-right 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-/* ── Premium Animations ────────────────────────────── */
-@keyframes fade-in-down {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slide-down {
-  from { opacity: 0; transform: translateY(-16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-16px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes zoom-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes bounce-gentle {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4px); }
-}
-
-/* ── Glass & Frosted Effects ───────────────────────── */
-.glass {
-  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--color-border);
-}
-
-.glass-strong {
-  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--color-border);
-}
-
-.glass-card {
-  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
-}
-
-/* ── Gradients ──────────────────────────────────────── */
-.gradient-border {
-  position: relative;
-  isolation: isolate;
-}
-
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--color-accent), transparent, var(--color-accent));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Firefox fallback: use inset box-shadow for the border effect */
-@supports not (mask-composite: exclude) {
-  .gradient-border::before {
-    background: transparent;
-    -webkit-mask: none;
-    mask: none;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 50%, transparent);
-  }
-}
-
-.gradient-subtle {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 5%, transparent), color-mix(in srgb, var(--color-info) 5%, transparent));
-}
 
 /* ── Card interactions ──────────────────────────────── */
 .card-hover {
@@ -337,59 +198,6 @@ p, li, figcaption {
   border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
 }
 
-/* ── Icon with glow ────────────────────────────────── */
-.icon-glow {
-  position: relative;
-  isolation: isolate;
-}
-
-.icon-glow::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: inherit;
-  background: radial-gradient(circle at center, var(--color-accent), transparent 70%);
-  opacity: 0.15;
-  z-index: -1;
-  transition: opacity 0.3s ease;
-}
-
-.group:hover .icon-glow::before {
-  opacity: 0.3;
-}
-
-/* ── Dot grid backgrounds ──────────────────────────── */
-.bg-dot-grid {
-  background-image: radial-gradient(circle, color-mix(in srgb, var(--color-text-primary) 6%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.bg-dot-grid-dense {
-  background-image: radial-gradient(circle, color-mix(in srgb, var(--color-text-primary) 8%, transparent) 1px, transparent 1px);
-  background-size: 16px 16px;
-}
-
-/* ── Section glow divider ──────────────────────────── */
-.section-glow {
-  position: relative;
-}
-
-.section-glow::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
-  opacity: 0.3;
-}
-
-/* ── Screenshot glow ──────────────────────────────── */
-.screenshot-glow {
-  box-shadow: 0 0 30px -8px color-mix(in srgb, var(--color-accent) 40%, transparent);
-}
 
 /* ── Accordion ──────────────────────────────────────── */
 .accordion-content {
@@ -436,10 +244,8 @@ p, li, figcaption {
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 30%, transparent);
   color: var(--color-text-primary);
-}
-
-/* ── Reduced motion ────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
+}  /* ── Reduced motion ────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
@@ -456,16 +262,7 @@ p, li, figcaption {
   .animate-fade-in-up,
   .animate-scale-in,
   .animate-shimmer,
-  .animate-border-glow,
-  .animate-slide-in-right,
-  .animate-pulse-glow,
-  .animate-float,
-  .animate-fade-in,
-  .animate-fade-in-down,
-  .animate-slide-up,
-  .animate-slide-down,
-  .animate-slide-in-left,
-  .animate-zoom-in {
+  .animate-slide-in-right {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

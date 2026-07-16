@@ -55,7 +55,7 @@ const comparisons: Array<{
     feature: "Alerts (Slack, Email, Webhook)",
     icon: <Bell className="h-4 w-4" />,
     bullBoard: "❌ None",
-    qcanary: "✅ Slack + Email (Starter), Webhook (Pro)",
+    qcanary: "✅ Slack + Email (Solo+), Webhook (Team+)",
     qcanaryWins: true,
   },
   {
@@ -118,7 +118,7 @@ const comparisons: Array<{
     feature: "Pricing",
     icon: <Shield className="h-4 w-4" />,
     bullBoard: "Free (self-hosted, infra costs)",
-    qcanary: "Free tier + $9/mo Starter + $24/mo Pro",
+    qcanary: "Free tier + $15/mo Solo + $39/mo Team + $149/mo Business",
     qcanaryWins: false,
   },
   {

@@ -9,7 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export function BillingCheckoutClient() {
   const searchParams = useSearchParams();
-  const plan = searchParams.get("plan") === "pro" ? "Pro" : "Starter";
+  const planParam = searchParams.get("plan");
+  const plan =
+    planParam === "business"
+      ? "Business"
+      : planParam === "solo"
+        ? "Solo"
+        : "Team";
   const status = searchParams.get("status");
 
   return (

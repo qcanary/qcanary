@@ -52,8 +52,8 @@ const pricingRows: Array<{
   { feature: "Send test events", free: "✓", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
   { feature: "Webhook alerts", free: "—", solo: "—", team: "✓", business: "✓", enterprise: "✓" },
   { feature: "Team members", free: "1", solo: "1", team: "5", business: "20", enterprise: "Unlimited" },
-  { feature: "SSO/SAML", free: "—", solo: "—", team: "—", business: "✓", enterprise: "✓" },
-  { feature: "PagerDuty/OpsGenie", free: "—", solo: "—", team: "—", business: "✓", enterprise: "✓" },
+  { feature: "SSO/SAML", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
+  { feature: "PagerDuty/OpsGenie", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
   { feature: "Self-hosted", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
   { feature: "Custom SLA", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
 ];
@@ -146,8 +146,7 @@ export default async function MarketingPage() {
 
       <section className="overflow-hidden border-b border-border bg-gradient-to-br from-surface/20 via-bg to-code-bg">
         <div className="relative mx-auto w-full max-w-6xl px-6 py-20 md:py-28">
-          {/* Dot grid overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-dot-grid" />
+
           <div className="mx-auto mb-14 max-w-2xl text-center animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-red-500/30 text-red-400">The Problem</Badge>
             <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Sharing Redis is a Security Risk</h2>
@@ -244,9 +243,7 @@ export default async function MarketingPage() {
 
       <section className="border-y border-border bg-gradient-to-b from-surface/30 via-bg to-surface/30">
         <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16 md:py-20">
-          {/* Corner decorative accent */}
-          <div className="pointer-events-none absolute -left-20 top-[-40px] h-60 w-60 rounded-full bg-accent/[0.04] animate-float blur-3xl" />
-          <div className="pointer-events-none absolute -right-20 bottom-[-40px] h-60 w-60 rounded-full bg-accent/[0.02] animate-float-delayed blur-3xl" />
+
           <div className="mb-10 max-w-2xl text-center animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Architecture</Badge>
             <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">How It Works</h2>
@@ -560,7 +557,7 @@ export default async function MarketingPage() {
             Monitor queue health, inspect failures, and track trends from one dashboard.
           </p>
         </div>
-        <div className="screenshot-glow relative overflow-hidden rounded-xl border border-border bg-gradient-to-b from-surface/80 to-code-bg shadow-lg shadow-accent/5">            <Image
+        <div className="relative overflow-hidden rounded-xl border border-border bg-surface/80 shadow-card">            <Image
               src="/screenshots/dashboard-overview.png"
               alt="Qcanary dashboard showing queue overview, job history, and health metrics"
               width={1918}
@@ -572,7 +569,7 @@ export default async function MarketingPage() {
         </div>
       </section>
 
-      <section className="section-glow overflow-hidden border-y border-border bg-gradient-to-br from-bg via-surface/10 to-code-bg">
+      <section className="overflow-hidden border-y border-border bg-surface/50">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-12 max-w-2xl animate-fade-in-up">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Features</Badge>
@@ -585,7 +582,7 @@ export default async function MarketingPage() {
           {/* Feature 1 & 2 — side-by-side code-style cards */}
           <div className="mb-6 grid gap-5 md:grid-cols-2">
             <div className="card-hover group animate-fade-in-up rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-6">
-              <div className="icon-glow mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <BarChart3 className="h-5 w-5" />
               </div>
               <h3 className="text-base font-semibold text-text-primary">Real-time Dashboards</h3>
@@ -617,7 +614,7 @@ export default async function MarketingPage() {
               </div>
             </div>
             <div className="card-hover group animate-fade-in-up-delay-1 rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-6">
-              <div className="icon-glow mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <Bell className="h-5 w-5" />
               </div>
               <h3 className="text-base font-semibold text-text-primary">Alert Rules</h3>
@@ -652,7 +649,7 @@ export default async function MarketingPage() {
           {/* Feature 3 — full-width highlight card */}
           <div className="card-hover group animate-fade-in-up-delay-2 mb-6 rounded-xl border border-accent/20 bg-gradient-to-r from-accent/5 via-surface/30 to-code-bg p-6 md:p-8">
             <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
-              <div className="icon-glow flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/15">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/15">
                 <Shield className="h-6 w-6 text-accent" />
               </div>
               <div className="flex-1">
@@ -666,21 +663,21 @@ export default async function MarketingPage() {
           {/* Feature 4, 5, 6 — compact grid */}
           <div className="grid gap-4 md:grid-cols-3">
             <div className="card-hover group animate-fade-in-up rounded-xl border border-border bg-surface/30 p-5">
-              <div className="icon-glow mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <Layers className="h-4 w-4" />
               </div>
               <h3 className="text-sm font-semibold text-text-primary">Multi-tenancy</h3>
               <p className="mt-1.5 text-xs leading-relaxed text-text-muted">Keep organizations, projects, environments, queues, and API keys cleanly separated.</p>
             </div>
             <div className="card-hover group animate-fade-in-up-delay-1 rounded-xl border border-border bg-surface/30 p-5">
-              <div className="icon-glow mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <Zap className="h-4 w-4" />
               </div>
               <h3 className="text-sm font-semibold text-text-primary">Auto-Resolution</h3>
               <p className="mt-1.5 text-xs leading-relaxed text-text-muted">Resolve incidents automatically when the alert condition recovers — no manual cleanup.</p>
             </div>
             <div className="card-hover group animate-fade-in-up-delay-2 rounded-xl border border-border bg-surface/30 p-5">
-              <div className="icon-glow mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <AlertTriangle className="h-4 w-4" />
               </div>
               <h3 className="text-sm font-semibold text-text-primary">Usage Limits</h3>
@@ -706,8 +703,8 @@ export default async function MarketingPage() {
             <div className="mb-10 grid gap-5 md:grid-cols-2 animate-fade-in-up-delay-1">
               {/* Card 1: Zero Redis Exposure */}
               <div className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-                <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                  <Shield className="h-5 w-5" />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <Shield className="h-5 w-5" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-primary">Zero Redis Exposure</h3>
                 <p className="mt-2 text-sm leading-relaxed text-text-muted">
@@ -719,8 +716,8 @@ export default async function MarketingPage() {
 
               {/* Card 2: Metadata Only */}
               <div className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-                <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                  <EyeOff className="h-5 w-5" />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <EyeOff className="h-5 w-5" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-primary">Metadata Only</h3>
                 <p className="mt-2 text-sm leading-relaxed text-text-muted">
@@ -731,8 +728,8 @@ export default async function MarketingPage() {
 
               {/* Card 3: Open Source Agent */}
               <div className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-                <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                  <FileCode className="h-5 w-5" />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <FileCode className="h-5 w-5" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-primary">Open Source Agent</h3>
                 <p className="mt-2 text-sm leading-relaxed text-text-muted">
@@ -743,8 +740,8 @@ export default async function MarketingPage() {
 
               {/* Card 4: Self-Hosted Option */}
               <div className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-                <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                  <Server className="h-5 w-5" />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <Server className="h-5 w-5" />
                 </div>
                 <h3 className="text-lg font-semibold text-text-primary">Self-Hosted Option</h3>
                 <p className="mt-2 text-sm leading-relaxed text-text-muted">
@@ -817,8 +814,7 @@ export default async function MarketingPage() {
 
       <section className="border-y border-border bg-gradient-to-br from-bg via-surface/20 to-code-bg">
         <div className="relative mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
-          {/* Dot grid overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-dot-grid" />
+
           <div className="mb-10 max-w-2xl">
             <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Pricing</Badge>
             <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Simple, usage-based pricing</h2>
@@ -995,7 +991,7 @@ export default async function MarketingPage() {
               },
               {
                 q: "Which alerts are available?",
-                a: "Starter and Pro plans include Slack and email alerts. Pro adds webhook alerts for PagerDuty, OpsGenie, or custom integrations. Free plan includes email alerts (1 rule) to get you started.",
+                a: "Solo and Team plans include Slack and email alerts. Team and Business add webhook alerts for PagerDuty, OpsGenie, or custom integrations. Free plan includes email alerts (1 rule) to get you started.",
               },
               {
                 q: "Can I view failed job details?",
@@ -1003,7 +999,7 @@ export default async function MarketingPage() {
               },
               {
                 q: "Is there a free plan?",
-                a: "Yes. The Free plan includes 1 project, 1 queue, 24-hour event history, and 1,000 events per day. No credit card required. Perfect for personal projects and evaluation.",
+                a: "Yes. The Free plan includes 1 project, 1 queue, 24-hour event history, and 5,000 events per day. No credit card required. Perfect for personal projects and evaluation.",
               },
             ].map((faq) => (
               <details key={faq.q} className="group cursor-pointer rounded-xl border border-border bg-surface/30 transition-all hover:border-accent/30 open:border-accent/30 open:bg-surface/40">
@@ -1052,7 +1048,7 @@ export default async function MarketingPage() {
                 name: "Which alerts are available?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Starter and Pro include Slack and email alerts. Pro adds webhook alerts.",
+                  text: "Solo and Team include Slack and email alerts. Team and Business add webhook alerts.",
                 },
               },
               {
@@ -1071,15 +1067,15 @@ export default async function MarketingPage() {
       {/* ── CTA ────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
         {/* Background glow */}
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-[800px] -translate-x-1/2 -translate-y-1/2 animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_70%)]" />
+
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-24 text-center md:py-32">
           <div className="animate-fade-in-up">
-            <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-border-glow">
+            <Badge variant="outline" className="mb-6 border-accent/40 text-accent">
               Get started in 3 lines
             </Badge>
           </div>
           <h2 className="animate-fade-in-up-delay-1 text-[clamp(1.75rem,5vw,3.75rem)] font-semibold tracking-tight md:text-5xl lg:text-6xl">
-            Queue monitoring, <span className="text-gradient">reimagined.</span>
+            Queue monitoring,            <span className="text-highlight">reimagined.</span>
           </h2>
           <p className="animate-fade-in-up-delay-2 mt-4 max-w-xl text-base text-text-muted">
             Monitor every queue. Catch every failure. Install in 3 lines, go live in 10 minutes.

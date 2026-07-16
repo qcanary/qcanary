@@ -13,7 +13,7 @@ VALUES (
   'a1b2c3d4-0000-4000-8000-000000000001',
   'Qcanary Dev Team',
   'org_test_dev_12345',
-  'pro'
+  'business'
 )
 ON CONFLICT (clerk_org_id) DO NOTHING;
 

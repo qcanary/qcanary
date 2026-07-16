@@ -45,7 +45,6 @@ const terminalLineVariants = {
 };
 
 export function HeroSection() {
-  const [mousePos, setMousePos] = React.useState({ x: 50, y: 50 });
   const heroRef = React.useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -55,37 +54,14 @@ export function HeroSection() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
-  React.useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    const onMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      setMousePos({
-        x: ((e.clientX - rect.left) / rect.width) * 100,
-        y: ((e.clientY - rect.top) / rect.height) * 100,
-      });
-    };
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
-
   return (
     <motion.section
       ref={heroRef}
       style={{ opacity: heroOpacity, y: heroY }}
       className="relative overflow-hidden border-b border-border"
     >
-      {/* Mouse-following glow */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 transition-[background] duration-700 ease-out"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePos.x}% ${mousePos.y}%, rgba(34,197,94,0.08), transparent 50%)`,
-        }}
-      />
-
-      {/* Ambient glows */}
-      <div aria-hidden="true" className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
-      <div aria-hidden="true" className="pointer-events-none absolute right-[-100px] top-[-100px] h-[400px] w-[400px] animate-pulse rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_60%)]" style={{ animationDelay: '2s' }} />
+      {/* Clean subtle accent tint */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-accent/[0.02]" />
 
       <motion.div
         variants={containerVariants}
@@ -109,7 +85,7 @@ export function HeroSection() {
             className="text-[clamp(1.75rem,5vw,3.75rem)] font-semibold tracking-tight md:text-5xl lg:text-6xl"
           >
             Monitor BullMQ{" "}
-            <span className="text-gradient">Without&nbsp;Exposing&nbsp;Redis.</span>
+            <span className="text-highlight">Without&nbsp;Exposing&nbsp;Redis.</span>
           </motion.h1>
 
           <motion.p

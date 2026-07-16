@@ -2,18 +2,15 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
-import { getPlanLimits, type PlanName } from '../middleware/planLimits';
+import {
+  classifyEventUsage,
+  getPlanLimits,
+  normalizePlan,
+} from '../middleware/planLimits';
 import { errorResponse, requireTeamContext } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
 
 const router = express.Router();
-
-function normalizePlan(plan: string | null): PlanName {
-  if (plan === 'starter' || plan === 'pro') {
-    return plan;
-  }
-  return 'free';
-}
 
 router.get('/', async (req: Request, res: Response) => {
   const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
@@ -68,6 +65,8 @@ router.get('/', async (req: Request, res: Response) => {
       eventsUsedToday = eventsCount ?? 0;
     }
 
+    const eventsStatus = classifyEventUsage(eventsUsedToday, limits.maxEventsPerDay);
+
     res.status(200).json({
       success: true,
       data: {
@@ -77,6 +76,7 @@ router.get('/', async (req: Request, res: Response) => {
           projectsLimit: limits.maxProjects,
           eventsUsedToday,
           eventsLimit: limits.maxEventsPerDay,
+          eventsStatus,
         },
       },
     });

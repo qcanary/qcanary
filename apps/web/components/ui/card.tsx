@@ -34,38 +34,7 @@ const CardInteractive = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
 );
 CardInteractive.displayName = "CardInteractive";
 
-const CardGradient = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "group relative rounded-xl border border-border text-text-primary shadow-card transition-all duration-200",
-        "bg-gradient-to-br from-surface via-surface to-accent/[0.08]",
-        "hover:border-accent/30 hover:shadow-card-hover hover:-translate-y-0.5",
-        className
-      )}
-      {...props}
-    />
-  )
-);
-CardGradient.displayName = "CardGradient";
 
-const CardGlow = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "group relative rounded-xl border border-border text-text-primary shadow-card transition-all duration-300",
-        "hover:shadow-glow",
-        "before:pointer-events-none before:absolute before:inset-0 before:rounded-xl before:opacity-0 before:transition-opacity before:duration-300 before:bg-gradient-to-br before:from-accent/5 before:via-transparent before:to-accent/5",
-        "hover:before:opacity-100",
-        className
-      )}
-      {...props}
-    />
-  )
-);
-CardGlow.displayName = "CardGlow";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
@@ -110,8 +79,6 @@ CardFooter.displayName = "CardFooter";
 export {
   Card,
   CardInteractive,
-  CardGradient,
-  CardGlow,
   CardHeader,
   CardFooter,
   CardTitle,

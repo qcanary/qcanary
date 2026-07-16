@@ -58,7 +58,7 @@ export default function AboutPage() {
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-fade-in-up">About</Badge>
           <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
             Monitoring BullMQ queues,{" "}
-            <span className="text-gradient">without the risk.</span>
+            <span className="text-highlight">without the risk.</span>
           </h1>
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-2xl text-lg text-text-muted">
             Qcanary was built to solve a simple problem: every queue monitoring tool asked for Redis credentials.
@@ -78,7 +78,7 @@ export default function AboutPage() {
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {values.map((v) => (
               <div key={v.title} className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-                <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                   <v.icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-base font-semibold text-text-primary">{v.title}</h3>

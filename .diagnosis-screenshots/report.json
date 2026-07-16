@@ -1,0 +1,199 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "capturedAt": "2026-07-16T13:52:19.232Z",
+  "pages": [
+    {
+      "slug": "pricing",
+      "requestedUrl": "http://localhost:3000/pricing",
+      "finalUrl": "http://localhost:3000/pricing",
+      "httpStatus": 200,
+      "title": "Pricing — Qcanary",
+      "screenshot": "c:\\Qcanary\\.diagnosis-screenshots\\pricing.png",
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageErrors": [],
+      "pricingTextMatches": [
+        "$39",
+        "Solo",
+        "Start Solo →",
+        "Team",
+        "$39/month",
+        "Start Team Trial →",
+        "Feature\tFree\tSolo\tTeam\tBusiness\tEnterprise",
+        "Team members\t1\t1\t5\t20\tUnlimited",
+        "What's the difference between Free and Solo?",
+        "What's the difference between Solo and Team?",
+        "What's the difference between Team and Business?"
+      ]
+    },
+    {
+      "slug": "docs",
+      "requestedUrl": "http://localhost:3000/docs",
+      "finalUrl": "http://localhost:3000/docs",
+      "httpStatus": 200,
+      "title": "QCanary Docs — BullMQ Monitoring Agent — Qcanary",
+      "screenshot": "c:\\Qcanary\\.diagnosis-screenshots\\docs.png",
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageErrors": [],
+      "pricingTextMatches": [
+        "View your current plan, upgrade to Starter or Pro via Dodo Payments, and manage billing.",
+        "Feature\tFree\tStarter — $9/mo\tPro — $24/mo",
+        "Team members\t1\t3\t10"
+      ]
+    },
+    {
+      "slug": "features",
+      "requestedUrl": "http://localhost:3000/features",
+      "finalUrl": "http://localhost:3000/features",
+      "httpStatus": 200,
+      "title": "Features | QCanary — Qcanary",
+      "screenshot": "c:\\Qcanary\\.diagnosis-screenshots\\features.png",
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageErrors": [],
+      "pricingTextMatches": []
+    },
+    {
+      "slug": "compare",
+      "requestedUrl": "http://localhost:3000/compare",
+      "finalUrl": "http://localhost:3000/compare",
+      "httpStatus": 200,
+      "title": "Compare | QCanary — Qcanary",
+      "screenshot": "c:\\Qcanary\\.diagnosis-screenshots\\compare.png",
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageErrors": [],
+      "pricingTextMatches": []
+    },
+    {
+      "slug": "settings",
+      "requestedUrl": "http://localhost:3000/settings",
+      "finalUrl": "https://relaxing-bunny-20.accounts.dev/sign-in?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Fsettings",
+      "httpStatus": 200,
+      "title": "My account | qcanary",
+      "screenshot": "c:\\Qcanary\\.diagnosis-screenshots\\settings.png",
+      "consoleErrors": [
+        " Note that 'script-src' was not explicitly set, so 'default-src' is used as a fallback."
+      ],
+      "pageErrors": [],
+      "pricingTextMatches": []
+    },
+    {
+      "slug": "sign-in",
+      "requestedUrl": "http://localhost:3000/sign-in",
+      "finalUrl": "http://localhost:3000/sign-in",
+      "httpStatus": 200,
+      "title": "Sign In — Qcanary — Qcanary",
+      "screenshot": "c:\\Qcanary\\.diagnosis-screenshots\\sign-in.png",
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageErrors": [],
+      "pricingTextMatches": []
+    }
+  ],
+  "errors": [
+    {
+      "slug": "home",
+      "url": "http://localhost:3000/",
+      "error": "TimeoutError: page.goto: Timeout 90000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/\", waiting until \"networkidle\"\n",
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageErrors": []
+    }
+  ]
+}

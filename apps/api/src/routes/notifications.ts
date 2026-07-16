@@ -58,7 +58,7 @@ function onboardingEmailForStep(step: OnboardingStep): OnboardingEmail {
       html: [
         '<h1>Turn queue events into alerts</h1>',
         '<p>Create alert rules for failure rate, no activity, queue depth, and long-running jobs.</p>',
-        '<p>Starter plans include Slack and email alerts; Pro adds webhooks.</p>',
+        '<p>Solo plans include Slack and email alerts; Team and Business add webhooks.</p>',
         '<p>A good first rule: alert when failure rate is above 5% over the last 10 minutes.</p>',
         '<p><a href="https://qcanary.dev/docs">Configure alerts</a></p>',
       ].join(''),
@@ -70,7 +70,7 @@ function onboardingEmailForStep(step: OnboardingStep): OnboardingEmail {
     html: [
       '<h1>Keep more queue history</h1>',
       '<p>QCanary plans include project, event, alert, and history limits so monitoring can scale with queue volume.</p>',
-      '<p>Starter adds 30-day history and alert rules. Pro adds unlimited projects, unlimited daily events, webhooks, and 90-day history.</p>',
+      '<p>Team adds 30-day history and webhooks. Business adds unlimited projects, unlimited daily events, and 90-day history.</p>',
       '<p><a href="https://qcanary.dev/settings">Review plans</a></p>',
     ].join(''),
   };

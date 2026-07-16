@@ -67,7 +67,7 @@ const featureGroups = [
   },
   {
     title: "Alerting",
-    badge: "Starter+",
+    badge: "Solo+",
     features: [
       {
         icon: Bell,
@@ -78,13 +78,13 @@ const featureGroups = [
       {
         icon: Zap,
         title: "Auto-Resolution",
-        desc: "Alerts close automatically when the triggering condition recovers — no manual cleanup, no stale notifications.",
+        desc: "Alerts close automatically when the triggering condition recovers — no manual cleanup, no stale notifications. (Coming soon as a plan-gated feature.)",
         details: ["Automatic recovery detection", "No manual dismissal needed", "Alert history log", "Rate-limited notifications"],
       },
       {
         icon: Filter,
         title: "Smart Alert Rules",
-        desc: "Define conditions based on failure rate %, queue inactivity, job duration, and queue depth. Pro plans get unlimited rules.",
+        desc: "Define conditions based on failure rate %, queue inactivity, job duration, and queue depth. Team+ gets unlimited rules.",
         details: ["Failure rate thresholds", "Inactivity detection", "Duration monitoring", "Queue depth triggers"],
       },
     ],
@@ -122,11 +122,11 @@ export default function FeaturesPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute left-[-200px] top-[-300px] h-[700px] w-[900px] animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.12)_0%,_rgba(34,197,94,0.04)_40%,_rgba(10,10,10,0)_70%)]" />
+
         <div className="mx-auto max-w-6xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-accent/40 text-accent animate-fade-in-up">Features</Badge>
           <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-6xl">
-            Everything you need to <span className="text-gradient">monitor queues</span>
+            Everything you need to        <span className="text-highlight">monitor queues</span>
           </h1>
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-2xl text-lg text-text-muted">
             Real-time dashboards, multi-channel alerts, zero-trust security — built for teams that run BullMQ in production.
@@ -143,7 +143,7 @@ export default function FeaturesPage() {
         <section key={group.title} className={`border-y border-border ${gi % 2 === 0 ? 'bg-gradient-to-b from-surface/20 to-bg' : 'bg-bg'}`}>
           <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
             <div className="mb-12 flex items-center gap-3">
-              <Badge variant={group.badge === "Core" ? "success" : "outline"} className={group.badge === "Starter+" ? "border-accent/30 text-accent" : ""}>
+              <Badge variant={group.badge === "Core" ? "success" : "outline"} className={group.badge === "Solo+" ? "border-accent/30 text-accent" : ""}>
                 {group.badge}
               </Badge>
               <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">{group.title}</h2>
@@ -151,7 +151,7 @@ export default function FeaturesPage() {
             <div className="grid gap-5 md:grid-cols-3">
               {group.features.map((feature) => (
                 <div key={feature.title} className="card-hover group rounded-xl border border-border bg-surface/40 p-6">
-                  <div className="icon-glow mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
                     <feature.icon className="h-5 w-5" />
                   </div>
                   <h3 className="text-base font-semibold text-text-primary">{feature.title}</h3>
@@ -173,7 +173,7 @@ export default function FeaturesPage() {
 
       {/* CTA */}
       <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-[800px] -translate-x-1/2 -translate-y-1/2 animate-pulse-glow rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_70%)]" />
+
         <div className="mx-auto flex max-w-6xl flex-col items-center px-6 py-20 text-center md:py-24">
           <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Ready to get started?</h2>
           <p className="mt-3 max-w-lg text-text-muted">No Redis credentials required. 3-line setup. 10 minutes to your first event.</p>

@@ -658,7 +658,7 @@ export function AlertsClient({ projectId }: { projectId: string }) {
                 >
                   <option value="slack">slack</option>
                   <option value="email">email</option>
-                  <option value="webhook">webhook (Pro)</option>
+                  <option value="webhook">webhook (Team+)</option>
                 </Select>
               </div>
               <div className="grid gap-2">

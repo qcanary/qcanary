@@ -280,9 +280,9 @@ export default function DocsPage() {
           <Separator />
 
           <div>
-            <h3 className="mb-2 text-sm font-medium text-text-primary">Webhook alerts (Pro plan)</h3>
+            <h3 className="mb-2 text-sm font-medium text-text-primary">Webhook alerts (Team+)</h3>
             <p className="text-sm text-text-muted">
-              Pro plan supports custom webhook destinations. Qcanary POSTs a JSON payload to your
+              Team and Business plans support custom webhook destinations. Qcanary POSTs a JSON payload to your
               endpoint with the alert details. Useful for PagerDuty, OpsGenie, or custom integrations.
             </p>
           </div>
@@ -321,7 +321,7 @@ export default function DocsPage() {
             <div className="rounded-md border border-border bg-surface/40 p-3">
               <div className="text-sm font-medium text-text-primary">Settings</div>
               <div className="mt-1 text-xs text-text-muted">
-                View your current plan, upgrade to Starter or Pro via Dodo Payments, and manage billing.
+                View your current plan, upgrade to Solo, Team, or Business via Dodo Payments, and manage billing.
               </div>
             </div>
           </div>
@@ -371,13 +371,15 @@ export default function DocsPage() {
                 <tr className="border-b border-border text-left text-text-muted">
                   <th className="px-2 py-2 font-medium">Feature</th>
                   <th className="px-2 py-2 font-medium">Free</th>
-                  <th className="px-2 py-2 font-medium">Starter — $9/mo</th>
-                  <th className="px-2 py-2 font-medium">Pro — $24/mo</th>
+                  <th className="px-2 py-2 font-medium">Solo — $15/mo</th>
+                  <th className="px-2 py-2 font-medium">Team — $39/mo</th>
+                  <th className="px-2 py-2 font-medium">Business — $149/mo</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Projects</td>
+                  <td className="px-2 py-2 text-text-muted">1</td>
                   <td className="px-2 py-2 text-text-muted">1</td>
                   <td className="px-2 py-2 text-text-muted">3</td>
                   <td className="px-2 py-2 text-text-muted">Unlimited</td>
@@ -385,18 +387,21 @@ export default function DocsPage() {
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Queues per project</td>
                   <td className="px-2 py-2 text-text-muted">1</td>
+                  <td className="px-2 py-2 text-text-muted">5</td>
                   <td className="px-2 py-2 text-text-muted">10</td>
                   <td className="px-2 py-2 text-text-muted">Unlimited</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Event history</td>
                   <td className="px-2 py-2 text-text-muted">24 hours</td>
+                  <td className="px-2 py-2 text-text-muted">14 days</td>
                   <td className="px-2 py-2 text-text-muted">30 days</td>
                   <td className="px-2 py-2 text-text-muted">90 days</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Events / day</td>
-                  <td className="px-2 py-2 text-text-muted">1,000</td>
+                  <td className="px-2 py-2 text-text-muted">5,000</td>
+                  <td className="px-2 py-2 text-text-muted">25,000</td>
                   <td className="px-2 py-2 text-text-muted">100,000</td>
                   <td className="px-2 py-2 text-text-muted">Unlimited</td>
                 </tr>
@@ -405,24 +410,28 @@ export default function DocsPage() {
                   <td className="px-2 py-2 text-text-muted">No</td>
                   <td className="px-2 py-2 text-text-muted">Yes</td>
                   <td className="px-2 py-2 text-text-muted">Yes</td>
+                  <td className="px-2 py-2 text-text-muted">Yes</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Email alerts</td>
-                  <td className="px-2 py-2 text-text-muted">Email only</td>
-                  <td className="px-2 py-2 text-text-muted">Yes</td>
-                  <td className="px-2 py-2 text-text-muted">Yes</td>
+                  <td className="px-2 py-2 text-text-muted">1 rule</td>
+                  <td className="px-2 py-2 text-text-muted">2 rules</td>
+                  <td className="px-2 py-2 text-text-muted">Unlimited</td>
+                  <td className="px-2 py-2 text-text-muted">Unlimited</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Webhook alerts</td>
                   <td className="px-2 py-2 text-text-muted">No</td>
                   <td className="px-2 py-2 text-text-muted">No</td>
                   <td className="px-2 py-2 text-text-muted">Yes</td>
+                  <td className="px-2 py-2 text-text-muted">Yes</td>
                 </tr>
                 <tr className="border-b border-border/70">
                   <td className="px-2 py-2 text-text-primary">Team members</td>
                   <td className="px-2 py-2 text-text-muted">1</td>
-                  <td className="px-2 py-2 text-text-muted">3</td>
-                  <td className="px-2 py-2 text-text-muted">10</td>
+                  <td className="px-2 py-2 text-text-muted">1</td>
+                  <td className="px-2 py-2 text-text-muted">5</td>
+                  <td className="px-2 py-2 text-text-muted">20</td>
                 </tr>
               </tbody>
             </table>

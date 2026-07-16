@@ -213,7 +213,7 @@ export function PricingTiers() {
   return (
     <>
       {/* ── Annual Toggle ──────────────────────────────────── */}
-      <section className="border-b border-border bg-gradient-to-br from-bg via-surface/10 to-code-bg">
+      <section className="border-b border-border bg-bg">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-8 flex items-center justify-center gap-4">
             <span className={`text-sm font-medium transition-colors ${annual ? "text-text-muted" : "text-text-primary"}`}>
@@ -246,16 +246,13 @@ export function PricingTiers() {
                 key={tier.name}
                 className={`relative flex flex-col rounded-2xl border p-6 transition-all ${
                   tier.highlighted
-                    ? "border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg shadow-lg shadow-accent/5 scale-[1.02]"
+                    ? "border-2 border-accent/40 bg-surface shadow-lg scale-[1.02]"
                     : tier.enterprise
-                    ? "border-border/60 bg-gradient-to-br from-surface/20 via-surface/10 to-code-bg/30"
+                    ? "border-border/60 bg-surface/50"
                     : "border-border bg-surface/30"
                 }`}
               >
-                {/* Glow for highlighted card */}
-                {tier.highlighted && (
-                  <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-accent/10 blur-3xl" />
-                )}
+
 
                 <div className="relative">
                   {/* Badge */}
@@ -327,7 +324,7 @@ export function PricingTiers() {
       </section>
 
       {/* ── Full Feature Comparison Table ──────────────────── */}
-      <section className="border-b border-border bg-gradient-to-b from-surface/20 to-bg">
+      <section className="border-b border-border bg-surface/30">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
           <h2 className="text-2xl font-semibold tracking-tight mb-2">Full feature comparison</h2>
           <p className="text-sm text-text-muted mb-8">See exactly what you get with each plan.</p>
@@ -364,7 +361,7 @@ export function PricingTiers() {
       </section>
 
       {/* ── FAQ ────────────────────────────────────────────── */}
-      <section className="border-b border-border bg-gradient-to-b from-surface/20 to-bg">
+      <section className="border-b border-border bg-bg">
         <div className="mx-auto max-w-3xl px-6 py-16 md:py-20">
           <h2 className="text-2xl font-semibold tracking-tight mb-2">Frequently Asked Questions</h2>
           <p className="text-sm text-text-muted mb-8">Quick answers about QCanary pricing and plans.</p>
@@ -397,11 +394,10 @@ export function PricingTiers() {
       </section>
 
       {/* ── CTA ────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_rgba(34,197,94,0.06)_0%,_rgba(10,10,10,0)_70%)]" />
+      <section className="border-b border-border bg-accent/[0.02]">
         <div className="mx-auto flex max-w-6xl flex-col items-center px-6 py-24 text-center md:py-32">
           <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">
-            Start monitoring your queues <span className="text-gradient">in 3 lines</span>
+            Start monitoring your queues <span className="text-highlight">in 3 lines</span>
           </h2>
           <p className="mt-4 max-w-xl text-base text-text-muted">
             Start with a single queue. Add alerting when you need it. Scale to production without switching tools.

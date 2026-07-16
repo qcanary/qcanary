@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { trackEvent, trackCriticalEvent } from "@/components/PostHogProvider";
 
 type ApiError = { success: false; error: { code: string; message: string } };
-type PlanName = "free" | "starter" | "pro";
+type PlanName = "free" | "solo" | "team" | "business";
 
 type PlanResponse = {
   success: true;
@@ -28,6 +28,7 @@ type UsageResponse = {
       projectsLimit: number | null;
       eventsUsedToday: number;
       eventsLimit: number | null;
+      eventsStatus?: "ok" | "grace" | "hard_capped";
     };
   };
 };
@@ -70,8 +71,9 @@ type CreateKeyResponse = {
 
 const planRank: Record<PlanName, number> = {
   free: 0,
-  starter: 1,
-  pro: 2,
+  solo: 1,
+  team: 2,
+  business: 3,
 };
 
 function formatLimit(limit: number | null): string {
@@ -491,7 +493,7 @@ export default function SettingsPage() {
             ) : (
               <div className="flex items-center gap-3">
                 {expiresText && <span className="text-sm text-text-muted">Renews/ends: {expiresText}</span>}
-                {currentPlan !== "pro" && (
+                {currentPlan !== "business" && (
                   <span className="text-xs text-text-muted">
                     — <button type="button" onClick={() => setActiveTab("Billing")} className="text-accent hover:underline">Upgrade</button> for more features
                   </span>
@@ -516,8 +518,19 @@ export default function SettingsPage() {
               <>
                 <UsageMeter label="Projects" used={usage.projectsUsed} limit={usage.projectsLimit} />
                 <UsageMeter label="Daily events" used={usage.eventsUsedToday} limit={usage.eventsLimit} />
+                {usage.eventsStatus === "grace" && (
+                  <div className="rounded-md border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-200">
+                    You&apos;re over your daily event limit but still within the 20% grace period. Events keep flowing — upgrade or wait for the daily reset to avoid a hard cut.
+                  </div>
+                )}
+                {usage.eventsStatus === "hard_capped" && (
+                  <div className="rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+                    Daily event grace period exhausted. New events are being rejected until reset or upgrade.{" "}
+                    <button type="button" onClick={() => setActiveTab("Billing")} className="underline hover:no-underline">Upgrade</button>
+                  </div>
+                )}
                 {((usage.projectsLimit !== null && usage.projectsUsed >= usage.projectsLimit) ||
-                  (usage.eventsLimit !== null && usage.eventsUsedToday >= usage.eventsLimit)) && (
+                  (usage.eventsLimit !== null && usage.eventsUsedToday >= usage.eventsLimit && usage.eventsStatus !== "grace" && usage.eventsStatus !== "hard_capped")) && (
                   <div className="rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
                     Your current plan is at capacity. <button type="button" onClick={() => setActiveTab("Billing")} className="underline hover:no-underline">Upgrade</button> to raise these limits.
                   </div>
@@ -572,7 +585,7 @@ export default function SettingsPage() {
                 </span>
               </div>
               <p className="mt-1 text-xs text-text-muted">
-                You&apos;ll receive <span className="text-accent font-medium">20% off Pro for life</span>. The discount will show in the Dodo checkout.
+                You&apos;ll receive <span className="text-accent font-medium">20% off Business for life</span>. The discount will show in the Dodo checkout.
               </p>
             </div>
           )}
@@ -598,50 +611,71 @@ export default function SettingsPage() {
             </button>
             <span className={`text-sm ${billingInterval === "year" ? "font-medium text-text-primary" : "text-text-muted"}`}>
               Yearly
-              <span className="ml-1 rounded-full bg-accent/10 px-1.5 py-0.5 text-xs font-medium text-accent">Save 15%</span>
+              <span className="ml-1 rounded-full bg-accent/10 px-1.5 py-0.5 text-xs font-medium text-accent">Save 20%</span>
             </span>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-md border border-border bg-surface/50 p-4">
               <div className="text-sm font-medium text-text-primary">
-                Starter - {billingInterval === "year" ? "$92/yr" : "$9/mo"}
+                Solo — {billingInterval === "year" ? "$144/yr" : "$15/mo"}
               </div>
-              <div className="mt-1 text-xs text-text-muted">Slack/email alerts, 3 projects, 30-day history.</div>
+              <div className="mt-1 text-xs text-text-muted">1 project, 5 queues, Slack + email (2 rules), 14-day history.</div>
               {billingInterval === "year" && (
-                <div className="mt-1 text-xs text-accent">$7.67/mo billed annually</div>
+                <div className="mt-1 text-xs text-accent">$12/mo billed annually</div>
               )}
               <Button
                 className="mt-4 w-full"
-                disabled={planRank.starter <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
-                onClick={() => void startUpgrade("starter")}
+                disabled={planRank.solo <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
+                onClick={() => void startUpgrade("solo")}
               >
-                {currentPlan === "starter"
+                {currentPlan === "solo"
                   ? "Current plan"
-                  : upgradingPlan === "starter"
+                  : upgradingPlan === "solo"
                     ? "Redirecting..."
-                    : billingInterval === "year" ? "Upgrade — $92/yr" : "Upgrade to Starter"}
+                    : billingInterval === "year" ? "Upgrade — $144/yr" : "Upgrade to Solo"}
               </Button>
             </div>
 
             <div className="rounded-md border border-border bg-surface/50 p-4">
               <div className="text-sm font-medium text-text-primary">
-                Pro - {billingInterval === "year" ? "$245/yr" : "$24/mo"}
+                Team — {billingInterval === "year" ? "$374/yr" : "$39/mo"}
               </div>
-              <div className="mt-1 text-xs text-text-muted">Unlimited projects/queues and advanced alerting.</div>
+              <div className="mt-1 text-xs text-text-muted">3 projects, webhooks, 100K events/day, 30-day history.</div>
               {billingInterval === "year" && (
-                <div className="mt-1 text-xs text-accent">$20.42/mo billed annually</div>
+                <div className="mt-1 text-xs text-accent">~$31/mo billed annually</div>
               )}
               <Button
                 className="mt-4 w-full"
-                disabled={planRank.pro <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
-                onClick={() => void startUpgrade("pro")}
+                disabled={planRank.team <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
+                onClick={() => void startUpgrade("team")}
               >
-                {currentPlan === "pro"
+                {currentPlan === "team"
                   ? "Current plan"
-                  : upgradingPlan === "pro"
+                  : upgradingPlan === "team"
                     ? "Redirecting..."
-                    : billingInterval === "year" ? "Upgrade — $245/yr" : "Upgrade to Pro"}
+                    : billingInterval === "year" ? "Upgrade — $374/yr" : "Upgrade to Team"}
+              </Button>
+            </div>
+
+            <div className="rounded-md border border-border bg-surface/50 p-4">
+              <div className="text-sm font-medium text-text-primary">
+                Business — {billingInterval === "year" ? "$1,430/yr" : "$149/mo"}
+              </div>
+              <div className="mt-1 text-xs text-text-muted">Unlimited projects/queues/events, 90-day history.</div>
+              {billingInterval === "year" && (
+                <div className="mt-1 text-xs text-accent">~$119/mo billed annually</div>
+              )}
+              <Button
+                className="mt-4 w-full"
+                disabled={planRank.business <= planRank[currentPlan] || upgradingPlan !== null || loadingPlan}
+                onClick={() => void startUpgrade("business")}
+              >
+                {currentPlan === "business"
+                  ? "Current plan"
+                  : upgradingPlan === "business"
+                    ? "Redirecting..."
+                    : billingInterval === "year" ? "Upgrade — $1,430/yr" : "Upgrade to Business"}
               </Button>
             </div>
           </div>

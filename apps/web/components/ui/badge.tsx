@@ -16,7 +16,6 @@ const badgeVariants = cva(
         warning: "border-transparent bg-warning/15 text-warning",
         info: "border-transparent bg-info/15 text-info",
         muted: "border-border text-text-muted",
-        gradient: "border-transparent bg-gradient-to-r from-accent/20 to-emerald-500/20 text-accent",
         // Solid variants
         "solid-success": "border-transparent bg-success text-white",
         "solid-danger": "border-transparent bg-danger text-white",
