@@ -1,5 +1,6 @@
-import * as React from "react";
+"use client";
 
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
@@ -17,7 +18,14 @@ Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("bg-surface/60", className)} {...props} />
+    <thead
+      ref={ref}
+      className={cn(
+        "bg-surface/60 sticky top-0 z-10",
+        className
+      )}
+      {...props}
+    />
   )
 );
 TableHeader.displayName = "TableHeader";
@@ -38,7 +46,9 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border transition-colors hover:bg-surface/40 data-[state=selected]:bg-surface/60",
+        "border-b border-border transition-all duration-150",
+        "hover:bg-surface/40 hover:shadow-sm",
+        "data-[state=selected]:bg-surface/60",
         className
       )}
       {...props}
@@ -51,7 +61,10 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
   ({ className, ...props }, ref) => (
     <th
       ref={ref}
-      className={cn("h-10 px-4 text-left align-middle font-medium text-text-muted", className)}
+      className={cn(
+        "h-10 px-4 text-left align-middle font-medium text-text-muted text-xs uppercase tracking-wider",
+        className
+      )}
       {...props}
     />
   )
@@ -60,10 +73,13 @@ TableHead.displayName = "TableHead";
 
 const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => (
-    <td ref={ref} className={cn("p-4 align-middle", className)} {...props} />
+    <td
+      ref={ref}
+      className={cn("p-4 align-middle text-text-primary", className)}
+      {...props}
+    />
   )
 );
 TableCell.displayName = "TableCell";
 
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell };
-
