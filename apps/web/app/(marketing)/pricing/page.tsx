@@ -34,7 +34,7 @@ export default function PricingPage() {
             Pricing
           </Badge>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
-            Try Pro free for 14 days. <span className="text-accent">No credit card.</span>
+            Pay for peace of mind. <span className="text-accent">Not events.</span>
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-text-muted">
             Full access to Pro features. If you don&apos;t love it, you stay on Free. No questions asked.
