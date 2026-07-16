@@ -46,7 +46,7 @@ const pricingRows: Array<{
   { feature: "Projects", free: "1", solo: "1", team: "3", business: "Unlimited", enterprise: "Unlimited" },
   { feature: "Queues per project", free: "1", solo: "5", team: "10", business: "Unlimited", enterprise: "Unlimited" },
   { feature: "Event history", free: "24 hours", solo: "14 days", team: "30 days", business: "90 days", enterprise: "Unlimited" },
-  { feature: "Events per day", free: "1,000", solo: "25,000", team: "100,000", business: "Unlimited", enterprise: "Unlimited" },
+  { feature: "Events per day", free: "5,000", solo: "25,000", team: "100,000", business: "Unlimited", enterprise: "Unlimited" },
   { feature: "Slack alerts", free: "—", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
   { feature: "Email alerts", free: "1 rule", solo: "2 rules", team: "Unlimited", business: "Unlimited", enterprise: "Unlimited" },
   { feature: "Send test events", free: "✓", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
@@ -827,114 +827,101 @@ export default async function MarketingPage() {
             </p>
           </div>
 
-          {/* Pricing — Featured starter + compact free/pro */}
-          <div className="mb-10">
-            {/* Starter — full-width, highlighted */}
-            <div className="relative mb-5 overflow-hidden rounded-2xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-8 md:p-10">
-              {/* Decorative corner gradient */}
-              <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-accent/10 blur-2xl" />
-              <div className="relative">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-semibold md:text-2xl">Starter</h3>
-                      <Badge variant="success">Most Popular</Badge>
-                    </div>
-                    <p className="mt-1 text-sm text-text-muted">For growing teams that need alerting</p>
-                  </div>
-                  <div className="text-right">
-                    <div>
-                      <span className="text-3xl font-bold md:text-4xl">$9</span>
-                      <span className="text-text-muted">/mo</span>
-                    </div>
-                    <div className="mt-2">
-                      <Link href="/sign-up">
-                        <Button size="sm">Start Free Trial</Button>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <svg className="h-4 w-4 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                      3 projects, 10 queues
-                    </div>
-                    <div className="mt-2 flex items-center gap-2 text-sm">
-                      <svg className="h-4 w-4 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                      30-day event history
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <svg className="h-4 w-4 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                      100,000 events / day
-                    </div>
-                    <div className="mt-2 flex items-center gap-2 text-sm">
-                      <svg className="h-4 w-4 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                      Slack + Email alerts
-                    </div>
-                  </div>
-                </div>
+          {/* Pricing — 5-tier grid: Free, Solo ($15), Team ($39), Business ($149), Enterprise */}
+          <div className="mb-10 grid gap-4 md:grid-cols-5">
+            {/* Free */}
+            <div className="relative rounded-xl border border-border bg-surface/30 p-5">
+              <h3 className="text-base font-semibold">Free</h3>
+              <div className="mt-1">
+                <span className="text-2xl font-bold">$0</span>
+                <span className="text-text-muted text-sm">/mo</span>
               </div>
+              <p className="mt-0.5 text-xs text-text-muted">Personal projects and evaluation</p>
+              <ul className="mt-4 space-y-1.5">
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 1 queue</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>5,000 events/day</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>24-hour history</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Email alerts (1 rule)</li>
+              </ul>
+              <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Get Started Free →</Button></Link>
             </div>
 
-            {/* Free, Solo, Business, Enterprise — grid */}
-            <div className="grid gap-4 md:grid-cols-4">
-              <div className="relative rounded-xl border border-border bg-surface/30 p-6">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
-                  <svg className="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <h3 className="mt-3 text-base font-semibold md:text-lg">Free</h3>
-                <div className="mt-1">
-                  <span className="text-xl font-bold md:text-2xl">$0</span>
-                  <span className="text-text-muted">/mo</span>
-                </div>
-                <p className="mt-0.5 text-xs text-text-muted">Personal projects and evaluation</p>
-                <ul className="mt-4 space-y-1.5">
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 1 queue</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>24h history, 1K events/day</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Send test events</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Email alerts (1 rule)</li>
-                </ul>
-                <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Get Started Free</Button></Link>
+            {/* Solo */}
+            <div className="relative rounded-xl border border-accent/20 bg-gradient-to-br from-accent/[0.03] via-surface/30 to-bg p-5">
+              <Badge variant="outline" className="mb-2 border-accent/20 text-accent bg-accent/[0.05]">For Indie Hackers</Badge>
+              <h3 className="text-base font-semibold">Solo</h3>
+              <div className="mt-1">
+                <span className="text-2xl font-bold">$15</span>
+                <span className="text-text-muted text-sm">/mo</span>
               </div>
-              <div className="relative rounded-xl border border-border bg-surface/30 p-6">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10"><svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div>
-                <h3 className="mt-3 text-base font-semibold md:text-lg">Solo</h3>
-                <div className="mt-1"><span className="text-xl font-bold md:text-2xl">$15</span><span className="text-text-muted">/mo</span></div>
-                <p className="mt-0.5 text-xs text-text-muted">For solo founders and indie hackers</p>
-                <ul className="mt-4 space-y-1.5">
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 5 queues</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>14-day history, 25K events/day</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Slack + Email alerts (2 rules)</li>
-                </ul>
-                <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full">Start Solo</Button></Link>
+              <p className="mt-0.5 text-xs text-text-muted">For solo founders and side projects</p>
+              <ul className="mt-4 space-y-1.5">
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 5 queues</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>25,000 events/day</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>14-day history</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Slack + Email alerts (2 rules)</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Basic support (48h)</li>
+              </ul>
+              <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full">Start Solo →</Button></Link>
+            </div>
+
+            {/* Team — featured */}
+            <div className="relative -mx-2 scale-[1.04] z-10 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-6 shadow-lg shadow-accent/10">
+              <div className="pointer-events-none absolute -right-12 -top-12 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
+              <Badge variant="success" className="mb-2">Most Popular</Badge>
+              <h3 className="text-base font-semibold">Team</h3>
+              <div className="mt-1">
+                <span className="text-2xl font-bold">$39</span>
+                <span className="text-text-muted text-sm">/mo</span>
               </div>
-              <div className="relative rounded-xl border border-border bg-surface/30 p-6">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10"><svg className="h-4 w-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div>
-                <h3 className="mt-3 text-base font-semibold md:text-lg">Business</h3>
-                <div className="mt-1"><span className="text-xl font-bold md:text-2xl">$149</span><span className="text-text-muted">/mo</span></div>
-                <p className="mt-0.5 text-xs text-text-muted">For teams with compliance needs</p>
-                <ul className="mt-4 space-y-1.5">
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Unlimited projects &amp; queues</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>90-day history, unlimited events</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SSO + RBAC + PagerDuty/OpsGenie</li>
-                </ul>
-                <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Start Business Trial</Button></Link>
+              <p className="mt-0.5 text-xs text-text-muted">For production teams needing reliable monitoring</p>
+              <ul className="mt-4 space-y-1.5">
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>3 projects, 10 queues/project</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>100,000 events/day</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>30-day history</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>5 team members</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Slack + Email + Webhook alerts</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>API access + Auto-resolution</li>
+              </ul>
+              <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full">Start Team Trial →</Button></Link>
+              <p className="mt-2 text-center text-[10px] text-text-muted/60">No credit card required</p>
+            </div>
+
+            {/* Business */}
+            <div className="relative rounded-xl border border-border bg-surface/30 p-5">
+              <Badge variant="outline" className="mb-2 border-accent/20 text-accent bg-accent/[0.05]">For Organizations</Badge>
+              <h3 className="text-base font-semibold">Business</h3>
+              <div className="mt-1">
+                <span className="text-2xl font-bold">$149</span>
+                <span className="text-text-muted text-sm">/mo</span>
               </div>
-              <div className="relative rounded-xl border border-border bg-gradient-to-br from-surface/20 to-code-bg/30 p-6">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10"><svg className="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg></div>
-                <h3 className="mt-3 text-base font-semibold md:text-lg">Enterprise</h3>
-                <div className="mt-1"><span className="text-xl font-bold md:text-2xl">Custom</span></div>
-                <p className="mt-0.5 text-xs text-text-muted">For regulated industries and self-hosted</p>
-                <ul className="mt-4 space-y-1.5">
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Self-hosted deployment</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Dedicated support + custom SLA</li>
-                  <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SOC 2 Type II + annual audits</li>
-                </ul>
-                <Link href="/enterprise" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Contact Sales</Button></Link>
+              <p className="mt-0.5 text-xs text-text-muted">For teams with compliance and scale needs</p>
+              <ul className="mt-4 space-y-1.5">
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Unlimited projects &amp; queues</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Unlimited events</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>90-day history</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>20 team members</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SSO + RBAC + PagerDuty/OpsGenie</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Priority support (24h, Slack)</li>
+              </ul>
+              <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Start Business Trial →</Button></Link>
+            </div>
+
+            {/* Enterprise */}
+            <div className="relative rounded-xl border border-border/60 bg-gradient-to-br from-surface/20 via-surface/10 to-code-bg/30 p-5">
+              <Badge variant="outline" className="mb-2 border-accent/20 text-accent bg-accent/[0.05]">Self-Hosted</Badge>
+              <h3 className="text-base font-semibold">Enterprise</h3>
+              <div className="mt-1">
+                <span className="text-2xl font-bold">Custom</span>
               </div>
+              <p className="mt-0.5 text-xs text-text-muted">For regulated industries and full control</p>
+              <ul className="mt-4 space-y-1.5">
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Everything in Business</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Self-hosted deployment</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Dedicated support + custom SLA</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SOC 2 Type II + annual audits</li>
+              </ul>
+              <Link href="/enterprise" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Contact Sales →</Button></Link>
             </div>
           </div>
 
