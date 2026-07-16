@@ -5,6 +5,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ToastProvider } from "@/components/ui/toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -208,8 +209,10 @@ export default function RootLayout({
             }}
           >
             <PostHogProvider>
-              {process.env.NODE_ENV === 'development' ? <ReticleDev /> : null}
-              {children}
+              <ToastProvider>
+                {process.env.NODE_ENV === 'development' ? <ReticleDev /> : null}
+                {children}
+              </ToastProvider>
             </PostHogProvider>
           </ClerkProvider>
         </ThemeProvider>

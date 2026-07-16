@@ -1,90 +1,143 @@
+"use client";
+
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface SkeletonProps {
-  className?: string;
-  style?: React.CSSProperties;
-}
-
-function SkeletonPulse({ className, style }: SkeletonProps) {
+/**
+ * Skeleton — a base loading placeholder with shimmer animation.
+ */
+function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded-xl bg-surface/70 border border-border/60",
-        className,
+        "relative overflow-hidden rounded-lg bg-surface/50",
+        "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-accent/[0.04] before:to-transparent before:animate-shimmer",
+        className
       )}
-      style={style}
+      {...props}
     />
   );
 }
 
-interface RowSkeletonProps {
-  rows?: number;
-  className?: string;
-}
+// ── Text skeletons ───────────────────────────────────
 
-export function RowSkeleton({ rows = 3, className }: RowSkeletonProps) {
+function SkeletonText({
+  lines = 3,
+  className,
+}: {
+  lines?: number;
+  className?: string;
+}) {
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4">
-          <SkeletonPulse className="h-4 w-4 rounded-full" />
-          <SkeletonPulse className="h-4 flex-1" />
-          <SkeletonPulse className="h-4 w-20" />
-        </div>
+    <div className={cn("flex flex-col gap-2", className)}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <Skeleton
+          key={i}
+          className={cn(
+            "h-4",
+            i === lines - 1 ? "w-3/4" : "w-full"
+          )}
+        />
       ))}
     </div>
   );
 }
 
-interface CardSkeletonProps {
-  className?: string;
-}
+// ── Card skeleton ────────────────────────────────────
 
-export function CardSkeleton({ className }: CardSkeletonProps) {
+function SkeletonCard({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        "rounded-xl border border-border bg-surface p-6",
-        className,
-      )}
-    >
-      <div className="flex items-center justify-between">
-        <SkeletonPulse className="h-5 w-32" />
-        <SkeletonPulse className="h-5 w-16" />
+    <div className={cn("rounded-xl border border-border bg-surface p-6", className)}>
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-10 w-10 rounded-lg" />
+        <div className="flex-1">
+          <Skeleton className="h-5 w-1/3" />
+          <Skeleton className="mt-1.5 h-3 w-1/2" />
+        </div>
       </div>
-      <div className="mt-4 space-y-3">
-        <SkeletonPulse className="h-3 w-full" />
-        <SkeletonPulse className="h-3 w-3/4" />
-        <SkeletonPulse className="h-3 w-1/2" />
+      <div className="mt-4 space-y-2">
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-5/6" />
+        <Skeleton className="h-3 w-2/3" />
       </div>
     </div>
   );
 }
 
-interface ChartSkeletonProps {
-  className?: string;
+// ── Queue stat card skeleton ─────────────────────────
+
+function SkeletonStatCard({ className }: { className?: string }) {
+  return (
+    <div className={cn("rounded-xl border border-border bg-surface p-5", className)}>
+      <Skeleton className="h-3 w-16" />
+      <Skeleton className="mt-2 h-7 w-20" />
+      <Skeleton className="mt-1 h-2 w-full rounded-full" />
+    </div>
+  );
 }
 
-export function ChartSkeleton({ className }: ChartSkeletonProps) {
+// ── Table row skeleton ───────────────────────────────
+
+function SkeletonTableRow({ columns = 4, className }: { columns?: number; className?: string }) {
   return (
-    <div
-      className={cn(
-        "rounded-xl border border-border bg-surface p-6",
-        className,
-      )}
-    >
-      <SkeletonPulse className="mb-6 h-5 w-40" />
-      <div className="flex items-end gap-2" style={{ height: 180 }}>
-        {Array.from({ length: 12 }).map((_, i) => (
-          <SkeletonPulse
-            key={i}
-            className="flex-1 rounded-t"
-            style={{
-              height: `${Math.max(20, Math.random() * 100 + 30)}%`,
-            }}
-          />
-        ))}
+    <div className={cn("flex items-center gap-4 border-b border-border px-4 py-3", className)}>
+      {Array.from({ length: columns }).map((_, i) => (
+        <Skeleton
+          key={i}
+          className={cn(
+            "h-4",
+            i === 0 ? "w-1/3" : "flex-1"
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Queue detail skeleton ────────────────────────────
+
+function SkeletonQueueDetail({ className }: { className?: string }) {
+  return (
+    <div className={cn("space-y-6", className)}>
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <Skeleton className="h-8 w-8 rounded-lg" />
+        <div>
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="mt-1 h-3 w-24" />
+        </div>
+      </div>
+
+      {/* Stats grid */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <SkeletonStatCard />
+        <SkeletonStatCard />
+        <SkeletonStatCard />
+        <SkeletonStatCard />
+      </div>
+
+      {/* Chart area */}
+      <Skeleton className="h-64 w-full" />
+
+      {/* Table */}
+      <div className="rounded-xl border border-border">
+        <div className="border-b border-border bg-surface/40 px-4 py-3">
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <SkeletonTableRow />
+        <SkeletonTableRow />
+        <SkeletonTableRow />
+        <SkeletonTableRow />
       </div>
     </div>
   );
 }
+
+export {
+  Skeleton,
+  SkeletonText,
+  SkeletonCard,
+  SkeletonStatCard,
+  SkeletonTableRow,
+  SkeletonQueueDetail,
+};

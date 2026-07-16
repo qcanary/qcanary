@@ -8,10 +8,10 @@ export { ErrorBoundary } from "./error-boundary";
 export { Input } from "./input";
 export type { InputProps } from "./input";
 export { Label } from "./label";
-export { RowSkeleton, CardSkeleton, ChartSkeleton } from "./loading-skeleton";
+export { Skeleton, SkeletonText, SkeletonCard, SkeletonStatCard, SkeletonTableRow, SkeletonQueueDetail } from "./loading-skeleton";
 export { Select } from "./select";
 export type { SelectProps } from "./select";
 export { Separator } from "./separator";
-export { Skeleton } from "./skeleton";
+// Skeleton is exported from ./loading-skeleton with more variants
 export { Switch } from "./switch";
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./table";
