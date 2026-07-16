@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { ArchitectureDiagram } from "@/components/landing/ArchitectureDiagram";
 
 export function SolutionSection() {
@@ -7,11 +6,9 @@ export function SolutionSection() {
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16 md:py-20">
 
         <div className="mb-10 max-w-2xl text-center animate-fade-in-up">
-          <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Architecture</Badge>
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">How It Works</h2>
-          <p className="mt-3 text-text-muted">
-            A lightweight agent inside your worker process streams job metadata to QCanary over HTTPS.
-            Redis never leaves your network.
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">QueueEvents. Not Redis.</h2>
+          <p className="mt-3 text-base text-text-muted">
+            BullMQ already emits lifecycle events. We just listen.
           </p>
         </div>
 
@@ -30,22 +27,22 @@ export function SolutionSection() {
           {[
             {
               step: "01",
-              title: "Install @qcanary/agent",
-              desc: "Add the package to your worker process. Initialize with your API key and BullMQ queues. Monitoring in 3 lines.",
+              title: "Install",
+              desc: "Add the agent to your worker process.",
               code: "npm install @qcanary/agent",
               icon: "📦",
             },
             {
               step: "02",
-              title: "Agent attaches via QueueEvents",
-              desc: "Subscribes to BullMQ's built-in lifecycle events as a local subscriber inside your process. Zero network changes.",
+              title: "Configure",
+              desc: "Initialize with your API key and BullMQ queues.",
               code: "new QueueMonitor({ apiKey, queues })",
               icon: "🔗",
             },
             {
               step: "03",
-              title: "Dashboards & Alerts live",
-              desc: "Track failures, trends, and alerts in real time. Catch issues before they reach production.",
+              title: "Done",
+              desc: "Alerts are live. Track failures and trends in real time.",
               code: "✓ Agent connected · streaming events",
               icon: "📊",
             },
@@ -61,10 +58,10 @@ export function SolutionSection() {
                 </div>
                 {/* Content */}
                 <div className="min-w-0 flex-1 md:mt-4">
-                  <h3 className="text-base font-semibold">{item.title}</h3>
+                  <h3 className="text-base font-semibold text-text-primary">{item.title}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-text-muted">{item.desc}</p>
                   {/* Code snippet */}
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-lg border border-border bg-gradient-to-r from-code-bg to-surface/30 px-3 py-1.5 font-mono text-xs text-accent ring-1 ring-accent/10">
+                  <div className="mt-2 inline-flex items-center gap-2 rounded-lg border border-border bg-code-bg px-3 py-1.5 font-mono text-xs text-accent">
                     <span className="text-text-muted">$</span>
                     {item.code}
                   </div>

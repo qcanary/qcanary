@@ -1,16 +1,12 @@
-import { Badge } from "@/components/ui/badge";
-
 export function ProblemSection() {
   return (
     <section className="overflow-hidden border-b border-border bg-gradient-to-br from-surface/20 via-bg to-code-bg">
-      <div className="relative mx-auto w-full max-w-6xl px-6 py-20 md:py-28">
+      <div className="relative mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
 
-        <div className="mx-auto mb-14 max-w-2xl text-center animate-fade-in-up">
-          <Badge variant="outline" className="mb-4 border-red-500/30 text-red-400">The Problem</Badge>
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Sharing Redis is a Security Risk</h2>
-          <p className="mt-3 text-text-muted">
-            Every queue monitoring dashboard that asks for your Redis URL creates an attack
-            surface that your security team will flag.
+        <div className="mx-auto mb-14 max-w-2xl animate-fade-in-up">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">Every monitoring tool wants your Redis URL</h2>
+          <p className="mt-3 text-base text-text-muted">
+            That&rsquo;s your entire database. One leak and it&rsquo;s over.
           </p>
         </div>
 
@@ -28,12 +24,12 @@ export function ProblemSection() {
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
               {[
-                { icon: "🔑", title: "Credential exposure", desc: "Handing over your Redis URL grants full database access to a third party" },
-                { icon: "🌐", title: "Network blast radius", desc: "Opening port 6379 to a vendor requires VPC peering or public exposure" },
-                { icon: "📋", title: "Compliance violation", desc: "Storing production Redis credentials in a third-party system violates SOC 2" },
-                { icon: "📊", title: "Data leakage", desc: "Job payloads, worker metadata, and internals exposed to external monitoring" },
+                { icon: "🔑", title: "Full access", desc: "Handing over your Redis URL grants full database access to a third party" },
+                { icon: "🌐", title: "No firewall changes", desc: "Opening port 6379 to a vendor requires VPC peering or public exposure" },
+                { icon: "📋", title: "SOC 2 violation", desc: "Storing production Redis credentials in a third-party system violates SOC 2" },
+                { icon: "📊", title: "Everything exposed", desc: "Job payloads, worker metadata, and internals exposed to external monitoring" },
               ].map((item) => (
-                <div key={item.title} className="card-hover group flex items-start gap-3 rounded-lg border border-border bg-surface/40 p-4">
+                <div key={item.title} className="flex items-start gap-3 rounded-lg border border-border bg-surface/40 p-4">
                   <span className="mt-0.5 shrink-0 text-base">{item.icon}</span>
                   <div>
                     <div className="text-sm font-medium text-text-primary">{item.title}</div>
@@ -58,7 +54,7 @@ export function ProblemSection() {
             BullMQ emits lifecycle events from inside your own process. No Redis URL ever needs to leave.
           </p>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="card-hover group rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-5">
+            <div className="rounded-xl border border-border bg-surface/50 p-5">
               <div className="mb-3 flex items-center gap-2">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/10">
                   <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
@@ -76,7 +72,7 @@ export function ProblemSection() {
                 BullMQ&apos;s QueueEvents dispatches these lifecycle events inside your Node.js process.
               </p>
             </div>
-            <div className="card-hover group rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-5">
+            <div className="rounded-xl border border-border bg-surface/50 p-5">
               <div className="mb-3 flex items-center gap-2">
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10">
                   <svg className="h-3.5 w-3.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg>

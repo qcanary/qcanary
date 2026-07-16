@@ -3,7 +3,6 @@ import Link from "next/link";
 import Script from "next/script";
 import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { ParallaxSection } from "@/components/ParallaxSection";
@@ -65,15 +64,15 @@ async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
     <section className="border-y border-border bg-surface/50">
       <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <div className="mb-10 max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Latest from the Blog</h2>
-          <p className="mt-3 text-text-muted">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">Latest from the Blog</h2>
+          <p className="mt-3 text-base text-text-muted">
             Technical writing about BullMQ monitoring, Redis queue observability, and production background jobs.
           </p>
         </div>
 
         {/* Featured post — full-width highlight */}
         <Link href={`/blog/${first.slug}`} className="group block">
-          <div className="mb-6 rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-6 transition-all hover:border-accent/30 md:p-8">
+          <div className="mb-6 rounded-xl border border-border bg-surface/50 p-6 transition-all hover:border-accent/30 md:p-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex-1">
                 <div className="mb-2 flex items-center gap-2">
@@ -135,7 +134,6 @@ export default async function MarketingPage() {
     <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       <MarketingNav />
 
-      {/* Mobile-responsive hero: stacking, overflow, padding */}
       <div className="overflow-x-hidden">
         <HeroSection />
       </div>
@@ -149,9 +147,8 @@ export default async function MarketingPage() {
       <ParallaxSection>
         <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-10 max-w-2xl">
-            <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Dashboard</Badge>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">See it in action</h2>
-            <p className="mt-3 text-text-muted">
+            <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">See it in action</h2>
+            <p className="mt-3 text-base text-text-muted">
               Monitor queue health, inspect failures, and track trends from one dashboard.
             </p>
           </div>
@@ -178,24 +175,18 @@ export default async function MarketingPage() {
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mx-auto max-w-3xl">
             <div className="mb-8 animate-fade-in-up">
-              <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Why I Built This</Badge>
-              <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">I got tired of security teams saying no.</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">I kept getting blocked by security teams.</h2>
             </div>
             <div className="animate-fade-in-up-delay-1 space-y-4 text-base leading-relaxed text-text-primary md:text-lg">
               <p>
-                Every queue monitoring tool I wanted to use required handing over our Redis URL.
-                That&rsquo;s full database access. My security team flagged it every time. Bull Board
-                was great for local development, but production needed something that didn&rsquo;t
+                Every monitoring tool wanted our Redis URL. Every time, the security team said no.
+                Bull Board was great for local development, but production needed something that didn&rsquo;t
                 require a third party to touch our infrastructure.
               </p>
               <p>
                 So I built QCanary. The agent runs inside your own worker process. Your Redis
                 credentials never leave your network. We only see metadata — never your job payloads,
                 never your data, never your keys.
-              </p>
-              <p>
-                It&rsquo;s not revolutionary. It&rsquo;s just the bare minimum that security-conscious
-                teams should expect from infrastructure monitoring.
               </p>
             </div>
             <div className="animate-fade-in-up-delay-2 mt-6 flex items-center gap-4">
@@ -227,9 +218,8 @@ export default async function MarketingPage() {
         <div className="relative mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
 
           <div className="mb-10 max-w-2xl">
-            <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Pricing</Badge>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Simple, usage-based pricing</h2>
-            <p className="mt-3 text-text-muted">
+            <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">Pay for what matters</h2>
+            <p className="mt-3 text-base text-text-muted">
               Start free and upgrade when alerting and deeper history become essential.
             </p>
           </div>
@@ -238,12 +228,12 @@ export default async function MarketingPage() {
           <div className="mb-10 grid gap-4 md:grid-cols-5">
             {/* Free */}
             <div className="relative rounded-xl border border-border bg-surface/30 p-5">
-              <h3 className="text-base font-semibold">Free</h3>
+              <h3 className="text-base font-semibold text-text-primary">Free</h3>
               <div className="mt-1">
-                <span className="text-2xl font-bold">$0</span>
+                <span className="text-2xl font-bold text-text-primary">$0</span>
                 <span className="text-text-muted text-sm">/mo</span>
               </div>
-              <p className="mt-0.5 text-xs text-text-muted">Personal projects and evaluation</p>
+              <p className="mt-0.5 text-xs text-text-muted">1 project. 5K events/day. Email alerts.</p>
               <ul className="mt-4 space-y-1.5">
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 1 queue</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>5,000 events/day</li>
@@ -254,14 +244,13 @@ export default async function MarketingPage() {
             </div>
 
             {/* Solo */}
-            <div className="relative rounded-xl border border-accent/20 bg-gradient-to-br from-accent/[0.03] via-surface/30 to-bg p-5">
-              <Badge variant="outline" className="mb-2 border-accent/20 text-accent bg-accent/[0.05]">For Indie Hackers</Badge>
-              <h3 className="text-base font-semibold">Solo</h3>
+            <div className="relative rounded-xl border border-border bg-surface/30 p-5">
+              <h3 className="text-base font-semibold text-text-primary">Solo</h3>
               <div className="mt-1">
-                <span className="text-2xl font-bold">$15</span>
+                <span className="text-2xl font-bold text-text-primary">$15</span>
                 <span className="text-text-muted text-sm">/mo</span>
               </div>
-              <p className="mt-0.5 text-xs text-text-muted">For solo founders and side projects</p>
+              <p className="mt-0.5 text-xs text-text-muted">For solo devs. 25K events/day. Slack alerts.</p>
               <ul className="mt-4 space-y-1.5">
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 5 queues</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>25,000 events/day</li>
@@ -275,13 +264,12 @@ export default async function MarketingPage() {
             {/* Team — featured */}
             <div className="relative -mx-2 scale-[1.04] z-10 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-6 shadow-lg shadow-accent/10">
               <div className="pointer-events-none absolute -right-12 -top-12 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
-              <Badge variant="success" className="mb-2">Most Popular</Badge>
-              <h3 className="text-base font-semibold">Team</h3>
+              <h3 className="text-base font-semibold text-text-primary">Team</h3>
               <div className="mt-1">
-                <span className="text-2xl font-bold">$39</span>
+                <span className="text-2xl font-bold text-text-primary">$39</span>
                 <span className="text-text-muted text-sm">/mo</span>
               </div>
-              <p className="mt-0.5 text-xs text-text-muted">For production teams needing reliable monitoring</p>
+              <p className="mt-0.5 text-xs text-text-muted">For teams. 100K events/day. Webhooks.</p>
               <ul className="mt-4 space-y-1.5">
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>3 projects, 10 queues/project</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>100,000 events/day</li>
@@ -296,13 +284,12 @@ export default async function MarketingPage() {
 
             {/* Business */}
             <div className="relative rounded-xl border border-border bg-surface/30 p-5">
-              <Badge variant="outline" className="mb-2 border-accent/20 text-accent bg-accent/[0.05]">For Organizations</Badge>
-              <h3 className="text-base font-semibold">Business</h3>
+              <h3 className="text-base font-semibold text-text-primary">Business</h3>
               <div className="mt-1">
-                <span className="text-2xl font-bold">$149</span>
+                <span className="text-2xl font-bold text-text-primary">$149</span>
                 <span className="text-text-muted text-sm">/mo</span>
               </div>
-              <p className="mt-0.5 text-xs text-text-muted">For teams with compliance and scale needs</p>
+              <p className="mt-0.5 text-xs text-text-muted">Unlimited everything. SSO coming.</p>
               <ul className="mt-4 space-y-1.5">
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Unlimited projects &amp; queues</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Unlimited events</li>
@@ -315,13 +302,12 @@ export default async function MarketingPage() {
             </div>
 
             {/* Enterprise */}
-            <div className="relative rounded-xl border border-border/60 bg-gradient-to-br from-surface/20 via-surface/10 to-code-bg/30 p-5">
-              <Badge variant="outline" className="mb-2 border-accent/20 text-accent bg-accent/[0.05]">Self-Hosted</Badge>
-              <h3 className="text-base font-semibold">Enterprise</h3>
+            <div className="relative rounded-xl border border-border bg-surface/30 p-5">
+              <h3 className="text-base font-semibold text-text-primary">Enterprise</h3>
               <div className="mt-1">
-                <span className="text-2xl font-bold">Custom</span>
+                <span className="text-2xl font-bold text-text-primary">Custom</span>
               </div>
-              <p className="mt-0.5 text-xs text-text-muted">For regulated industries and full control</p>
+              <p className="mt-0.5 text-xs text-text-muted">Self-hosted. Your infrastructure.</p>
               <ul className="mt-4 space-y-1.5">
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Everything in Business</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Self-hosted deployment</li>
@@ -386,33 +372,29 @@ export default async function MarketingPage() {
         <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto w-full max-w-3xl px-6 py-16 md:py-20">
           <div className="mb-10 max-w-2xl animate-fade-in-up">
-            <Badge variant="outline" className="mb-4 border-accent/30 text-accent">FAQ</Badge>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Frequently Asked Questions</h2>
-            <p className="mt-3 text-text-muted">
-              Quick answers to the most common questions about QCanary.
-            </p>
+            <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">Frequently Asked Questions</h2>
           </div>
           <div className="space-y-3 animate-fade-in-up-delay-1">
             {[
               {
                 q: "Do I need to share Redis credentials?",
-                a: "No. The Qcanary agent listens to BullMQ events inside your app and sends only lightweight metadata to the API. Your Redis URL stays in your environment and is never shared.",
+                a: "No. The agent listens to BullMQ events inside your app and sends only metadata. Your Redis URL stays in your environment.",
               },
               {
                 q: "How long does setup take?",
-                a: "Most teams install and send first events in under 10 minutes. It's a 3-line setup: install the package, initialize with your API key, and pass your BullMQ queues.",
+                a: "Under 10 minutes. Install the package, initialize with your API key, pass your queues. That's it.",
               },
               {
                 q: "Which alerts are available?",
-                a: "Solo and Team plans include Slack and email alerts. Team and Business add webhook alerts for PagerDuty, OpsGenie, or custom integrations. Free plan includes email alerts (1 rule) to get you started.",
+                a: "Email on all plans. Slack and email on Solo. Webhooks on Team and Business for PagerDuty, OpsGenie, or custom integrations.",
               },
               {
                 q: "Can I view failed job details?",
-                a: "Yes. Every plan includes job-level detail and stack traces for failed jobs. You can inspect the full error message, the number of attempts, and the job metadata from the dashboard.",
+                a: "Yes. Every plan includes job-level detail and stack traces — full error message, attempts, and metadata.",
               },
               {
                 q: "Is there a free plan?",
-                a: "Yes. The Free plan includes 1 project, 1 queue, 24-hour event history, and 5,000 events per day. No credit card required. Perfect for personal projects and evaluation.",
+                a: "Yes. 1 project, 1 queue, 24-hour history, 5K events/day. No credit card required.",
               },
             ].map((faq) => (
               <details key={faq.q} className="group cursor-pointer rounded-xl border border-border bg-surface/30 transition-all hover:border-accent/30 open:border-accent/30 open:bg-surface/40">
@@ -481,24 +463,17 @@ export default async function MarketingPage() {
       {/* ── CTA ────────────────────────────────────────────────── */}
       <ScrollReveal>
         <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
-        {/* Background glow */}
-
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-24 text-center md:py-32">
-          <div className="animate-fade-in-up">
-            <Badge variant="outline" className="mb-6 border-accent/40 text-accent">
-              Get started in 3 lines
-            </Badge>
-          </div>
-          <h2 className="animate-fade-in-up-delay-1 text-[clamp(1.75rem,5vw,3.75rem)] font-semibold tracking-tight md:text-5xl lg:text-6xl">
-            Queue monitoring,            <span className="text-highlight">reimagined.</span>
+          <h2 className="animate-fade-in-up text-[clamp(1.75rem,5vw,3.75rem)] font-bold tracking-tighter md:text-5xl lg:text-6xl">
+            Your queues deserve better than blind faith
           </h2>
-          <p className="animate-fade-in-up-delay-2 mt-4 max-w-xl text-base text-text-muted">
-            Monitor every queue. Catch every failure. Install in 3 lines, go live in 10 minutes.
+          <p className="animate-fade-in-up-delay-1 mt-4 max-w-xl text-base text-text-muted">
+            Install in 3 lines. First event in 10 minutes.
           </p>
-          <div className="animate-fade-in-up-delay-3 mt-10 flex flex-col items-center gap-3 sm:flex-row">
+          <div className="animate-fade-in-up-delay-2 mt-10 flex flex-col items-center gap-3 sm:flex-row">
             <Link href="/sign-up">
               <Button size="lg" className="group gap-2">
-                Start Free
+                Start free
                 <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Button>
             </Link>
@@ -509,8 +484,7 @@ export default async function MarketingPage() {
               </Button>
             </Link>
           </div>
-          {/* Bottom trust line */}
-          <p className="animate-fade-in-up-delay-4 mt-8 text-xs text-text-muted">
+          <p className="animate-fade-in-up-delay-3 mt-8 text-xs text-text-muted">
             No credit card required · 3-line setup · 10 minutes to first event
           </p>
         </div>

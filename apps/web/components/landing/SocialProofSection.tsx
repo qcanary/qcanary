@@ -1,13 +1,10 @@
-import { Badge } from "@/components/ui/badge";
-
 export function SocialProofSection() {
   return (
     <section className="border-y border-border bg-gradient-to-t from-surface/30 to-bg">
       <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <div className="mb-12 max-w-2xl animate-fade-in-up">
-          <Badge variant="outline" className="mb-4 border-accent/30 text-accent">Community</Badge>
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Open source and community driven</h2>
-          <p className="mt-3 text-text-muted">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">Built in the open</h2>
+          <p className="mt-3 text-base text-text-muted">
             The agent package is MIT-licensed and available on GitHub and npm.
             Built in the open with contributions from the BullMQ ecosystem.
           </p>
@@ -16,7 +13,7 @@ export function SocialProofSection() {
         {/* Key metrics with Shields.io-style badges */}
         <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* GitHub Stars */}
-          <div className="card-hover group rounded-xl border border-border bg-surface/40 p-5">
+          <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
                 <svg className="h-5 w-5 text-accent" fill="currentColor" viewBox="0 0 24 24">
@@ -37,7 +34,7 @@ export function SocialProofSection() {
           </div>
 
           {/* Available on npm */}
-          <div className="card-hover group rounded-xl border border-border bg-surface/40 p-5">
+          <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/10">
                 <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 24 24">
@@ -52,7 +49,7 @@ export function SocialProofSection() {
           </div>
 
           {/* MIT Licensed */}
-          <div className="card-hover group rounded-xl border border-border bg-surface/40 p-5">
+          <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/10">
                 <svg className="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,7 +64,7 @@ export function SocialProofSection() {
           </div>
 
           {/* BullMQ Native */}
-          <div className="card-hover group rounded-xl border border-border bg-surface/40 p-5">
+          <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
                 <svg className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -121,7 +118,7 @@ export function SocialProofSection() {
               <svg aria-hidden="true" className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
             </div>
             <div>
-              <div className="text-lg font-semibold">TypeScript</div>
+              <div className="text-lg font-semibold text-text-primary">TypeScript</div>
               <div className="text-xs text-text-muted">Full type safety across agent + API</div>
             </div>
           </div>
@@ -130,7 +127,7 @@ export function SocialProofSection() {
               <svg aria-hidden="true" className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </div>
             <div>
-              <div className="text-lg font-semibold">3-line</div>
+              <div className="text-lg font-semibold text-text-primary">3-line</div>
               <div className="text-xs text-text-muted">Setup · 10 minutes to first event</div>
             </div>
           </div>
@@ -139,7 +136,7 @@ export function SocialProofSection() {
               <svg aria-hidden="true" className="h-6 w-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
             <div>
-              <div className="text-lg font-semibold">SOC 2 in Progress</div>
+              <div className="text-lg font-semibold text-text-primary">SOC 2 in Progress</div>
               <div className="text-xs text-text-muted">Zero-trust architecture — Type II audit in progress</div>
             </div>
           </div>

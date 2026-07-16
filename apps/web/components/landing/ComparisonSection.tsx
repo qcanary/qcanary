@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export function ComparisonSection() {
@@ -7,12 +6,7 @@ export function ComparisonSection() {
     <section className="border-y border-border bg-gradient-to-br from-bg via-surface/10 to-code-bg">
       <div className="relative mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
         <div className="mb-10 max-w-2xl animate-fade-in-up">
-          <Badge variant="outline" className="mb-4 border-amber-500/30 text-amber-400">Comparison</Badge>
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Why teams choose QCanary over Bull Board</h2>
-          <p className="mt-3 text-text-muted">
-            Bull Board is great for local debugging, but production monitoring demands
-            secure infrastructure, alerting, and zero-config deployments.
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">Bull Board is great for local dev. This is for production.</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 animate-fade-in-up-delay-1">
           <div className="rounded-xl border border-red-500/15 bg-gradient-to-br from-red-500/5 to-code-bg p-6">
@@ -24,10 +18,10 @@ export function ComparisonSection() {
             </div>
             <ul className="space-y-2.5">
               {[
-                "Requires SSH tunnel or VPC bastion to access Redis",
-                "No built-in alerting — need separate Nagios/Datadog setup",
-                "Manual authentication — no team access controls",
-                "No event history — only live queue state",
+                "Needs SSH tunnel",
+                "No alerts",
+                "No team access",
+                "Live-only, no history",
                 "Dashboard accessible only from private network",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm">
@@ -46,10 +40,10 @@ export function ComparisonSection() {
             </div>
             <ul className="space-y-2.5">
               {[
-                "Zero-trust agent runs inside your process — no network exposure",
-                "Built-in Slack, email, and webhook alerting with 5+ rule types",
-                "Team-based access controls with Clerk authentication",
-                "30-day event history with job-level detail and stack traces",
+                "Zero network exposure",
+                "Slack, email, webhooks",
+                "Team permissions",
+                "30-day history",
                 "Accessible from anywhere — secure dashboard with HTTPS",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm">

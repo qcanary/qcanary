@@ -3,7 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const containerVariants = {
@@ -60,7 +59,6 @@ export function HeroSection() {
       style={{ opacity: heroOpacity, y: heroY }}
       className="relative overflow-hidden border-b border-border"
     >
-      {/* Clean subtle accent tint */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-accent/[0.02]" />
 
       <motion.div
@@ -69,76 +67,44 @@ export function HeroSection() {
         animate="visible"
         className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-6 pb-24 pt-24 md:flex-row md:items-start md:pt-28"
       >
-        {/* Left: Text content */}
-        <div className="flex-1 md:pt-8">
-          <motion.div variants={itemVariants} className="mb-6 flex items-center gap-2">
-            <Badge variant="outline" className="border-accent/40 text-accent">
-              ✦ Zero-Trust BullMQ Monitoring
-            </Badge>
-            <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
-              Free tier available
-            </span>
-          </motion.div>
-
+        {/* Left: Text content — 55% */}
+        <div className="flex-1 md:pt-8 md:basis-[55%]">
           <motion.h1
             variants={itemVariants}
-            className="text-[clamp(1.75rem,5vw,3.75rem)] font-semibold tracking-tight md:text-5xl lg:text-6xl"
+            className="text-5xl font-bold tracking-tighter md:text-6xl lg:text-7xl"
           >
-            Monitor BullMQ{" "}
-            <span className="text-highlight">Without&nbsp;Exposing&nbsp;Redis.</span>
+            Your queues are running.
+            <br />
+            <span className="text-text-muted">You just can&rsquo;t see them.</span>
           </motion.h1>
 
           <motion.p
             variants={itemVariants}
-            className="mt-5 text-sm leading-relaxed text-text-muted md:text-base lg:text-xl"
+            className="mt-5 max-w-[48ch] text-base leading-relaxed text-text-muted lg:text-lg"
           >
-            The lightweight agent runs inside your worker process streaming job metadata over HTTPS.
-            <span className="mt-2 block">Your Redis stays private. No firewall changes. Alert-ready in minutes.</span>
+            QCanary listens to BullMQ events inside your process. No Redis access needed.
+            Failures show up in Slack before your users notice.
           </motion.p>
 
           <motion.div variants={itemVariants} className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="/sign-up">
               <Button size="lg" className="group relative gap-2 overflow-hidden hover:scale-[1.02] active:scale-[0.97]">
-                <span className="relative z-10">Start Monitoring Free</span>
+                <span className="relative z-10">Start monitoring free</span>
                 <svg className="relative z-10 h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Button>
             </Link>
             <Link href="/docs">
               <Button variant="secondary" size="lg" className="group gap-2 hover:scale-[1.02] active:scale-[0.97]">
-                <span>View Docs</span>
-                <kbd className="hidden rounded-md border border-border bg-code-bg px-1.5 py-0.5 font-mono text-[10px] text-text-muted transition-colors group-hover:border-accent/30 sm:inline-flex">⌘K</kbd>
+                <span>Read the docs</span>
               </Button>
             </Link>
           </motion.div>
-
-          {/* Trust bar */}
-          <motion.div variants={itemVariants} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-text-muted">
-            <span className="flex items-center gap-1.5">
-              <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-              MIT-licensed open source
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-              Slack & email alerts included
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              Setup in 3 lines · 10 minutes
-            </span>
-          </motion.div>
-
-          {/* Social proof bar */}
-          <motion.div variants={itemVariants} className="mt-6 flex items-center gap-2 rounded-lg border border-border bg-surface/30 px-4 py-2.5">
-            <span className="text-xs text-text-muted">
-              Built for teams where security isn&rsquo;t optional.
-            </span>
-          </motion.div>
         </div>
 
-        {/* Right: Terminal code block */}
+        {/* Right: Terminal code block — 45% */}
         <motion.div
           variants={itemVariants}
-          className="w-full max-w-xl flex-1 md:max-w-none"
+          className="w-full max-w-xl flex-1 md:max-w-none md:basis-[45%]"
         >
           <motion.div
             whileHover={{ scale: 1.01, transition: { duration: 0.3 } }}
@@ -193,6 +159,24 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
       </motion.div>
+
+      {/* Trust bar — below hero */}
+      <div className="border-t border-border bg-surface/30">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-6 py-4 text-xs text-text-muted">
+          <span className="flex items-center gap-1.5">
+            <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            MIT-licensed open source
+          </span>
+          <span className="flex items-center gap-1.5">
+            <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            Slack &amp; email alerts included
+          </span>
+          <span className="flex items-center gap-1.5">
+            <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Setup in 3 lines · 10 minutes
+          </span>
+        </div>
+      </div>
     </motion.section>
   );
 }
