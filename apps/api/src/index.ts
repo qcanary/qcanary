@@ -53,6 +53,8 @@ import { calculateBenchmarks } from './lib/benchmarks';
 import { calculateBaselinesForAllQueues } from './lib/anomalies';
 import { detectAnomalies } from './lib/anomalyDetection';
 import { healthRouter } from './routes/health';
+import { auditRouter } from './routes/audit';
+import { exportRouter } from './routes/export';
 import { sendDailyDigest } from './lib/digest';
 
 const app = express();
@@ -246,6 +248,8 @@ app.use('/v1/billing', requireDashboardAuth, dashboardRateLimit, billingRouter);
 app.use('/v1/usage', requireDashboardAuth, dashboardRateLimit, usageRouter);
 app.use('/v1/anomalies', requireDashboardAuth, dashboardRateLimit, anomaliesRouter);
 app.use('/v1/health-scores', requireDashboardAuth, dashboardRateLimit, healthRouter);
+app.use('/v1/audit', requireDashboardAuth, dashboardRateLimit, auditRouter);
+app.use('/v1/export', requireDashboardAuth, dashboardRateLimit, exportRouter);
 
 // ── Sentry Error Handler ───────────────────────────────────
 if (process.env.SENTRY_DSN) {
