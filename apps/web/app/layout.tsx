@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "@/components/PostHogProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -85,12 +86,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preconnect hints */}            <link rel="preconnect" href="https://clerk.accounts.dev" />
-            <link rel="preconnect" href="https://app.posthog.com" />
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Theme color script — prevents flash */}
+        <Script
+          id="theme-script"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (!theme) {
+                    theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+                  }
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+        {/* Preconnect hints */}
+        <link rel="preconnect" href="https://clerk.accounts.dev" />
+        <link rel="preconnect" href="https://app.posthog.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
 
@@ -116,7 +140,7 @@ export default function RootLayout({
                 "@type": "Offer",
                 price: "0",
                 priceCurrency: "USD",
-                description: "Free tier available. Starter $9/mo, Pro $24/mo.",
+                description: "Free tier available. Solo $15/mo, Team $39/mo, Business $149/mo.",
               },
               author: {
                 "@type": "Organization",
@@ -149,7 +173,7 @@ export default function RootLayout({
   </>
 )}
       </head>
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#0A0A0A] text-[#FAFAFA]`}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-bg text-text-primary`}>
         {/* Skip-to-content link for keyboard users */}
         <a
           href="#main-content"
@@ -157,36 +181,38 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <ClerkProvider
-          appearance={{
-            variables: {
-              colorPrimary: "#22C55E",
-              colorBackground: "#111111",
-              colorText: "#FAFAFA",
-              colorTextSecondary: "#71717A",
-              colorInputBackground: "#0F0F0F",
-              colorInputText: "#FAFAFA",
-              colorDanger: "#F87171",
-              borderRadius: "0.5rem",
-              fontFamily: "var(--font-inter)",
-            },
-            elements: {
-              card: "bg-surface border border-border",
-              headerTitle: "text-text-primary",
-              headerSubtitle: "text-text-muted",
-              formButtonPrimary: "bg-accent text-black hover:bg-accent/90",
-              formFieldLabel: "text-text-primary",
-              formFieldInput: "bg-code-bg text-text-primary border border-border",
-              footerActionText: "text-text-muted",
-              footerActionLink: "text-accent hover:opacity-90",
-            },
-          }}
-        >
-          <PostHogProvider>
-            {process.env.NODE_ENV === 'development' ? <ReticleDev /> : null}
-            {children}
-          </PostHogProvider>
-        </ClerkProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <ClerkProvider
+            appearance={{
+              variables: {
+                colorPrimary: "#22C55E",
+                colorBackground: "#111111",
+                colorText: "#FAFAFA",
+                colorTextSecondary: "#71717A",
+                colorInputBackground: "#0F0F0F",
+                colorInputText: "#FAFAFA",
+                colorDanger: "#F87171",
+                borderRadius: "0.5rem",
+                fontFamily: "var(--font-inter)",
+              },
+              elements: {
+                card: "bg-surface border border-border",
+                headerTitle: "text-text-primary",
+                headerSubtitle: "text-text-muted",
+                formButtonPrimary: "bg-accent text-black hover:bg-accent/90",
+                formFieldLabel: "text-text-primary",
+                formFieldInput: "bg-code-bg text-text-primary border border-border",
+                footerActionText: "text-text-muted",
+                footerActionLink: "text-accent hover:opacity-90",
+              },
+            }}
+          >
+            <PostHogProvider>
+              {process.env.NODE_ENV === 'development' ? <ReticleDev /> : null}
+              {children}
+            </PostHogProvider>
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

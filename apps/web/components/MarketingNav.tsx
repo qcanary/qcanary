@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 
 import { BrandLockup } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 type MarketingNavProps = {
@@ -38,7 +39,7 @@ export default function MarketingNav({
         <BrandLockup href="/" size="md" />
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           {visibleLinks.map((link) => (
             <Link
               key={link.href}
@@ -53,6 +54,9 @@ export default function MarketingNav({
               {link.label}
             </Link>
           ))}
+          <div className="ml-2">
+            <ThemeToggle />
+          </div>
           <Link
             href="/sign-in"
             className="text-sm text-text-muted whitespace-nowrap transition-colors hover:text-text-primary"
@@ -106,6 +110,9 @@ export default function MarketingNav({
           </Link>
         ))}
         <div className="mt-2 border-t border-border pt-3">
+          <div className="mb-2">
+            <ThemeToggle showLabel className="w-full justify-start" />
+          </div>
           <Link
             href="/sign-in"
             className="block rounded-xl px-3 py-2.5 text-sm text-text-muted transition-colors hover:bg-surface/80 hover:text-text-primary"
