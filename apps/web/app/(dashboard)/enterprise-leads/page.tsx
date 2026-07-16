@@ -78,7 +78,7 @@ export default function EnterpriseDashboard() {
   const [editNotes, setEditNotes] = React.useState("");
   const [savingNotes, setSavingNotes] = React.useState(false);
 
-  async function loadInquiries() {
+  const loadInquiries = React.useCallback(async function loadInquiries() {
     setLoading(true);
     setError(null);
     try {
@@ -100,7 +100,7 @@ export default function EnterpriseDashboard() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [filter]);
 
   async function updateStatus(id: string, status: InquiryStatus) {
     try {
@@ -158,7 +158,7 @@ export default function EnterpriseDashboard() {
     setEditNotes(inquiry.notes || "");
   }
 
-  React.useEffect(() => { void loadInquiries(); }, [filter]);
+  React.useEffect(() => { void loadInquiries(); }, [loadInquiries]);
 
   // Clear action message after 3s
   React.useEffect(() => {

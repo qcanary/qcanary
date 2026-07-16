@@ -75,7 +75,7 @@ export default function TestimonialsDashboard() {
   const [filter, setFilter] = React.useState<TestimonialStatus | "all">("all");
   const [actionMsg, setActionMsg] = React.useState<string | null>(null);
 
-  async function loadTestimonials() {
+  const loadTestimonials = React.useCallback(async function loadTestimonials() {
     setLoading(true);
     setError(null);
     try {
@@ -90,7 +90,7 @@ export default function TestimonialsDashboard() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [filter]);
 
   async function updateStatus(id: string, status: TestimonialStatus) {
     try {
@@ -129,7 +129,7 @@ export default function TestimonialsDashboard() {
     navigator.clipboard.writeText(html).then(() => setActionMsg("HTML copied!")).catch(() => setActionMsg("Failed to copy"));
   }
 
-  React.useEffect(() => { void loadTestimonials(); }, [filter]);
+  React.useEffect(() => { void loadTestimonials(); }, [loadTestimonials]);
 
   // Clear action message after 3s
   React.useEffect(() => {
