@@ -10,7 +10,6 @@ import { trackEvent } from "@/components/PostHogProvider";
 import { useUpgradeModal } from "@/components/dashboard/UpgradeModalContext";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { cn } from "@/lib/utils";
 
 // Map of path segments to human-readable labels
 const breadcrumbLabels: Record<string, string> = {
