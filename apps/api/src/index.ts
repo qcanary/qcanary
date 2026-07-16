@@ -38,6 +38,7 @@ import { notificationsRouter } from './routes/notifications';
 import { feedbackRouter } from './routes/feedback';
 import { testimonialsPublicRouter, testimonialsRouter } from './routes/testimonials';
 import { enterprisePublicRouter, enterpriseRouter } from './routes/enterprise';
+import { newsletterRouter } from './routes/newsletter';
 import { clerkMiddleware } from '@clerk/express';
 import { requireDashboardAuth } from './middleware/dashboardAuth';
 import { requireBearerAuth } from './middleware/bearerAuth';
@@ -193,6 +194,7 @@ app.use('/v1/feedback', feedbackRouter);
 // Public submission endpoints (no auth)
 app.use('/v1/testimonials', testimonialsPublicRouter);
 app.use('/v1/enterprise', enterprisePublicRouter);
+app.use('/v1/newsletter', newsletterRouter);
 
 // Protected management endpoints (Bearer auth via API proxy)
 app.use('/v1/testimonials', requireBearerAuth, dashboardRateLimit, testimonialsRouter);

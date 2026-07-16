@@ -22,6 +22,7 @@ export interface Database {
       feedback_applications: { Row: FeedbackApplicationRow; Insert: FeedbackApplicationInsert; Update: FeedbackApplicationUpdate; Relationships: [] };
       testimonials:    { Row: TestimonialRow;    Insert: TestimonialInsert;    Update: TestimonialUpdate;    Relationships: [] };
       enterprise_inquiries: { Row: EnterpriseInquiryRow; Insert: EnterpriseInquiryInsert; Update: EnterpriseInquiryUpdate; Relationships: [] };
+      newsletter_subscribers: { Row: NewsletterSubscriberRow; Insert: NewsletterSubscriberInsert; Update: NewsletterSubscriberUpdate; Relationships: [] };
       anomaly_baselines: { Row: AnomalyBaselineRow; Insert: AnomalyBaselineInsert; Update: Record<string, never>; Relationships: [] };
       queue_benchmarks: { Row: QueueBenchmarkRow; Insert: QueueBenchmarkInsert; Update: QueueBenchmarkUpdate; Relationships: [] };
     };
@@ -497,6 +498,34 @@ export interface EnterpriseInquiryUpdate {
   notes?: string | null;
   created_at?: string;
   updated_at?: string;
+}
+
+// ============================================================
+// NEWSLETTER SUBSCRIBERS TYPES
+// ============================================================
+
+export interface NewsletterSubscriberRow {
+  id: string;
+  email: string;
+  source: string;
+  subscribed_at: string;
+  unsubscribed_at: string | null;
+}
+
+export interface NewsletterSubscriberInsert {
+  id?: string;
+  email: string;
+  source?: string;
+  subscribed_at?: string;
+  unsubscribed_at?: string | null;
+}
+
+export interface NewsletterSubscriberUpdate {
+  id?: string;
+  email?: string;
+  source?: string;
+  subscribed_at?: string;
+  unsubscribed_at?: string | null;
 }
 
 // ============================================================

@@ -17,6 +17,7 @@ import { SocialProofSection } from "@/components/landing/SocialProofSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { TestimonialShowcase } from "@/components/landing/TestimonialShowcase";
 import { SecuritySection } from "@/components/landing/SecuritySection";
+import { EmailCapture } from "@/components/landing/EmailCapture";
 
 import { getAllBlogPosts, type BlogPostMeta } from "./blog/posts";
 import type { Metadata } from "next";
@@ -419,6 +420,9 @@ export default async function MarketingPage() {
           }),
         }}
       />
+
+      {/* ── Email Capture ──────────────────────────────────────── */}
+      <EmailCapture />
 
       {/* ── CTA ────────────────────────────────────────────────── */}
       <ScrollReveal>
