@@ -57,6 +57,9 @@ import { auditRouter } from './routes/audit';
 import { exportRouter } from './routes/export';
 import { sendDailyDigest } from './lib/digest';
 import { ssoRouter } from './routes/sso';
+import { incidentsRouter } from './routes/incidents';
+import { slaRouter } from './routes/sla';
+import { dashboardRouter } from './routes/dashboard';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -252,6 +255,9 @@ app.use('/v1/health-scores', requireDashboardAuth, dashboardRateLimit, healthRou
 app.use('/v1/audit', requireDashboardAuth, dashboardRateLimit, auditRouter);
 app.use('/v1/export', requireDashboardAuth, dashboardRateLimit, exportRouter);
 app.use('/v1/sso', requireDashboardAuth, dashboardRateLimit, ssoRouter);
+app.use('/v1/sla', requireDashboardAuth, dashboardRateLimit, slaRouter);
+app.use('/v1/dashboard', requireDashboardAuth, dashboardRateLimit, dashboardRouter);
+app.use('/v1/incidents', requireDashboardAuth, dashboardRateLimit, incidentsRouter);
 
 // ── Sentry Error Handler ───────────────────────────────────
 if (process.env.SENTRY_DSN) {
