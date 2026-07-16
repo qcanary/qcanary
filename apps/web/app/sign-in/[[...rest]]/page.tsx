@@ -18,7 +18,7 @@ export default function SignInPage() {
             colorInputBackground: "var(--color-code-bg)",
             colorInputText: "var(--color-text-primary)",
             borderRadius: "0.5rem",
-            fontFamily: "var(--font-inter)",
+            fontFamily: "var(--font-geist)",
           },
           elements: {
             card: "bg-surface border border-border shadow-lg",

@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/components/ui/toast";
+import { GrainOverlay } from "@/components/GrainOverlay";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist",
+  display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  display: "swap",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
@@ -174,7 +177,7 @@ export default function RootLayout({
   </>
 )}
       </head>
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-bg text-text-primary`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-bg text-text-primary`}>
         {/* Skip-to-content link for keyboard users */}
         <a
           href="#main-content"
@@ -194,7 +197,7 @@ export default function RootLayout({
                 colorInputText: "#FAFAFA",
                 colorDanger: "#F87171",
                 borderRadius: "0.5rem",
-                fontFamily: "var(--font-inter)",
+                fontFamily: "var(--font-geist)",
               },
               elements: {
                 card: "bg-surface border border-border",
@@ -216,6 +219,7 @@ export default function RootLayout({
             </PostHogProvider>
           </ClerkProvider>
         </ThemeProvider>
+        <GrainOverlay />
       </body>
     </html>
   );

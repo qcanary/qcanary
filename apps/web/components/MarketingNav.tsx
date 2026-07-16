@@ -34,7 +34,7 @@ export default function MarketingNav({
   });
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-bg">
+    <nav className="sticky top-0 z-50 border-b border-border/50 bg-bg/80 backdrop-blur-xl backdrop-saturate-150">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3">
         <BrandLockup href="/" size="md" />
 
