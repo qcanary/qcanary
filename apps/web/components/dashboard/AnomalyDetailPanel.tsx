@@ -268,7 +268,7 @@ function AnomalyDetailPanelInner({
             </CardDescription>
           </div>
           <Badge
-            variant={data.status === "critical" ? "danger" : "warning"}
+            variant={data.status === "critical" ? "danger" : "default"}
             className="text-xs"
           >
             {data.status === "critical" ? "🚨 Critical" : "⚠️ Warning"}
