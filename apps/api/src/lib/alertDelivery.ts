@@ -1,4 +1,6 @@
 import { getResend, getResendFromAddress } from './resend';
+import { sendPagerDutyAlert, sendPagerDutyResolve } from './pagerduty';
+import { sendOpsGenieAlert, closeOpsGenieAlert } from './opsgenie';
 import type { AlertRuleRow } from '../types/database';
 
 // ── SSRF Protection ─────────────────────────────────────────
@@ -151,4 +153,47 @@ export function escapeHtml(text: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+export async function deliverPagerDuty(
+  destination: string,
+  title: string,
+  description: string,
+  severity: 'info' | 'warning' | 'error' | 'critical' = 'error'
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  return sendPagerDutyAlert({
+    routingKey: destination,
+    title,
+    source: 'QCanary',
+    severity,
+    description,
+  });
+}
+
+export async function deliverPagerDutyResolve(
+  destination: string,
+  title: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  return sendPagerDutyResolve(destination, title, 'QCanary');
+}
+
+export async function deliverOpsGenie(
+  destination: string,
+  title: string,
+  description: string,
+  priority: 'P1' | 'P2' | 'P3' | 'P4' | 'P5' = 'P2'
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  return sendOpsGenieAlert({
+    apiKey: destination,
+    message: title,
+    description,
+    priority,
+  });
+}
+
+export async function closeOpsGenie(
+  destination: string,
+  alias: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  return closeOpsGenieAlert(destination, alias);
 }

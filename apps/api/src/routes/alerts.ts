@@ -7,7 +7,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import { validateDestination } from '../lib/alertDelivery';
-import { buildTestMessage, deliverEmail, deliverSlack, deliverWebhook, escapeHtml } from '../lib/alertDelivery';
+import { buildTestMessage, deliverEmail, deliverSlack, deliverWebhook, deliverPagerDuty, deliverOpsGenie, escapeHtml } from '../lib/alertDelivery';
 import type { AlertRuleInsert, AlertRuleRow, AlertRuleUpdate } from '../types/database';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 import { insertRow, updateRows } from '../lib/typedSupabase';
@@ -23,7 +23,7 @@ const CONDITION_TYPES = new Set([
   'job_duration',
 ]);
 
-const CHANNELS = new Set(['slack', 'email', 'webhook']);
+const CHANNELS = new Set(['slack', 'email', 'webhook', 'pagerduty', 'opsgenie']);
 
 interface ProjectOwnershipRecord {
   id: string;
@@ -135,11 +135,15 @@ function parseCreateBody(
   const destination = typeof b.destination === 'string' ? b.destination.trim() : '';
   if (!destination) {
     return { ok: false, message: 'destination is required' };
-  }    // SSRF guard at write time
+  }
+
+  // SSRF guard at write time (skip for PagerDuty/OpsGenie API keys)
+  if (channel !== 'pagerduty' && channel !== 'opsgenie') {
     const urlCheck = validateDestination(destination);
     if (!urlCheck.ok) {
       return { ok: false, message: urlCheck.error };
     }
+  }
 
   const thresholdRaw = b.thresholdValue;
   const thresholdValue =
@@ -260,10 +264,13 @@ function parsePatchBody(body: unknown): { ok: true; value: AlertRuleUpdate } | {
     if (typeof b.destination !== 'string' || b.destination.trim().length === 0) {
       return { ok: false, message: 'destination must be a non-empty string' };
     }
-    // SSRF guard at write time
-    const urlCheck = validateDestination(b.destination.trim());
-    if (!urlCheck.ok) {
-      return { ok: false, message: urlCheck.error };
+    // SSRF guard at write time (skip for PagerDuty/OpsGenie API keys)
+    const updateChannel = b.channel as string | undefined;
+    if (updateChannel !== 'pagerduty' && updateChannel !== 'opsgenie') {
+      const urlCheck = validateDestination(b.destination.trim());
+      if (!urlCheck.ok) {
+        return { ok: false, message: urlCheck.error };
+      }
     }
     update.destination = b.destination.trim();
   }
@@ -358,6 +365,18 @@ router.post('/:id/alerts/test', async (req: Request, res: Response) => {
     }
   } else if (rule.channel === 'email') {
     const result = await deliverEmail(rule.destination, subject, `<pre>${escapeHtml(text)}</pre>`);
+    if (!result.ok) {
+      errorResponse(res, 502, 'DELIVERY_FAILED', result.error);
+      return;
+    }
+  } else if (rule.channel === 'pagerduty') {
+    const result = await deliverPagerDuty(rule.destination, subject, text);
+    if (!result.ok) {
+      errorResponse(res, 502, 'DELIVERY_FAILED', result.error);
+      return;
+    }
+  } else if (rule.channel === 'opsgenie') {
+    const result = await deliverOpsGenie(rule.destination, subject, text);
     if (!result.ok) {
       errorResponse(res, 502, 'DELIVERY_FAILED', result.error);
       return;
@@ -523,6 +542,26 @@ router.post('/:id/alerts', async (req: Request, res: Response) => {
     return;
   }
 
+  if (parsed.value.channel === 'pagerduty' && !planInfo.limits.allowPagerDuty) {
+    errorResponse(
+      res,
+      403,
+      'PLAN_FEATURE_REQUIRED',
+      `PagerDuty alerts require Team plan or higher. Current plan: ${planInfo.plan}.`
+    );
+    return;
+  }
+
+  if (parsed.value.channel === 'opsgenie' && !planInfo.limits.allowOpsGenie) {
+    errorResponse(
+      res,
+      403,
+      'PLAN_FEATURE_REQUIRED',
+      `OpsGenie alerts require Team plan or higher. Current plan: ${planInfo.plan}.`
+    );
+    return;
+  }
+
   if (planInfo.limits.maxAlertRules !== null) {
     const { count: ruleCount, error: countError } = await supabase
       .from('alert_rules')
@@ -656,6 +695,40 @@ router.patch('/:id/alerts/:ruleId', async (req: Request, res: Response) => {
         403,
         'PLAN_FEATURE_REQUIRED',
         `Webhook alerts require Team plan or higher. Current plan: ${planInfo.plan}.`
+      );
+      return;
+    }
+  }
+
+  if (parsed.value.channel === 'pagerduty') {
+    const planInfo = await getTeamPlanLimitsByTeamId(teamId);
+    if (!planInfo) {
+      errorResponse(res, 404, 'TEAM_NOT_FOUND', 'Team not found');
+      return;
+    }
+    if (!planInfo.limits.allowPagerDuty) {
+      errorResponse(
+        res,
+        403,
+        'PLAN_FEATURE_REQUIRED',
+        `PagerDuty alerts require Team plan or higher. Current plan: ${planInfo.plan}.`
+      );
+      return;
+    }
+  }
+
+  if (parsed.value.channel === 'opsgenie') {
+    const planInfo = await getTeamPlanLimitsByTeamId(teamId);
+    if (!planInfo) {
+      errorResponse(res, 404, 'TEAM_NOT_FOUND', 'Team not found');
+      return;
+    }
+    if (!planInfo.limits.allowOpsGenie) {
+      errorResponse(
+        res,
+        403,
+        'PLAN_FEATURE_REQUIRED',
+        `OpsGenie alerts require Team plan or higher. Current plan: ${planInfo.plan}.`
       );
       return;
     }

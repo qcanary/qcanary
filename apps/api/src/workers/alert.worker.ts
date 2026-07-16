@@ -9,6 +9,9 @@ import {
   deliverEmail,
   deliverSlack,
   deliverWebhook,
+  deliverPagerDuty,
+  deliverPagerDutyResolve,
+  deliverOpsGenie,
   escapeHtml,
 } from '../lib/alertDelivery';
 import type { AlertChannel, AlertDetails, AlertRuleRow, ConditionType, JobEventRow, AnomalySettings, SensitivityLevel } from '../types/database';
@@ -198,6 +201,18 @@ async function logAndDeliver(
     if (!result.ok) {
       delivery_error = result.error;
     }
+  } else if (channel === 'pagerduty') {
+    const result = await deliverPagerDuty(rule.destination, subject, messageText);
+    delivery_success = result.ok;
+    if (!result.ok) {
+      delivery_error = result.error;
+    }
+  } else if (channel === 'opsgenie') {
+    const result = await deliverOpsGenie(rule.destination, subject, messageText);
+    delivery_success = result.ok;
+    if (!result.ok) {
+      delivery_error = result.error;
+    }
   } else {
     delivery_error = `Unsupported channel: ${rule.channel}`;
   }
@@ -254,6 +269,11 @@ async function deliverResolvedNotification(rule: RuleRow): Promise<void> {
     });
   } else if (channel === 'email') {
     result = await deliverEmail(rule.destination, subject, `<p>${escapeHtml(messageText)}</p>`);
+  } else if (channel === 'pagerduty') {
+    result = await deliverPagerDutyResolve(rule.destination, subject);
+  } else if (channel === 'opsgenie') {
+    // OpsGenie close is handled by alias, not resolved notification
+    result = { ok: true };
   } else {
     result = { ok: false, error: `Unsupported channel: ${rule.channel}` };
   }
@@ -482,6 +502,12 @@ async function deliverAnomalyViaRules(
           description: anomaly.rule_description,
           triggered_at: new Date().toISOString(),
         });
+      } else if (channel === 'pagerduty') {
+        const severity = anomaly.severity === 'critical' ? 'critical' : 'warning';
+        await deliverPagerDuty(rule.destination, subject, messageText, severity);
+      } else if (channel === 'opsgenie') {
+        const priority = anomaly.severity === 'critical' ? 'P1' : 'P2';
+        await deliverOpsGenie(rule.destination, subject, messageText, priority);
       }
     } catch (deliveryErr) {
       logger.error({ err: deliveryErr, ruleId: rule.id, channel }, '[Anomaly] Failed to deliver anomaly via rule');

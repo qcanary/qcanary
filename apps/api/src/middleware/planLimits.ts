@@ -13,6 +13,8 @@ export interface PlanLimits {
   /** null = unlimited */
   maxAlertRules: number | null;
   allowWebhook: boolean;
+  allowPagerDuty: boolean;
+  allowOpsGenie: boolean;
   /** Documented for future seat enforcement; not gated in API yet */
   maxMembers: number | null;
 }
@@ -28,6 +30,8 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     historyDays: 1,
     maxAlertRules: 1,
     allowWebhook: false,
+    allowPagerDuty: false,
+    allowOpsGenie: false,
     maxMembers: 1,
   },
   solo: {
@@ -37,6 +41,8 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     historyDays: 14,
     maxAlertRules: 2,
     allowWebhook: false,
+    allowPagerDuty: false,
+    allowOpsGenie: false,
     maxMembers: 1,
   },
   team: {
@@ -46,6 +52,8 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     historyDays: 30,
     maxAlertRules: null,
     allowWebhook: true,
+    allowPagerDuty: true,
+    allowOpsGenie: true,
     maxMembers: 5,
   },
   business: {
@@ -55,6 +63,8 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     historyDays: 90,
     maxAlertRules: null,
     allowWebhook: true,
+    allowPagerDuty: true,
+    allowOpsGenie: true,
     maxMembers: 20,
   },
 };
