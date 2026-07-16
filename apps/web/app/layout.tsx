@@ -7,6 +7,8 @@ import { PostHogProvider } from "@/components/PostHogProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/components/ui/toast";
 import { GrainOverlay } from "@/components/GrainOverlay";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { CustomCursor } from "@/components/CustomCursor";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -220,6 +222,8 @@ export default function RootLayout({
           </ClerkProvider>
         </ThemeProvider>
         <GrainOverlay />
+        <SmoothScroll />
+        <CustomCursor />
       </body>
     </html>
   );

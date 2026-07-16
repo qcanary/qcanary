@@ -7,6 +7,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { TiltCard } from "@/components/TiltCard";
 
 export function FeaturesSection() {
   return (
@@ -22,7 +23,8 @@ export function FeaturesSection() {
 
         {/* Feature 1 & 2 — side-by-side code-style cards */}
         <div className="mb-6 grid gap-5 md:grid-cols-2">
-          <div className="card-hover group animate-fade-in-up rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-6">
+          <TiltCard>
+            <div className="card-hover group animate-fade-in-up rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-6 h-full">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
               <BarChart3 className="h-5 w-5" />
             </div>
@@ -54,7 +56,9 @@ export function FeaturesSection() {
               </div>
             </div>
           </div>
-          <div className="card-hover group animate-fade-in-up-delay-1 rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-6">
+          </TiltCard>
+          <TiltCard>
+          <div className="card-hover group animate-fade-in-up-delay-1 rounded-xl border border-border bg-gradient-to-br from-surface/60 to-code-bg p-6 h-full">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
               <Bell className="h-5 w-5" />
             </div>
@@ -85,6 +89,7 @@ export function FeaturesSection() {
               </div>
             </div>
           </div>
+          </TiltCard>
         </div>
 
         {/* Feature 3 — full-width highlight card */}
