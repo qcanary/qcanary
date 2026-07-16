@@ -7,6 +7,7 @@ import { UpgradeModal } from "@/components/dashboard/UpgradeModal";
 import { ToastProvider } from "@/components/Toast";
 import { PageTransition } from "@/components/PageTransition";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { CommandPalette } from "@/components/CommandPalette";
 
 export default function DashboardLayout({
   children,
@@ -35,6 +36,7 @@ export default function DashboardLayout({
             </main>
           </div>
           <UpgradeModal />
+          <CommandPalette />
         </ToastProvider>
       </UpgradeModalProvider>
     </TeamProjectProvider>
