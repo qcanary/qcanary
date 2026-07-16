@@ -8,6 +8,7 @@ import { Zap, ChevronRight, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { trackEvent } from "@/components/PostHogProvider";
 import { useUpgradeModal } from "@/components/dashboard/UpgradeModalContext";
+import { useTeamProjects } from "../_providers/TeamProjectProvider";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -80,8 +81,7 @@ export function DashboardTopbar() {
   }, [pathname]);
 
   const { open: openUpgrade } = useUpgradeModal();
-  // TODO: Replace with actual plan check from TeamProjectProvider
-  const isFreeUser = true;
+  const { isFreeUser } = useTeamProjects();
 
   return (
     <motion.div

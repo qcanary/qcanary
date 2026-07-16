@@ -34,7 +34,7 @@ export default function SignInPage() {
             socialButtonsBlockButtonText: "text-text-primary",
           },
         }}
-        afterSignInUrl="/onboarding"
+        fallbackRedirectUrl="/onboarding"
         signUpUrl="/sign-up"
       />
     </main>

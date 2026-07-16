@@ -105,7 +105,7 @@ function SidebarContent({ collapsed, onNavClick }: { collapsed?: boolean; onNavC
   const { projects, loading, error } = useTeamProjects();
   const hasProjects = projects.length > 0;
   const { open: openUpgrade } = useUpgradeModal();
-  const isFreeUser = true; // TODO: Replace with actual plan check
+  const { isFreeUser } = useTeamProjects();
 
   return (
     <>

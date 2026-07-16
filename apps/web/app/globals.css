@@ -4,21 +4,21 @@
 
 /* ── Design Tokens ──────────────────────────────────── */
 :root {
-  /* Light theme (default) */
-  --color-bg: #F8F9FA;
+  /* Light theme (default) — refined for premium look */
+  --color-bg: #F3F4F6;
   --color-surface: #FFFFFF;
-  --color-border: #E2E4E9;
+  --color-border: #D1D5DB;
   --color-text-primary: #0A0A0A;
   --color-text-muted: #6B7280;
   --color-accent: #059669;
   --color-accent-hover: #047857;
-  --color-accent-muted: rgba(5, 150, 105, 0.1);
-  --color-code-bg: #F3F4F6;
+  --color-accent-muted: rgba(5, 150, 105, 0.08);
+  --color-code-bg: #E5E7EB;
   --color-success: #059669;
   --color-warning: #D97706;
   --color-danger: #DC2626;
   --color-info: #2563EB;
-  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-overlay: rgba(0, 0, 0, 0.4);
 
   /* Spacing & layout */
   --scroll-offset: 80px;
@@ -35,8 +35,8 @@
   --radius-2xl: 20px;
 
   /* Shadows */
-  --shadow-card: 0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.06);
-  --shadow-card-hover: 0 10px 25px -5px rgba(0,0,0,0.08), 0 4px 10px -6px rgba(0,0,0,0.04);
+  --shadow-card: 0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 10px 25px -5px rgba(0,0,0,0.10), 0 4px 10px -6px rgba(0,0,0,0.05);
   --shadow-glow: 0 0 16px -4px var(--color-accent);
 }
 

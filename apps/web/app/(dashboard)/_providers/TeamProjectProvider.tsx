@@ -16,6 +16,8 @@ type TeamProjectContextValue = {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  isFreeUser: boolean;
+  userPlan: string;
 };
 
 const TeamProjectContext = React.createContext<TeamProjectContextValue | null>(null);
@@ -35,6 +37,7 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [userPlan, setUserPlan] = React.useState<string>("free");
   const previousOrgIdRef = React.useRef<string | null | undefined>(orgId);
 
   const refresh = React.useCallback(async () => {
@@ -60,9 +63,24 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
+  // Fetch user plan info
+  const fetchPlan = React.useCallback(async () => {
+    try {
+      const res = await fetch("/api/v1/billing/plan", { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json() as { plan?: string };
+        setUserPlan(json.plan ?? "free");
+      }
+    } catch {
+      // API not available yet — default to free
+      setUserPlan("free");
+    }
+  }, []);
+
   React.useEffect(() => {
     void refresh();
-  }, [refresh]);
+    void fetchPlan();
+  }, [refresh, fetchPlan]);
 
   React.useEffect(() => {
     const previousOrgId = previousOrgIdRef.current;
@@ -91,8 +109,10 @@ export function TeamProjectProvider({ children }: { children: React.ReactNode })
     }
   }, [loading, pathname, projects, router]);
 
+  const isFreeUser = userPlan === "free" || userPlan === "";
+
   return (
-    <TeamProjectContext.Provider value={{ projects, loading, error, refresh }}>
+    <TeamProjectContext.Provider value={{ projects, loading, error, refresh, isFreeUser, userPlan }}>
       {children}
     </TeamProjectContext.Provider>
   );

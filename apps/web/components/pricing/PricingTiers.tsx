@@ -5,7 +5,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ComingSoonModal } from "@/components/pricing/ComingSoonModal";
+import { ComingSoonModal } from "./ComingSoonModal";
 
 // ── Data ────────────────────────────────────────────────────
 
@@ -76,8 +76,8 @@ const TIERS = [
       "30-day history",
       "5 team members",
       "Slack + Email + Webhook alerts (unlimited rules)",
-      "Auto-resolution",
-      "API access",
+      "Auto-resolution (coming soon)",
+      "API access (coming soon)",
       "Basic support (48h response)",
     ],
   },
@@ -100,9 +100,9 @@ const TIERS = [
       "Unlimited events",
       "90-day history",
       "20 team members",
-      "SSO (SAML/OIDC)",
-      "Role-based access control",
-      "PagerDuty + OpsGenie webhooks",
+      "SSO (SAML/OIDC) (coming soon)",
+      "Role-based access control (coming soon)",
+      "PagerDuty + OpsGenie webhooks (coming soon)",
       "Priority support (24h response, Slack channel)",
       "Usage analytics & reporting",
     ],
@@ -144,11 +144,11 @@ const COMPARISON_ROWS = [
   { feature: "Email alerts", free: "1 rule", solo: "2 rules", team: "Unlimited", business: "Unlimited", enterprise: "Unlimited" },
   { feature: "Slack alerts", free: "—", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
   { feature: "Webhook alerts", free: "—", solo: "—", team: "✓", business: "✓", enterprise: "✓" },
-  { feature: "PagerDuty/OpsGenie", free: "—", solo: "—", team: "—", business: "✓", enterprise: "✓" },
-  { feature: "Auto-resolution", free: "—", solo: "—", team: "✓", business: "✓", enterprise: "✓" },
-  { feature: "SSO/SAML", free: "—", solo: "—", team: "—", business: "✓", enterprise: "✓" },
-  { feature: "Role-based access", free: "—", solo: "—", team: "—", business: "✓", enterprise: "✓" },
-  { feature: "API access", free: "—", solo: "—", team: "✓", business: "✓", enterprise: "✓" },
+  { feature: "Auto-resolution", free: "—", solo: "—", team: "Coming soon", business: "Coming soon", enterprise: "Coming soon" },
+  { feature: "SSO/SAML", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
+  { feature: "Role-based access", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
+  { feature: "API access", free: "—", solo: "—", team: "Coming soon", business: "Coming soon", enterprise: "Coming soon" },
+  { feature: "PagerDuty/OpsGenie", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
   { feature: "Support", free: "Community", solo: "48h", team: "48h", business: "24h + Slack", enterprise: "Dedicated engineer" },
   { feature: "Self-hosted", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
   { feature: "Custom SLA", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
@@ -166,7 +166,7 @@ const FAQS = [
   },
   {
     q: "What happens if I exceed my plan limits?",
-    a: "We'll notify you at 80% and 100% of your limit. You can upgrade instantly from your dashboard. We don't hard-cut you off — we give you a grace period to decide.",
+    a: "We'll notify you at 80% and 100% of your daily event limit. Past 100%, a 20% grace band keeps events flowing so you aren't cut off mid-incident. After that grace is used, new events are rejected until the daily reset or you upgrade.",
   },
   {
     q: "Do I need a credit card for the free tier?",
@@ -212,19 +212,16 @@ export function PricingTiers() {
   const [annual, setAnnual] = useState(false);
   const [comingSoonTier, setComingSoonTier] = useState<string | null>(null);
 
-  /**
-   * TODO: Once Dodo Payments is updated with the new Solo ($15), Team ($39), and
-   * Business ($149) products, remove this handler and the ComingSoonModal.
-   * Re-link all paid tier CTAs directly to the billing flow (/sign-up or /settings).
-   */
-  function handlePaidCta(tierName: string) {
+  const handlePaidCta = (tierName: string, e: React.MouseEvent) => {
+    e.preventDefault();
     setComingSoonTier(tierName);
-  }
+  };
 
   return (
     <>
       <ComingSoonModal
         isOpen={comingSoonTier !== null}
+        tierName={comingSoonTier ?? ""}
         onClose={() => setComingSoonTier(null)}
       />
       {/* ── Annual Toggle ──────────────────────────────────── */}
@@ -328,23 +325,20 @@ export function PricingTiers() {
 
                   {/* CTA */}
                   <div className="mt-6">
-                    {tier.name === "Free" || tier.name === "Enterprise" ? (
-                      <Link href={tier.ctaHref}>
-                        <Button
-                          variant={tier.ctaVariant}
-                          className="w-full"
-                        >
-                          {tier.cta}
-                        </Button>
-                      </Link>
-                    ) : (
+                    {tier.name !== "Free" && tier.name !== "Enterprise" ? (
                       <Button
                         variant={tier.ctaVariant}
                         className="w-full"
-                        onClick={() => handlePaidCta(tier.name)}
+                        onClick={(e) => handlePaidCta(tier.name, e)}
                       >
                         {tier.cta}
                       </Button>
+                    ) : (
+                      <Link href={tier.ctaHref}>
+                        <Button variant={tier.ctaVariant} className="w-full">
+                          {tier.cta}
+                        </Button>
+                      </Link>
                     )}
                   </div>
                 </div>
