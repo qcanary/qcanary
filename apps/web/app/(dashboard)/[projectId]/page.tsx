@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { ProjectOverviewClient } from "./_components/ProjectOverviewClient";
 import { isExcludedProjectId } from "@/lib/auth-constants";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 function apiBaseUrl(): string | null {
   const raw = process.env.API_BASE_URL;
@@ -75,5 +76,9 @@ export default async function ProjectOverviewPage({
     redirect("/sign-in");
   }
 
-  return <ProjectOverviewClient projectId={params.projectId} />;
+  return (
+    <ErrorBoundary>
+      <ProjectOverviewClient projectId={params.projectId} />
+    </ErrorBoundary>
+  );
 }
