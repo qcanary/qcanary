@@ -8,11 +8,14 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { ParallaxSection } from "@/components/ParallaxSection";
 
 import { HeroSection } from "@/components/landing/HeroSection";
+import { LogoStrip } from "@/components/landing/LogoStrip";
+import { MetricsBar } from "@/components/landing/MetricsBar";
 import { ProblemSection } from "@/components/landing/ProblemSection";
 import { SolutionSection } from "@/components/landing/SolutionSection";
 import { ComparisonSection } from "@/components/landing/ComparisonSection";
 import { SocialProofSection } from "@/components/landing/SocialProofSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
+import { TestimonialShowcase } from "@/components/landing/TestimonialShowcase";
 import { SecuritySection } from "@/components/landing/SecuritySection";
 
 import { getAllBlogPosts, type BlogPostMeta } from "./blog/posts";
@@ -35,24 +38,19 @@ export const metadata: Metadata = {
 const pricingRows: Array<{
   feature: string;
   free: string;
-  solo: string;
-  team: string;
-  business: string;
+  pro: string;
   enterprise: string;
 }> = [
-  { feature: "Projects", free: "1", solo: "1", team: "3", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Queues per project", free: "1", solo: "5", team: "10", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Event history", free: "24 hours", solo: "14 days", team: "30 days", business: "90 days", enterprise: "Unlimited" },
-  { feature: "Events per day", free: "5,000", solo: "25,000", team: "100,000", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Slack alerts", free: "—", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
-  { feature: "Email alerts", free: "1 rule", solo: "2 rules", team: "Unlimited", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Send test events", free: "✓", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
-  { feature: "Webhook alerts", free: "—", solo: "—", team: "✓", business: "✓", enterprise: "✓" },
-  { feature: "Team members", free: "1", solo: "1", team: "5", business: "20", enterprise: "Unlimited" },
-  { feature: "SSO/SAML", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
-  { feature: "PagerDuty/OpsGenie", free: "—", solo: "—", team: "—", business: "Coming soon", enterprise: "Coming soon" },
-  { feature: "Self-hosted", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
-  { feature: "Custom SLA", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
+  { feature: "Projects", free: "1", pro: "3", enterprise: "Unlimited" },
+  { feature: "Queues per project", free: "1", pro: "10", enterprise: "Unlimited" },
+  { feature: "Event history", free: "24 hours", pro: "30 days", enterprise: "Unlimited" },
+  { feature: "Events per day", free: "5,000", pro: "100,000", enterprise: "Unlimited" },
+  { feature: "Slack alerts", free: "—", pro: "✓", enterprise: "✓" },
+  { feature: "Email alerts", free: "1 rule", pro: "Unlimited", enterprise: "Unlimited" },
+  { feature: "Webhook alerts", free: "—", pro: "✓", enterprise: "✓" },
+  { feature: "Team members", free: "1", pro: "5", enterprise: "Unlimited" },
+  { feature: "Self-hosted", free: "—", pro: "—", enterprise: "✓" },
+  { feature: "Custom SLA", free: "—", pro: "—", enterprise: "✓" },
 ];
 
 async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
@@ -138,6 +136,9 @@ export default async function MarketingPage() {
         <HeroSection />
       </div>
 
+      <LogoStrip />
+      <MetricsBar />
+
       <ProblemSection />
       <SolutionSection />
       <ComparisonSection />
@@ -167,6 +168,7 @@ export default async function MarketingPage() {
       </ParallaxSection>
 
       <FeaturesSection />
+      <TestimonialShowcase />
       <SecuritySection />
 
       {/* ── Why I Built This ──────────────────────────────────── */}
@@ -224,8 +226,8 @@ export default async function MarketingPage() {
             </p>
           </div>
 
-          {/* Pricing — 5-tier grid: Free, Solo ($15), Team ($39), Business ($149), Enterprise */}
-          <div className="mb-10 grid gap-4 md:grid-cols-5">
+          {/* Pricing — 3-tier grid: Free, Pro ($39), Enterprise */}
+          <div className="mb-10 grid gap-4 md:grid-cols-3">
             {/* Free */}
             <div className="relative rounded-xl border border-border bg-surface/30 p-5">
               <h3 className="text-base font-semibold text-text-primary">Free</h3>
@@ -243,28 +245,10 @@ export default async function MarketingPage() {
               <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Get Started Free →</Button></Link>
             </div>
 
-            {/* Solo */}
-            <div className="relative rounded-xl border border-border bg-surface/30 p-5">
-              <h3 className="text-base font-semibold text-text-primary">Solo</h3>
-              <div className="mt-1">
-                <span className="text-2xl font-bold text-text-primary">$15</span>
-                <span className="text-text-muted text-sm">/mo</span>
-              </div>
-              <p className="mt-0.5 text-xs text-text-muted">For solo devs. 25K events/day. Slack alerts.</p>
-              <ul className="mt-4 space-y-1.5">
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 5 queues</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>25,000 events/day</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>14-day history</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Slack + Email alerts (2 rules)</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Basic support (48h)</li>
-              </ul>
-              <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full">Start Solo →</Button></Link>
-            </div>
-
-            {/* Team — featured */}
+            {/* Pro — featured */}
             <div className="relative -mx-2 scale-[1.04] z-10 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-6 shadow-lg shadow-accent/10">
               <div className="pointer-events-none absolute -right-12 -top-12 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
-              <h3 className="text-base font-semibold text-text-primary">Team</h3>
+              <h3 className="text-base font-semibold text-text-primary">Pro</h3>
               <div className="mt-1">
                 <span className="text-2xl font-bold text-text-primary">$39</span>
                 <span className="text-text-muted text-sm">/mo</span>
@@ -276,29 +260,9 @@ export default async function MarketingPage() {
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>30-day history</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>5 team members</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Slack + Email + Webhook alerts</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>API access + Auto-resolution</li>
               </ul>
-              <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full">Start Team Trial →</Button></Link>
+              <Link href="/sign-up?plan=pro" className="mt-5 block"><Button size="sm" className="w-full">Start 14-Day Free Trial →</Button></Link>
               <p className="mt-2 text-center text-[10px] text-text-muted/60">No credit card required</p>
-            </div>
-
-            {/* Business */}
-            <div className="relative rounded-xl border border-border bg-surface/30 p-5">
-              <h3 className="text-base font-semibold text-text-primary">Business</h3>
-              <div className="mt-1">
-                <span className="text-2xl font-bold text-text-primary">$149</span>
-                <span className="text-text-muted text-sm">/mo</span>
-              </div>
-              <p className="mt-0.5 text-xs text-text-muted">Unlimited everything. SSO coming.</p>
-              <ul className="mt-4 space-y-1.5">
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Unlimited projects &amp; queues</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Unlimited events</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>90-day history</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>20 team members</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SSO + RBAC + PagerDuty/OpsGenie</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Priority support (24h, Slack)</li>
-              </ul>
-              <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Start Business Trial →</Button></Link>
             </div>
 
             {/* Enterprise */}
@@ -309,10 +273,10 @@ export default async function MarketingPage() {
               </div>
               <p className="mt-0.5 text-xs text-text-muted">Self-hosted. Your infrastructure.</p>
               <ul className="mt-4 space-y-1.5">
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Everything in Business</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Self-hosted deployment</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SSO (SAML/OIDC)</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Dedicated support + custom SLA</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SOC 2 Type II + annual audits</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SOC 2 Type II report</li>
               </ul>
               <Link href="/enterprise" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Contact Sales →</Button></Link>
             </div>
@@ -333,9 +297,7 @@ export default async function MarketingPage() {
                     <tr className="border-b border-border bg-code-bg text-left text-sm">
                       <th className="px-4 py-3 font-medium text-text-primary">Feature</th>
                       <th className="px-4 py-3 font-medium text-text-primary">Free</th>
-                      <th className="px-4 py-3 font-medium text-text-primary">Solo</th>
-                      <th className="px-4 py-3 font-medium text-accent">Team</th>
-                      <th className="px-4 py-3 font-medium text-text-primary">Business</th>
+                      <th className="px-4 py-3 font-medium text-accent">Pro</th>
                       <th className="px-4 py-3 font-medium text-text-primary">Enterprise</th>
                     </tr>
                   </thead>
@@ -344,9 +306,7 @@ export default async function MarketingPage() {
                       <tr key={row.feature} className="border-b border-border/70 text-sm">
                         <td className="px-4 py-3 text-text-primary">{row.feature}</td>
                         <td className="px-4 py-3 text-text-muted">{row.free}</td>
-                        <td className="px-4 py-3 text-text-muted">{row.solo}</td>
-                        <td className="px-4 py-3 text-text-muted">{row.team}</td>
-                        <td className="px-4 py-3 text-text-muted">{row.business}</td>
+                        <td className="px-4 py-3 text-text-muted">{row.pro}</td>
                         <td className="px-4 py-3 text-text-muted">{row.enterprise}</td>
                       </tr>
                     ))}
@@ -358,7 +318,7 @@ export default async function MarketingPage() {
 
           <p className="mt-4 text-sm text-text-muted">
             Free plan includes email alerting so you can catch failures from day one.
-            Upgrade to Solo for Slack alerts and Team for full advanced rules.
+            Upgrade to Pro for Slack, webhook alerts, and deeper history.
           </p>
         </div>
       </section>
@@ -386,7 +346,7 @@ export default async function MarketingPage() {
               },
               {
                 q: "Which alerts are available?",
-                a: "Email on all plans. Slack and email on Solo. Webhooks on Team and Business for PagerDuty, OpsGenie, or custom integrations.",
+                a: "Email on all plans. Pro adds Slack and webhook alerts for PagerDuty, OpsGenie, or custom integrations.",
               },
               {
                 q: "Can I view failed job details?",
@@ -444,7 +404,7 @@ export default async function MarketingPage() {
                 name: "Which alerts are available?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Solo and Team include Slack and email alerts. Team and Business add webhook alerts.",
+                  text: "Email on all plans. Pro adds Slack and webhook alerts.",
                 },
               },
               {
