@@ -1,4 +1,4 @@
-import { DashboardSidebar } from "./_components/DashboardSidebar";
+﻿import { DashboardSidebar } from "./_components/DashboardSidebar";
 import { DashboardTopbar } from "./_components/DashboardTopbar";
 import { UsageNudge } from "./_components/UsageNudge";
 import { TeamProjectProvider } from "./_providers/TeamProjectProvider";
@@ -8,11 +8,12 @@ import { ToastProvider } from "@/components/Toast";
 import { PageTransition } from "@/components/PageTransition";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CommandPalette } from "@/components/CommandPalette";
+import type { ReactNode } from "react";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <TeamProjectProvider>

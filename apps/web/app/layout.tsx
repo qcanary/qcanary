@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import type { ReactNode } from "react";
 import { ToastProvider } from "@/components/ui/toast";
 import { GrainOverlay } from "@/components/GrainOverlay";
 import { SmoothScroll } from "@/components/SmoothScroll";
@@ -26,7 +27,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 const siteDescription =
   "Monitor BullMQ queues without sharing Redis credentials. QCanary streams job metadata through a lightweight agent for real-time dashboards, alerts, and history.";
 const ogImage = "/opengraph-image";
-const siteName = "Qcanary — BullMQ Monitoring Dashboard";
+const siteName = "Qcanary â€” BullMQ Monitoring Dashboard";
 
 export const metadata: Metadata = {
     other: {
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     },
   title: {
     default: siteName,
-    template: `%s — Qcanary`,
+    template: `%s â€” Qcanary`,
   },
   description: siteDescription,
   keywords: [
@@ -89,12 +90,12 @@ import { ReticleDev } from "./reticle-dev";
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Theme color script — prevents flash */}
+        {/* Theme color script â€” prevents flash */}
         <Script
           id="theme-script"
           strategy="beforeInteractive"
@@ -157,7 +158,7 @@ export default function RootLayout({
           }}
         />
 
-{/* Google Analytics — only loaded when NEXT_PUBLIC_GA_ID is set */}
+{/* Google Analytics â€” only loaded when NEXT_PUBLIC_GA_ID is set */}
 {process.env.NEXT_PUBLIC_GA_ID && (
   <>
     <Script

@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
@@ -20,6 +21,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function EnterpriseLayout({ children }: { children: React.ReactNode }) {
+export default function EnterpriseLayout({ children }: { children: ReactNode }) {
   return children;
 }

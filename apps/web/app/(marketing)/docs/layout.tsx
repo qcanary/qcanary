@@ -1,11 +1,12 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
+import type { ReactNode } from "react";
 
 const docSections = [
   { title: "Getting Started", items: [
-    { label: "Quick Start", href: "/docs" },
-    { label: "Installation", href: "/docs/quick-start" },
+    { label: "Quick Start", href: "/docs/quick-start" },
+    { label: "Installation", href: "/docs#install" },
     { label: "Configuration", href: "/docs/configuration" },
   ]},
   { title: "Features", items: [
@@ -20,11 +21,12 @@ const docSections = [
   ]},
 ];
 
-export default function DocsLayout({ children }: { children: React.ReactNode }) {
+export default function DocsLayout({ children }: { children: ReactNode }) {
   return (
     <main className="min-h-screen bg-bg text-text-primary">
       <MarketingNav showCompare={false} />
       <div className="mx-auto flex w-full max-w-6xl gap-8 px-6 py-10">
+        {/* Sidebar */}
         <aside className="hidden w-56 shrink-0 md:block">
           <nav className="sticky top-24 space-y-6">
             {docSections.map((section) => (
@@ -34,8 +36,11 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
                 </div>
                 <div className="space-y-1">
                   {section.items.map((item) => (
-                    <Link key={item.href} href={item.href}
-                      className="block rounded-lg px-3 py-1.5 text-sm text-text-muted transition-colors hover:bg-surface/60 hover:text-text-primary">
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="block rounded-lg px-3 py-1.5 text-sm text-text-muted transition-colors hover:bg-surface/60 hover:text-text-primary"
+                    >
                       {item.label}
                     </Link>
                   ))}
@@ -44,6 +49,8 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
             ))}
           </nav>
         </aside>
+
+        {/* Content */}
         <div className="min-w-0 flex-1">{children}</div>
       </div>
       <MarketingFooter />
