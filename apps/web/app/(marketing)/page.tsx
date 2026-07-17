@@ -48,13 +48,13 @@ const pricingRows: Array<{
   { feature: "Queues per project", free: "1", solo: "5", team: "10", business: "Unlimited", enterprise: "Unlimited" },
   { feature: "Event history", free: "24 hours", solo: "14 days", team: "30 days", business: "90 days", enterprise: "Unlimited" },
   { feature: "Events per day", free: "5,000", solo: "25,000", team: "100,000", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Slack alerts", free: "â€”", solo: "âœ“", team: "âœ“", business: "âœ“", enterprise: "âœ“" },
+  { feature: "Slack alerts", free: "-", solo: "✓“", team: "✓“", business: "✓“", enterprise: "✓“" },
   { feature: "Email alerts", free: "1 rule", solo: "2 rules", team: "Unlimited", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Webhook alerts", free: "â€”", solo: "â€”", team: "âœ“", business: "âœ“", enterprise: "âœ“" },
+  { feature: "Webhook alerts", free: "-", solo: "-", team: "✓“", business: "✓“", enterprise: "✓“" },
   { feature: "Team members", free: "1", solo: "1", team: "5", business: "20", enterprise: "Unlimited" },
-  { feature: "SSO/SAML", free: "â€”", solo: "â€”", team: "â€”", business: "âœ“", enterprise: "âœ“" },
-  { feature: "Self-hosted", free: "â€”", solo: "â€”", team: "â€”", business: "â€”", enterprise: "âœ“" },
-  { feature: "Custom SLA", free: "â€”", solo: "â€”", team: "â€”", business: "â€”", enterprise: "âœ“" },
+  { feature: "SSO/SAML", free: "-", solo: "-", team: "-", business: "✓“", enterprise: "✓“" },
+  { feature: "Self-hosted", free: "-", solo: "-", team: "-", business: "-", enterprise: "✓“" },
+  { feature: "Custom SLA", free: "-", solo: "-", team: "-", business: "-", enterprise: "✓“" },
 ];
 
 async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
@@ -72,7 +72,7 @@ async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
           </p>
         </div>
 
-        {/* Featured post â€” full-width highlight */}
+        {/* Featured post - full-width highlight */}
         <Link href={`/blog/${first.slug}`} className="group block">
           <div className="mb-6 rounded-xl border border-border bg-surface/50 p-6 transition-all hover:border-accent/30 md:p-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -99,7 +99,7 @@ async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
           </div>
         </Link>
 
-        {/* Rest â€” compact side-by-side */}
+        {/* Rest - compact side-by-side */}
         <div className="grid gap-4 md:grid-cols-2">
           {rest.map((post) => (
             <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
@@ -121,7 +121,7 @@ async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
 
         <div className="mt-8 text-center">
           <Link href="/blog">
-            <Button variant="secondary" size="sm">View all posts â†’</Button>
+            <Button variant="secondary" size="sm">View all posts →’</Button>
           </Link>
         </div>
       </div>
@@ -191,7 +191,7 @@ export default async function MarketingPage() {
               </p>
               <p>
                 So I built QCanary. The agent runs inside your own worker process. Your Redis
-                credentials never leave your network. We only see metadata â€” never your job payloads,
+                credentials never leave your network. We only see metadata - never your job payloads,
                 never your data, never your keys.
               </p>
             </div>
@@ -230,7 +230,7 @@ export default async function MarketingPage() {
             </p>
           </div>
 
-          {/* Pricing â€” 5-tier grid */}
+          {/* Pricing - 5-tier grid */}
           <div className="mb-10 grid gap-4 md:grid-cols-3 lg:grid-cols-5">
             {/* Free */}
             <div className="relative rounded-xl border border-border bg-surface/30 p-5">
@@ -267,7 +267,7 @@ export default async function MarketingPage() {
               <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Start Solo</Button></Link>
             </div>
 
-            {/* Team â€” featured */}
+            {/* Team - featured */}
             <div className="relative -mx-2 scale-[1.04] z-10 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-6 shadow-lg shadow-accent/10">
               <div className="pointer-events-none absolute -right-12 -top-12 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
               <h3 className="text-base font-semibold text-text-primary">Team</h3>
@@ -393,7 +393,7 @@ export default async function MarketingPage() {
               },
               {
                 q: "Can I view failed job details?",
-                a: "Yes. Every plan includes job-level detail and stack traces â€” full error message, attempts, and metadata.",
+                a: "Yes. Every plan includes job-level detail and stack traces - full error message, attempts, and metadata.",
               },
               {
                 q: "Is there a free plan?",

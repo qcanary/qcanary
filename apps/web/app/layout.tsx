@@ -27,7 +27,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 const siteDescription =
   "Monitor BullMQ queues without sharing Redis credentials. QCanary streams job metadata through a lightweight agent for real-time dashboards, alerts, and history.";
 const ogImage = "/opengraph-image";
-const siteName = "Qcanary â€” BullMQ Monitoring Dashboard";
+const siteName = "Qcanary - BullMQ Monitoring Dashboard";
 
 export const metadata: Metadata = {
     other: {
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     },
   title: {
     default: siteName,
-    template: `%s â€” Qcanary`,
+    template: `%s - Qcanary`,
   },
   description: siteDescription,
   keywords: [
@@ -95,7 +95,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Theme color script â€” prevents flash */}
+        {/* Theme color script - prevents flash */}
         <Script
           id="theme-script"
           strategy="beforeInteractive"
@@ -158,7 +158,7 @@ export default function RootLayout({
           }}
         />
 
-{/* Google Analytics â€” only loaded when NEXT_PUBLIC_GA_ID is set */}
+{/* Google Analytics - only loaded when NEXT_PUBLIC_GA_ID is set */}
 {process.env.NEXT_PUBLIC_GA_ID && (
   <>
     <Script
