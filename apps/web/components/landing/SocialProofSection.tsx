@@ -1,8 +1,8 @@
-export function SocialProofSection() {
+﻿export function SocialProofSection() {
   return (
     <section className="border-y border-border bg-gradient-to-t from-surface/30 to-bg">
       <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
-        <div className="mb-12 max-w-2xl animate-fade-in-up">
+        <div className="mb-12 max-w-2xl">
           <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">Built in the open</h2>
           <p className="mt-3 text-base text-text-muted">
             The agent package is MIT-licensed and available on GitHub and npm.
@@ -10,9 +10,8 @@ export function SocialProofSection() {
           </p>
         </div>
 
-        {/* Key metrics with Shields.io-style badges */}
+        {/* Key metrics */}
         <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* GitHub Stars */}
           <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
@@ -33,7 +32,6 @@ export function SocialProofSection() {
             </div>
           </div>
 
-          {/* Available on npm */}
           <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-500/10">
@@ -48,7 +46,6 @@ export function SocialProofSection() {
             </div>
           </div>
 
-          {/* MIT Licensed */}
           <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-500/10">
@@ -63,7 +60,6 @@ export function SocialProofSection() {
             </div>
           </div>
 
-          {/* BullMQ Native */}
           <div className="group rounded-xl border border-border bg-surface/40 p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
@@ -111,7 +107,7 @@ export function SocialProofSection() {
           </span>
         </div>
 
-        {/* Quality signals row — no live counters */}
+        {/* Quality signals row */}
         <div className="mb-8 grid gap-4 sm:grid-cols-3">
           <div className="flex items-center gap-4 rounded-xl border border-border bg-surface/40 px-5 py-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10">
@@ -128,7 +124,7 @@ export function SocialProofSection() {
             </div>
             <div>
               <div className="text-lg font-semibold text-text-primary">3-line</div>
-              <div className="text-xs text-text-muted">Setup · 10 minutes to first event</div>
+              <div className="text-xs text-text-muted">Setup to first event</div>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-xl border border-border bg-surface/40 px-5 py-4">
@@ -142,11 +138,11 @@ export function SocialProofSection() {
           </div>
         </div>
 
-        {/* Technology stack / integrations */}
-        <div className="animate-fade-in-up-delay-1">
-          <div className="mb-4 text-xs font-medium uppercase tracking-wider text-text-muted">Built for the BullMQ ecosystem</div>
+        {/* Technology integrations — focused */}
+        <div>
+          <div className="mb-4 text-xs font-medium uppercase tracking-wider text-text-muted">Integrates with</div>
           <div className="flex flex-wrap gap-2">
-            {["BullMQ", "Node.js", "Redis", "TypeScript", "Docker", "Express", "npm", "pnpm", "Supabase", "Vercel"].map((tech) => (
+            {["BullMQ", "Node.js", "Redis", "TypeScript"].map((tech) => (
               <span key={tech} className="rounded-full border border-border bg-surface/40 px-3.5 py-1.5 text-xs font-medium text-text-primary transition-colors hover:border-accent/30 hover:text-accent">
                 {tech}
               </span>

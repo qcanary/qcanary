@@ -1,11 +1,11 @@
-import './instrumentation';
+﻿import './instrumentation';
 
 import dotenv from 'dotenv';
 dotenv.config();
 
 import * as Sentry from '@sentry/node';
 
-// ── Global unhandled error handlers ─────────────────────────
+// â”€â”€ Global unhandled error handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 process.on('unhandledRejection', (reason) => {
   if (process.env.SENTRY_DSN) {
     Sentry.captureException(reason, { level: 'error' });
@@ -17,8 +17,8 @@ process.on('uncaughtException', (err) => {
   if (process.env.SENTRY_DSN) {
     Sentry.captureException(err, { level: 'fatal' });
   }
-  logger.error({ err }, 'Uncaught exception — exiting');
-  // Exit uncleanly — process is in unknown state
+  logger.error({ err }, 'Uncaught exception â€” exiting');
+  // Exit uncleanly â€” process is in unknown state
   setImmediate(() => process.exit(1));
 });
 
@@ -55,7 +55,7 @@ import { detectAnomalies } from './lib/anomalyDetection';
 import { healthRouter } from './routes/health';
 import { auditRouter } from './routes/audit';
 import { exportRouter } from './routes/export';
-import { sendDailyDigest } from './lib/digest';
+import { sendWeeklyDigest } from './lib/digest';
 import { ssoRouter } from './routes/sso';
 import { incidentsRouter } from './routes/incidents';
 import { slaRouter } from './routes/sla';
@@ -76,7 +76,7 @@ cron.schedule('0 0 * * *', () => {
   timezone: 'UTC',
 });
 
-// Daily benchmark cron — runs at 03:00 UTC (low traffic time)
+// Daily benchmark cron â€” runs at 03:00 UTC (low traffic time)
 cron.schedule('0 3 * * *', () => {
   void calculateBenchmarks()
     .then(() => {
@@ -89,7 +89,7 @@ cron.schedule('0 3 * * *', () => {
   timezone: 'UTC',
 });
 
-// Hourly anomaly baseline calculation — runs at :15 past the hour
+// Hourly anomaly baseline calculation â€” runs at :15 past the hour
 // (15 min after the benchmark cron to give metrics time to settle)
 cron.schedule('15 * * * *', () => {
   void calculateBaselinesForAllQueues()
@@ -103,7 +103,7 @@ cron.schedule('15 * * * *', () => {
   timezone: 'UTC',
 });
 
-// Anomaly detection cron — runs every 15 minutes
+// Anomaly detection cron â€” runs every 15 minutes
 cron.schedule('*/15 * * * *', () => {
   void (async () => {
     try {
@@ -125,7 +125,7 @@ cron.schedule('*/15 * * * *', () => {
   timezone: 'UTC',
 });
 
-// Daily onboarding email cron — runs at 10:00 UTC to catch business hours
+// Daily onboarding email cron â€” runs at 10:00 UTC to catch business hours
 cron.schedule('0 10 * * *', () => {
   void sendOnboardingEmails()
     .then((result) => {
@@ -138,21 +138,21 @@ cron.schedule('0 10 * * *', () => {
   timezone: 'UTC',
 });
 
-// Daily digest cron — runs at 08:00 UTC
-cron.schedule('0 8 * * *', () => {
-  void sendDailyDigest()
+// Daily digest cron â€” runs at 08:00 UTC
+cron.schedule('0 9 * * 1', () => {
+  void sendWeeklyDigest()
     .then((result) => {
-      logger.info(result, 'Daily digest cron completed');
+      logger.info(result, 'Weekly digest cron completed');
     })
     .catch((err) => {
-      logger.error({ err }, 'Daily digest cron failed');
+      logger.error({ err }, 'Weekly digest cron failed');
     });
 }, {
   timezone: 'UTC',
 });
 
-// ── Middleware ──────────────────────────────────────────────
-// Request ID tracing — generates a unique ID per request for log correlation
+// â”€â”€ Middleware â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Request ID tracing â€” generates a unique ID per request for log correlation
 app.use((req: Request, _res: Response, next: NextFunction) => {
   const requestId = crypto.randomUUID();
   req.headers['x-request-id'] = requestId;
@@ -178,7 +178,7 @@ app.use(clerkMiddleware({
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
 }));
 
-// ── Cached health check ────────────────────────────────────
+// â”€â”€ Cached health check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Cached for 5 seconds to reduce load on Supabase/Redis from load balancer pings
 let healthCache: { status: number; body: string; expiresAt: number } | null = null;
 const HEALTH_CACHE_TTL_MS = 5_000;
@@ -231,7 +231,7 @@ async function healthCheckHandler(_req: Request, res: Response): Promise<void> {
 app.get('/health', healthCheckHandler);
 app.get('/v1/health', healthCheckHandler);
 
-// ── Routes ─────────────────────────────────────────────────
+// â”€â”€ Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use('/v1/ingest', ingestRouter);
 app.use('/v1/notifications', notificationsRouter);
 app.use('/v1/feedback', feedbackRouter);
@@ -259,12 +259,12 @@ app.use('/v1/sla', requireDashboardAuth, dashboardRateLimit, slaRouter);
 app.use('/v1/dashboard', requireDashboardAuth, dashboardRateLimit, dashboardRouter);
 app.use('/v1/incidents', requireDashboardAuth, dashboardRateLimit, incidentsRouter);
 
-// ── Sentry Error Handler ───────────────────────────────────
+// â”€â”€ Sentry Error Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (process.env.SENTRY_DSN) {
   Sentry.setupExpressErrorHandler(app);
 }
 
-// ── 404 handler ────────────────────────────────────────────
+// â”€â”€ 404 handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
@@ -280,11 +280,11 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
   });
 });
 
-// ── Graceful Shutdown ──────────────────────────────────────
+// â”€â”€ Graceful Shutdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let server: ReturnType<typeof app.listen>;
 
 async function gracefulShutdown(signal: string): Promise<void> {
-  logger.info(`${signal} received — shutting down gracefully`);
+  logger.info(`${signal} received â€” shutting down gracefully`);
 
   server.close(async () => {
     try {
@@ -300,9 +300,9 @@ async function gracefulShutdown(signal: string): Promise<void> {
       const { getRedis } = await import('./lib/redis.js');
       try {
         getRedis().disconnect();
-      } catch { /* never initialized — nothing to disconnect */ }
+      } catch { /* never initialized â€” nothing to disconnect */ }
     } catch { /* module may not have loaded */ }
-    logger.info('HTTP server closed — goodbye');
+    logger.info('HTTP server closed â€” goodbye');
     process.exit(0);
   });
 
@@ -310,7 +310,7 @@ async function gracefulShutdown(signal: string): Promise<void> {
   // Not unref()-ed: if server.close() never fires its callback (e.g., stuck connections),
   // the timeout keeps the event loop alive and forces the exit
   const forceExit = setTimeout(() => {
-    logger.error('Shutdown timed out — forcing exit');
+    logger.error('Shutdown timed out â€” forcing exit');
     process.exit(1);
   }, 10_000);
 
@@ -319,7 +319,7 @@ async function gracefulShutdown(signal: string): Promise<void> {
 process.on('SIGTERM', () => { void gracefulShutdown('SIGTERM'); });
 process.on('SIGINT', () => { void gracefulShutdown('SIGINT'); });
 
-// ── Startup validation ────────────────────────────────────
+// â”€â”€ Startup validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Validate that all required env vars are present before accepting requests.
 // This prevents a partially-configured deployment from serving traffic.
 const REQUIRED_ENV_VARS = [
@@ -336,7 +336,7 @@ if (missingVars.length > 0) {
   process.exit(1);
 }
 
-// ── Start ──────────────────────────────────────────────────
+// â”€â”€ Start â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 server = app.listen(PORT, () => {
   logger.info({ port: PORT }, 'Qcanary API started');
 });

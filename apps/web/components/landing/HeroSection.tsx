@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -67,23 +67,23 @@ export function HeroSection() {
         animate="visible"
         className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-6 pb-24 pt-24 md:flex-row md:items-start md:pt-28"
       >
-        {/* Left: Text content — 55% */}
+        {/* Left: Text content */}
         <div className="flex-1 md:pt-8 md:basis-[55%]">
           <motion.h1
             variants={itemVariants}
             className="text-5xl font-bold tracking-tighter md:text-6xl lg:text-7xl"
           >
-            Your queues are running.
+            BullMQ gives you QueueEvents.
             <br />
-            <span className="text-text-muted">You just can&rsquo;t see them.</span>
+            <span className="text-text-muted">You&rsquo;re not using them.</span>
           </motion.h1>
 
           <motion.p
             variants={itemVariants}
             className="mt-5 max-w-[48ch] text-base leading-relaxed text-text-muted lg:text-lg"
           >
-            QCanary listens to BullMQ events inside your process. No Redis access needed.
-            Failures show up in Slack before your users notice.
+            QCanary attaches to your worker process and streams queue metadata
+            over HTTPS. No Redis exposure. No firewall changes.
           </motion.p>
 
           <motion.div variants={itemVariants} className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -101,7 +101,7 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right: Terminal code block — 45% */}
+        {/* Right: Terminal code block */}
         <motion.div
           variants={itemVariants}
           className="w-full max-w-xl flex-1 md:max-w-none md:basis-[45%]"
@@ -160,20 +160,20 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
 
-      {/* Trust bar — below hero */}
+      {/* Trust bar */}
       <div className="border-t border-border bg-surface/30">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-6 py-4 text-xs text-text-muted">
           <span className="flex items-center gap-1.5">
             <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-            MIT-licensed open source
+            MIT-licensed agent
           </span>
           <span className="flex items-center gap-1.5">
             <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-            Slack &amp; email alerts included
+            Slack &amp; email alerts
           </span>
           <span className="flex items-center gap-1.5">
             <svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            Setup in 3 lines · 10 minutes
+            3-line setup
           </span>
         </div>
       </div>

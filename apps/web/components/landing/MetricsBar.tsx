@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useRef, useState } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
@@ -28,13 +28,13 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
 export function MetricsBar() {
   return (
     <ScrollReveal>
-      <section className="border-y border-border bg-bg">
+      <section className="border-b border-border bg-bg">
         <div className="mx-auto w-full max-w-6xl px-6 py-12">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {[
-              { value: 10, suffix: "min", label: "Average setup time" },
-              { value: 3, suffix: "lines", label: "Code to get started" },
               { value: 0, suffix: "", label: "Redis credentials needed" },
+              { value: 3, suffix: "", label: "Lines of code to start" },
+              { value: 1, suffix: "", label: "npm package to install" },
               { value: 24, suffix: "/7", label: "Queue monitoring" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">

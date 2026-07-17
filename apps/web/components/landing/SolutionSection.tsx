@@ -1,18 +1,19 @@
-import { ArchitectureDiagram } from "@/components/landing/ArchitectureDiagram";
+﻿import { ArchitectureDiagram } from "@/components/landing/ArchitectureDiagram";
+import { Package, Link2, CheckCircle } from "lucide-react";
 
 export function SolutionSection() {
   return (
     <section className="border-y border-border bg-gradient-to-b from-surface/30 via-bg to-surface/30">
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16 md:py-20">
 
-        <div className="mb-10 max-w-2xl text-center animate-fade-in-up">
+        <div className="mb-10 max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">QueueEvents. Not Redis.</h2>
           <p className="mt-3 text-base text-text-muted">
             BullMQ already emits lifecycle events. We just listen.
           </p>
         </div>
 
-        <div className="mb-12 w-full max-w-5xl animate-fade-in-up-delay-1">
+        <div className="mb-12 w-full max-w-5xl">
           <ArchitectureDiagram />
         </div>
 
@@ -30,31 +31,29 @@ export function SolutionSection() {
               title: "Install",
               desc: "Add the agent to your worker process.",
               code: "npm install @qcanary/agent",
-              icon: "📦",
+              icon: Package,
             },
             {
               step: "02",
               title: "Configure",
               desc: "Initialize with your API key and BullMQ queues.",
               code: "new QueueMonitor({ apiKey, queues })",
-              icon: "🔗",
+              icon: Link2,
             },
             {
               step: "03",
               title: "Done",
               desc: "Alerts are live. Track failures and trends in real time.",
               code: "✓ Agent connected · streaming events",
-              icon: "📊",
+              icon: CheckCircle,
             },
           ].map((item, i) => (
-            <div key={item.step} className={`relative flex-1 pb-8 md:pb-0 md:px-3 ${
-              i === 0 ? 'animate-fade-in-up' : i === 1 ? 'animate-fade-in-up-delay-1' : 'animate-fade-in-up-delay-2'
-            }`}>
+            <div key={item.step} className={`relative flex-1 pb-8 md:pb-0 md:px-3`}>
               {/* Timeline dot + line container */}
               <div className="flex items-start gap-4 md:flex-col md:items-center md:text-center">
                 {/* Dot */}
                 <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-accent/30 bg-gradient-to-br from-bg to-surface shadow-lg shadow-accent/5 transition-all group-hover:border-accent/60">
-                  <span className="text-sm">{item.icon}</span>
+                  <item.icon className="h-4 w-4 text-accent" />
                 </div>
                 {/* Content */}
                 <div className="min-w-0 flex-1 md:mt-4">

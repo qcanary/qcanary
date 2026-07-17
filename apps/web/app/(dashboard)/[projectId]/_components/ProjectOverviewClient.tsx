@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { createAuthedSupabaseClient } from "@/lib/supabaseClient";
 import { trackEvent } from "@/components/PostHogProvider";
 import { EmptyState } from "@/components/EmptyState";
-import { Folder } from "lucide-react";
+import { Folder, BarChart3, XCircle, CheckCircle2, AlertTriangle, Activity, TrendingUp, Target, TrendingDown } from "lucide-react";
 
 type ApiError = { success: false; error: { code: string; message: string } };
 
@@ -283,17 +283,21 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
           const progressActive = totals.totalJobs > 0 ? Math.min(((totals.active + totals.completed) / totals.totalJobs) * 100, 100) : 0;
           
           return [
-            { label: "Total jobs", value: formatNumber(totals.totalJobs), sub: "Across all queues", icon: "📊", tone: "default" as const, progress: 100, progressColor: "bg-accent/50" },
-            { label: "Failed", value: formatNumber(totals.failed), sub: `Failure rate ${formatPercent(totals.failureRate)}`, icon: "❌", tone: totals.failed > 0 ? "danger" as const : "default" as const, progress: progressFailed, progressColor: "bg-red-500" },
-            { label: "Success rate", value: formatPercent(totals.successRate), sub: "Completed / total", icon: "✅", tone: totals.successRate > 90 ? "success" as const : totals.failureRate > 10 ? "danger" as const : "default" as const, progress: progressSuccess, progressColor: "bg-accent" },
-            { label: "Active / stalled", value: `${formatNumber(totals.active)} / ${formatNumber(totals.stalled)}`, sub: "Currently in-flight vs stalled", icon: totals.stalled > 0 ? "⚠️" : "⚡", tone: totals.stalled > 0 ? "warning" as const : "default" as const, progress: progressActive, progressColor: totals.stalled > 0 ? "bg-yellow-400" : "bg-accent/50" },
+            { label: "Total jobs", value: formatNumber(totals.totalJobs), sub: "Across all queues", icon: "BarChart3", tone: "default" as const, progress: 100, progressColor: "bg-accent/50" },
+            { label: "Failed", value: formatNumber(totals.failed), sub: `Failure rate ${formatPercent(totals.failureRate)}`, icon: "XCircle", tone: totals.failed > 0 ? "danger" as const : "default" as const, progress: progressFailed, progressColor: "bg-red-500" },
+            { label: "Success rate", value: formatPercent(totals.successRate), sub: "Completed / total", icon: "CheckCircle2", tone: totals.successRate > 90 ? "success" as const : totals.failureRate > 10 ? "danger" as const : "default" as const, progress: progressSuccess, progressColor: "bg-accent" },
+            { label: "Active / stalled", value: `${formatNumber(totals.active)} / ${formatNumber(totals.stalled)}`, sub: "Currently in-flight vs stalled", icon: totals.stalled > 0 ? "AlertTriangle" : "Activity", tone: totals.stalled > 0 ? "warning" as const : "default" as const, progress: progressActive, progressColor: totals.stalled > 0 ? "bg-yellow-400" : "bg-accent/50" },
           ];
         })().map((stat, idx) => (
           <div key={stat.label} className={`card-hover group rounded-xl border border-border bg-surface p-5 ${idx === 0 ? 'animate-fade-in-up' : idx === 1 ? 'animate-fade-in-up-delay-1' : idx === 2 ? 'animate-fade-in-up-delay-2' : 'animate-fade-in-up-delay-3'}`}>
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-xs font-medium uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-                  <span className="text-base">{stat.icon}</span>
+                  {stat.icon === "BarChart3" && <BarChart3 className="h-4 w-4" />}
+                  {stat.icon === "XCircle" && <XCircle className="h-4 w-4" />}
+                  {stat.icon === "CheckCircle2" && <CheckCircle2 className="h-4 w-4" />}
+                  {stat.icon === "AlertTriangle" && <AlertTriangle className="h-4 w-4" />}
+                  {stat.icon === "Activity" && <Activity className="h-4 w-4" />}
                   {stat.label}
                 </div>
                 <div className={`mt-2 text-3xl font-semibold tracking-tight ${
@@ -306,8 +310,8 @@ export function ProjectOverviewClient({ projectId }: { projectId: string }) {
                 </div>
               </div>
               {/* Mini indicator */}
-              <div className="h-10 w-10 shrink-0 rounded-lg bg-surface/60 border border-border flex items-center justify-center text-lg opacity-60 group-hover:opacity-100 transition-opacity">
-                {stat.tone === 'danger' ? '📈' : stat.tone === 'success' ? '🎯' : '📉'}
+              <div className="h-10 w-10 shrink-0 rounded-lg bg-surface/60 border border-border flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity">
+                {stat.tone === 'danger' ? <TrendingUp className="h-5 w-5 text-red-400" /> : stat.tone === 'success' ? <Target className="h-5 w-5 text-accent" /> : <TrendingDown className="h-5 w-5 text-text-muted" />}
               </div>
             </div>
             <div className="mt-3 text-xs text-text-muted">{stat.sub}</div>

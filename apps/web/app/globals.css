@@ -1,10 +1,10 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Design Tokens ──────────────────────────────────── */
+/* â”€â”€ Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
-  /* Light theme (default) — refined for premium look */
+  /* Light theme (default) â€” refined for premium look */
   --color-bg: #EEF0F2;
   --color-surface: #FFFFFF;
   --color-border: #C8CBD0;
@@ -61,7 +61,7 @@
   --shadow-glow: 0 0 20px -4px var(--color-accent);
 }
 
-/* ── Base ──────────────────────────────────────────── */
+/* â”€â”€ Base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 html {
   color-scheme: light dark;
   scroll-behavior: smooth;
@@ -89,7 +89,7 @@ body {
   box-sizing: border-box;
 }
 
-/* ── Typography ─────────────────────────────────────── */
+/* â”€â”€ Typography â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
   scroll-margin-top: var(--scroll-offset, 80px);
@@ -99,12 +99,12 @@ p, li, figcaption {
   text-wrap: pretty;
 }
 
-/* Accent highlight text — clean, no gradient */
+/* Accent highlight text â€” clean, no gradient */
 .text-highlight {
   color: var(--color-accent);
 }
 
-/* ── Theme transition ──────────────────────────────── */
+/* â”€â”€ Theme transition â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .theme-transition,
 .theme-transition nav,
 .theme-transition footer,
@@ -118,7 +118,7 @@ p, li, figcaption {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
-/* ── Animations ────────────────────────────────────── */
+/* â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* Core fade-in-up (keep for backward compat) */
 @keyframes fade-in-up {
@@ -181,7 +181,7 @@ p, li, figcaption {
 
 
 
-/* ── Card interactions ──────────────────────────────── */
+/* â”€â”€ Card interactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .card-hover {
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
               border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
@@ -199,7 +199,7 @@ p, li, figcaption {
 }
 
 
-/* ── Accordion ──────────────────────────────────────── */
+/* â”€â”€ Accordion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .accordion-content {
   display: grid;
   grid-template-rows: 0fr;
@@ -214,7 +214,7 @@ p, li, figcaption {
   overflow: hidden;
 }
 
-/* ── Scrollbar ───────────────────────────────────────── */
+/* â”€â”€ Scrollbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -233,18 +233,18 @@ p, li, figcaption {
   background: var(--color-text-muted);
 }
 
-/* ── Focus ring ──────────────────────────────────────── */
+/* â”€â”€ Focus ring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 *:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 
-/* ── Selection ───────────────────────────────────────── */
+/* â”€â”€ Selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::selection {
   background: color-mix(in srgb, var(--color-accent) 30%, transparent);
   color: var(--color-text-primary);
-}  /* ── Reduced motion ────────────────────────────────── */
+}  /* â”€â”€ Reduced motion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -269,7 +269,7 @@ p, li, figcaption {
   }
 }
 
-/* ── Mobile Table Scroll ───────────────────────────── */
+/* â”€â”€ Mobile Table Scroll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .table-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -289,7 +289,7 @@ p, li, figcaption {
   background: transparent;
 }
 
-/* ── Print styles ──────────────────────────────────── */
+/* â”€â”€ Print styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media print {
   nav, footer, .no-print {
     display: none !important;
@@ -300,12 +300,4 @@ p, li, figcaption {
   }
 }
 
-/* Hide default cursor on desktop when custom cursor is active */
-@media (pointer: fine) {
-  body {
-    cursor: none;
-  }
-  a, button, [role="button"], input, textarea, select {
-    cursor: none;
-  }
-}
+

@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from 'express';
+﻿import type { NextFunction, Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import type { DashboardAuthedRequest } from './dashboardAuth';
 import { errorResponse } from '../lib/responseUtils';
@@ -27,8 +27,8 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     maxProjects: 1,
     maxQueuesPerProject: 1,
     maxEventsPerDay: 5_000,
-    historyDays: 1,
-    maxAlertRules: 1,
+    historyDays: 7,
+    maxAlertRules: 3,
     allowWebhook: false,
     allowPagerDuty: false,
     allowOpsGenie: false,
@@ -38,9 +38,9 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     maxProjects: 1,
     maxQueuesPerProject: 5,
     maxEventsPerDay: 25_000,
-    historyDays: 14,
-    maxAlertRules: 2,
-    allowWebhook: false,
+    historyDays: 30,
+    maxAlertRules: null,
+    allowWebhook: true,
     allowPagerDuty: false,
     allowOpsGenie: false,
     maxMembers: 1,
@@ -49,7 +49,7 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     maxProjects: 3,
     maxQueuesPerProject: 10,
     maxEventsPerDay: 100_000,
-    historyDays: 30,
+    historyDays: 60,
     maxAlertRules: null,
     allowWebhook: true,
     allowPagerDuty: true,
@@ -60,7 +60,7 @@ export const PLAN_LIMITS: Record<PlanName, PlanLimits> = {
     maxProjects: null,
     maxQueuesPerProject: null,
     maxEventsPerDay: null,
-    historyDays: 90,
+    historyDays: 365,
     maxAlertRules: null,
     allowWebhook: true,
     allowPagerDuty: true,

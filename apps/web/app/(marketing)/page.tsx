@@ -243,8 +243,9 @@ export default async function MarketingPage() {
               <ul className="mt-4 space-y-1.5">
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1 project, 1 queue</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>5,000 events/day</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>24-hour history</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Email alerts (1 rule)</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>7-day history</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Email alerts (3 rules)</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Slack alerts</li>
               </ul>
               <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Get Started Free</Button></Link>
             </div>
@@ -278,7 +279,7 @@ export default async function MarketingPage() {
               <ul className="mt-4 space-y-1.5">
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>3 projects, 10 queues/project</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>100,000 events/day</li>
-                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>30-day history</li>
+                <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>60-day history</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>5 team members</li>
                 <li className="flex items-center gap-2 text-xs"><svg className="h-3.5 w-3.5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Slack + Email + Webhook alerts</li>
               </ul>
@@ -396,7 +397,7 @@ export default async function MarketingPage() {
               },
               {
                 q: "Is there a free plan?",
-                a: "Yes. 1 project, 1 queue, 24-hour history, 5K events/day. No credit card required.",
+                a: "Yes. 1 project, 1 queue, 7-day history, 5K events/day, 3 alert rules + Slack alerts. No credit card required.",
               },
             ].map((faq) => (
               <details key={faq.q} className="group cursor-pointer rounded-xl border border-border bg-surface/30 transition-all hover:border-accent/30 open:border-accent/30 open:bg-surface/40">
