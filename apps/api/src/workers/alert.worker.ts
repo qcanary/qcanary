@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+﻿import dotenv from 'dotenv';
 dotenv.config();
 
 import { Worker, type Job } from 'bullmq';
@@ -341,19 +341,20 @@ async function getAnomalySettings(projectId: string): Promise<AnomalySettings> {
   }
 
   const { data: settings } = await supabase
-    .from('anomaly_settings')
+    .from('anomaly_settings' as never)
     .select('enabled, sensitivity, min_sample_days')
-    .eq('team_id', project.team_id)
+    .eq('team_id', (project as { team_id: string }).team_id)
     .single();
 
   if (!settings) {
     return getDefaultAnomalySettings();
   }
 
+  const s = settings as { enabled: boolean; sensitivity: string; min_sample_days: number };
   return {
-    enabled: settings.enabled,
-    sensitivity: settings.sensitivity as SensitivityLevel,
-    min_sample_days: settings.min_sample_days,
+    enabled: s.enabled,
+    sensitivity: s.sensitivity as SensitivityLevel,
+    min_sample_days: s.min_sample_days,
   };
 }
 
@@ -364,7 +365,7 @@ async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promis
     return;
   }
 
-  // ── Step 1: Evaluate user-configured alert rules ────────────
+  // â”€â”€ Step 1: Evaluate user-configured alert rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const { data: rulesRaw, error: rulesError } = await supabase
     .from('alert_rules')
     .select(
@@ -406,7 +407,7 @@ async function processEvaluateAlertsJob(job: Job<EvaluateAlertsJobData>): Promis
     }
   }
 
-  // ── Step 2: Run anomaly detection for each queue ──────────
+  // â”€â”€ Step 2: Run anomaly detection for each queue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Anomalies are auto-generated alerts (not user-configured)
   // They use the same delivery channels but are logged separately
   const anomalySettings = await getAnomalySettings(projectId);
@@ -539,12 +540,12 @@ worker.on('completed', () => {
 });
 
 worker.on('error', (err) => {
-  logger.error({ err }, 'Alert worker error — restarting connection');
+  logger.error({ err }, 'Alert worker error â€” restarting connection');
 });
 
 function shutdown(): void {
   const forceExit = setTimeout(() => {
-    logger.error('Alert worker shutdown timed out — forcing exit');
+    logger.error('Alert worker shutdown timed out â€” forcing exit');
     process.exit(1);
   }, 10_000);
 
