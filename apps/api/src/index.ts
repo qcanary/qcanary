@@ -273,7 +273,8 @@ app.use((_req: Request, res: Response) => {
 });
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  const message = err instanceof Error ? err.message : 'Unexpected server error';
+  // Never expose raw error messages to clients
+  const message = 'An unexpected error occurred';
   res.status(500).json({
     success: false,
     error: { code: 'INTERNAL_ERROR', message },
