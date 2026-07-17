@@ -1,7 +1,8 @@
-import express from 'express';
+﻿import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import { errorResponse } from '../lib/responseUtils';
+import { ensureProjectOwnership } from '../lib/projectOwnership';
 import { logger } from '../lib/logger';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
