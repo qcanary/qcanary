@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -6,12 +6,10 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
-  Building,
   ChevronLeft,
   ChevronRight,
   Folder,
   LayoutDashboard,
-  MessageSquareHeart,
   Settings,
   Zap,
 } from "lucide-react";
@@ -150,22 +148,8 @@ function SidebarContent({ collapsed, onNavClick }: { collapsed?: boolean; onNavC
           collapsed={collapsed}
           onClick={onNavClick}
         />
-        <NavLink
-          href="/testimonials"
-          icon={<MessageSquareHeart className="h-4 w-4" />}
-          label="Testimonials"
-          active={pathname === "/testimonials"}
-          collapsed={collapsed}
-          onClick={onNavClick}
-        />
-        <NavLink
-          href="/enterprise-leads"
-          icon={<Building className="h-4 w-4" />}
-          label="Enterprise Leads"
-          active={pathname === "/enterprise-leads"}
-          collapsed={collapsed}
-          onClick={onNavClick}
-        />
+        
+        
       </nav>
 
       {/* Projects section */}
@@ -203,7 +187,7 @@ function SidebarContent({ collapsed, onNavClick }: { collapsed?: boolean; onNavC
                 <Zap className="h-4 w-4 text-accent" />
                 <span className="text-sm font-medium text-text-primary">Free plan</span>
               </div>
-              <p className="mt-1 text-xs text-text-muted">1 queue limit — Upgrade to Solo for $15/mo</p>
+              <p className="mt-1 text-xs text-text-muted">1 queue limit â€” Upgrade to Solo for $15/mo</p>
               <div className="mt-2">
                 <div className="flex items-center justify-between text-[10px] text-text-muted/70">
                   <span>1 of 1 queue used</span>
@@ -296,7 +280,7 @@ export function DashboardSidebar() {
           collapsed ? "md:w-16 md:px-3" : "md:w-64 md:px-5"
         )}
       >
-        {/* Collapse toggle — desktop only */}
+        {/* Collapse toggle â€” desktop only */}
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
