@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { Heart, Shield } from "lucide-react";
@@ -111,7 +111,7 @@ export default function TestimonialPage() {
               {/* LinkedIn (optional) */}
               <div className="space-y-1.5">
                 <Label htmlFor="linkedinUrl">
-                  LinkedIn Profile URL <span className="text-text-muted">(optional — for verification)</span>
+                  LinkedIn Profile URL <span className="text-text-muted">(optional â€” for verification)</span>
                 </Label>
                 <Input id="linkedinUrl" name="linkedinUrl" type="url" placeholder="https://linkedin.com/in/janesmith" />
               </div>
@@ -129,7 +129,7 @@ export default function TestimonialPage() {
                   minLength={100}
                   maxLength={1000}
                   placeholder="What problem did QCanary solve for you? How long did setup take? What would you tell a colleague?"
-                  className="flex w-full rounded-xl border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                  className="flex w-full rounded-xl border border-border bg-code-bg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                 />
                 <div className={`text-right text-xs ${testimonialText.length < 100 && testimonialText.length > 0 ? "text-red-400" : "text-text-muted"}`}>
                   {testimonialText.length} / 1000
@@ -150,7 +150,7 @@ export default function TestimonialPage() {
                         name="recommendation"
                         value={value}
                         required
-                        className="h-4 w-4 text-accent focus:ring-accent/70 border-border bg-[#0B0B0B]"
+                        className="h-4 w-4 text-accent focus:ring-accent/70 border-border bg-code-bg"
                       />
                       <span className="text-sm capitalize text-text-primary">{value}</span>
                     </label>
@@ -165,7 +165,7 @@ export default function TestimonialPage() {
                   name="canDisplay"
                   type="checkbox"
                   required
-                  className="mt-1 h-4 w-4 shrink-0 rounded border-border bg-[#0B0B0B] text-accent focus:ring-accent/70"
+                  className="mt-1 h-4 w-4 shrink-0 rounded border-border bg-code-bg text-accent focus:ring-accent/70"
                 />
                 <Label htmlFor="canDisplay" className="text-sm text-text-primary">
                   Yes, you can use this testimonial on qcanary.dev
@@ -178,7 +178,7 @@ export default function TestimonialPage() {
                   id="canUseLogo"
                   name="canUseLogo"
                   type="checkbox"
-                  className="mt-1 h-4 w-4 shrink-0 rounded border-border bg-[#0B0B0B] text-accent focus:ring-accent/70"
+                  className="mt-1 h-4 w-4 shrink-0 rounded border-border bg-code-bg text-accent focus:ring-accent/70"
                 />
                 <Label htmlFor="canUseLogo" className="text-sm text-text-primary">
                   Yes, you can include my company logo <span className="text-text-muted">(optional)</span>

@@ -108,11 +108,11 @@ export function HeroSection() {
         >
           <motion.div
             whileHover={{ scale: 1.01, transition: { duration: 0.3 } }}
-            className="animate-scale-in overflow-hidden rounded-xl border border-border bg-[#0C0C0C] shadow-lg shadow-accent/5 overflow-x-auto"
+            className="animate-scale-in overflow-hidden rounded-xl border border-border bg-code-bg shadow-lg shadow-accent/5 overflow-x-auto"
             translate="no"
           >
             {/* Terminal header */}
-            <div className="flex items-center gap-1.5 border-b border-border bg-[#111] px-4 py-2.5">
+            <div className="flex items-center gap-1.5 border-b border-border bg-surface px-4 py-2.5">
               <div className="h-3 w-3 rounded-full bg-red-500/70" />
               <div className="h-3 w-3 rounded-full bg-yellow-500/70" />
               <div className="h-3 w-3 rounded-full bg-green-500/70" />
@@ -120,7 +120,7 @@ export function HeroSection() {
             </div>
 
             {/* Terminal body */}
-            <div className="space-y-1.5 bg-[#0C0C0C] px-5 py-4 font-mono text-sm leading-relaxed">
+            <div className="space-y-1.5 bg-code-bg px-5 py-4 font-mono text-sm leading-relaxed">
               {[
                 { text: <><span className="text-accent">$</span><span className="ml-2 text-text-primary">npm install @qcanary/agent</span></> },
                 { text: <><span className="text-zinc-500">import</span><span className="ml-2 text-accent">{'{ QueueMonitor }'}</span><span className="ml-2 text-zinc-500">from</span><span className="ml-2 text-yellow-400">&quot;@qcanary/agent&quot;</span></> },

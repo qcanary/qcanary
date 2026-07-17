@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { Shield, Users, Server, CheckCircle, ArrowRight } from "lucide-react";
@@ -131,7 +131,7 @@ export default function EnterprisePage() {
     <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       <MarketingNav showCompare={false} showBlog={false} />
 
-      {/* ── Hero ───────────────────────────────────────────── */}
+      {/* â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-accent/[0.02] via-surface/10 to-code-bg/20">
         <div className="pointer-events-none absolute -right-40 -top-40 h-80 w-80 rounded-full bg-accent/[0.03] blur-3xl" />
         <div className="pointer-events-none absolute -left-40 bottom-0 h-60 w-60 rounded-full bg-accent/[0.02] blur-3xl" />
@@ -159,12 +159,12 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      {/* ── Book a Demo ────────────────────────────────────── */}
+      {/* â”€â”€ Book a Demo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-b border-border bg-gradient-to-b from-surface/10 to-bg">
         <div className="mx-auto max-w-3xl px-6 py-16 text-center">
           <h2 className="text-2xl font-semibold tracking-tight">Prefer to talk?</h2>
           <p className="mt-2 text-text-muted">
-            Book a 30-minute technical walkthrough. No sales pitch — just a demo of the self-hosted deployment.
+            Book a 30-minute technical walkthrough. No sales pitch â€” just a demo of the self-hosted deployment.
           </p>
           <div className="mt-6">
             <a href="https://calendly.com/qcanary/enterprise-demo" target="_blank" rel="noopener noreferrer">
@@ -174,7 +174,7 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      {/* ── Why Self-Hosted ────────────────────────────────── */}
+      {/* â”€â”€ Why Self-Hosted â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-b border-border bg-gradient-to-b from-bg via-surface/[0.02] to-bg">
         <div className="mx-auto max-w-5xl px-6 py-20 md:py-24">
           <h2 className="text-center text-2xl font-semibold tracking-tight md:text-3xl">Why teams choose self-hosted</h2>
@@ -192,7 +192,7 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      {/* ── What's Included ────────────────────────────────── */}
+      {/* â”€â”€ What's Included â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-b border-border bg-gradient-to-b from-surface/10 via-bg to-surface/5">
         <div className="mx-auto max-w-4xl px-6 py-20 md:py-24">
           <h2 className="text-center text-2xl font-semibold tracking-tight md:text-3xl">What&apos;s included</h2>
@@ -212,7 +212,7 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      {/* ── Social Proof ───────────────────────────────────── */}
+      {/* â”€â”€ Social Proof â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-b border-border bg-gradient-to-b from-bg via-surface/5 to-bg">
         <div className="mx-auto max-w-3xl px-6 py-16 md:py-20 text-center">
           <div className="rounded-2xl border border-border/60 bg-surface/20 p-8 md:p-10">
@@ -234,7 +234,7 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      {/* ── The Form ───────────────────────────────────────── */}
+      {/* â”€â”€ The Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section id="inquiry-form" className="border-b border-border bg-gradient-to-b from-bg via-surface/10 to-bg">
         <div className="mx-auto max-w-2xl px-6 py-20 md:py-24">
           <h2 className="text-center text-2xl font-semibold tracking-tight md:text-3xl">Talk to us about Enterprise</h2>
@@ -302,7 +302,7 @@ export default function EnterprisePage() {
                 onChange={(e) => setCurrentSetup(e.target.value)}
                 required
                 placeholder="What job queue system do you use? How many queues? What volume?"
-                className="mt-1.5 flex min-h-[80px] w-full rounded-xl border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:opacity-50 resize-y"
+                className="mt-1.5 flex min-h-[80px] w-full rounded-xl border border-border bg-code-bg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:opacity-50 resize-y"
               />
             </div>
 
@@ -319,7 +319,7 @@ export default function EnterprisePage() {
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="GDPR requirements? Security team mandate? Air-gapped environment?"
-                    className="mt-1.5 flex min-h-[80px] w-full rounded-xl border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:opacity-50 resize-y"
+                    className="mt-1.5 flex min-h-[80px] w-full rounded-xl border border-border bg-code-bg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:opacity-50 resize-y"
                   />
                 </div>
                 <div>
@@ -357,7 +357,7 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      {/* ── FAQ ────────────────────────────────────────────── */}
+      {/* â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-b border-border bg-gradient-to-b from-surface/5 via-bg to-surface/10">
         <div className="mx-auto max-w-3xl px-6 py-20 md:py-24">
           <h2 className="text-center text-2xl font-semibold tracking-tight md:text-3xl">Frequently Asked Questions</h2>
@@ -389,7 +389,7 @@ export default function EnterprisePage() {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────── */}
+      {/* â”€â”€ CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-surface/5 via-accent/[0.01] to-bg">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center md:py-28">
           <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">

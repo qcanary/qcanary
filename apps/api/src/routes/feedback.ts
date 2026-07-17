@@ -1,9 +1,10 @@
-import express from 'express';
+﻿import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import { insertRow } from '../lib/typedSupabase';
 import { getResend, getResendFromAddress } from '../lib/resend';
 import { errorResponse } from '../lib/responseUtils';
+import { escapeHtml } from '../lib/alertDelivery';
 import { logger } from '../lib/logger';
 
 const router = express.Router();
@@ -113,13 +114,13 @@ router.post('/apply', async (req: Request, res: Response): Promise<void> => {
           subject: `[Feedback] New application from ${name} at ${company}`,
           html: [
             '<h1>New Feedback Application</h1>',
-            `<p><strong>Name:</strong> ${name}</p>`,
-            `<p><strong>Email:</strong> ${email}</p>`,
-            `<p><strong>Company:</strong> ${company}</p>`,
+            `<p><strong>Name:</strong> ${escapeHtml(name)}</p>`,
+            `<p><strong>Email:</strong> ${escapeHtml(email)}</p>`,
+            `<p><strong>Company:</strong> ${escapeHtml(company)}</p>`,
             `<p><strong>Queue Count:</strong> ${queueCount}</p>`,
             `<p><strong>Use Case:</strong> ${useCase}</p>`,
-            `<p><strong>Current Solution:</strong> ${currentSolution}</p>`,
-            reason ? `<p><strong>Reason:</strong> ${reason}</p>` : '',
+            `<p><strong>Current Solution:</strong> ${escapeHtml(currentSolution)}</p>`,
+            reason ? `<p><strong>Reason:</strong> ${escapeHtml(reason)}</p>` : '',
             `<p><strong>Agreed to Feedback:</strong> ${agreesToFeedback ? 'Yes' : 'No'}</p>`,
             '<hr/>',
             '<p>Log into Supabase to view all applications: <a href="https://supabase.com">https://supabase.com</a></p>',
@@ -127,7 +128,7 @@ router.post('/apply', async (req: Request, res: Response): Promise<void> => {
         });
       }
     } catch (emailErr) {
-      // Don't fail the request if email fails — data is stored
+      // Don't fail the request if email fails â€” data is stored
       logger.warn({ err: emailErr }, 'Failed to send feedback application notification email');
     }
 

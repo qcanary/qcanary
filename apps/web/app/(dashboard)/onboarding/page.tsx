@@ -1,5 +1,5 @@
-/**
- * Onboarding page — new user flow
+﻿/**
+ * Onboarding page â€” new user flow
  * Full implementation: Session 12
  */
 "use client";
@@ -239,7 +239,7 @@ export default function OnboardingPage() {
     }
   }
 
-  const escapedEnv = (environment.trim() || "production").replace(/'/g, "\\'");
+  const escapedEnv = (environment.trim() || "production").replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$").replace(/\{/g, "\\{");
   const snippet = `import { QueueMonitor } from '@qcanary/agent'
 
 const monitor = new QueueMonitor({
@@ -291,7 +291,7 @@ const monitor = new QueueMonitor({
                 <Label htmlFor="environment">Environment</Label>
                 <span
                   className="inline-flex items-center justify-center rounded-full text-text-muted cursor-help"
-                  title="The deployment stage — typically production, staging, or development. Events are tagged for filtering."
+                  title="The deployment stage â€” typically production, staging, or development. Events are tagged for filtering."
                   aria-label="Help: Environment"
                 >
                   <HelpCircle className="h-3.5 w-3.5" />
@@ -309,7 +309,7 @@ const monitor = new QueueMonitor({
             {error && <div className="text-sm text-red-400">{error}</div>}
             <div className="flex items-center gap-3">
               <Button type="submit" disabled={loading}>
-                {loading ? "Creating…" : "Create project + API key"}
+                {loading ? "Creatingâ€¦" : "Create project + API key"}
               </Button>
               {createdProjectId && (
                 <Link
@@ -396,7 +396,7 @@ const monitor = new QueueMonitor({
           <CardHeader>
             <CardTitle>Try it instantly</CardTitle>
             <CardDescription>
-              Send sample queue events to see your dashboard come to life right now — no agent installation needed.
+              Send sample queue events to see your dashboard come to life right now â€” no agent installation needed.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
@@ -410,10 +410,10 @@ const monitor = new QueueMonitor({
                 onClick={() => void sendTestEvent()}
                 disabled={sendingTestEvent}
               >
-                {sendingTestEvent ? "Sending…" : "Send test events"}
+                {sendingTestEvent ? "Sendingâ€¦" : "Send test events"}
               </Button>
               {sendingTestEvent && (
-                <span className="text-sm text-text-muted">Generating sample queue activity…</span>
+                <span className="text-sm text-text-muted">Generating sample queue activityâ€¦</span>
               )}
             </div>
             <div className="text-xs text-text-muted">
@@ -426,7 +426,7 @@ const monitor = new QueueMonitor({
       {createdProjectId && apiKey && testEventSent && (
         <Card>
           <CardHeader>
-            <CardTitle>Events sent successfully! 🎉</CardTitle>
+            <CardTitle>Events sent successfully! ðŸŽ‰</CardTitle>
             <CardDescription>
               4 sample events have been ingested. Head to your dashboard to see queues, stats, and failures in action.
             </CardDescription>

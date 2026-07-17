@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { insertRow } from '../lib/typedSupabase';
 import { getResend, getResendFromAddress } from '../lib/resend';
 import { errorResponse } from '../lib/responseUtils';
+import { escapeHtml } from '../lib/alertDelivery';
 import { getAppUrl } from '../lib/validationUtils';
 import { logger } from '../lib/logger';
 
@@ -109,13 +110,13 @@ publicRouter.post('/inquiry', async (req: Request, res: Response): Promise<void>
           subject: `[Enterprise] New inquiry from ${name} at ${company}`,
           html: [
             '<h1>New Enterprise Inquiry</h1>',
-            `<p><strong>Name:</strong> ${name}</p>`,
-            `<p><strong>Email:</strong> ${email}</p>`,
-            `<p><strong>Company:</strong> ${company}</p>`,
+            `<p><strong>Name:</strong> ${escapeHtml(name)}</p>`,
+            `<p><strong>Email:</strong> ${escapeHtml(email)}</p>`,
+            `<p><strong>Company:</strong> ${escapeHtml(company)}</p>`,
             `<p><strong>Team Size:</strong> ${teamSize}</p>`,
             `<p><strong>Industry:</strong> ${industry}</p>`,
-            `<p><strong>Current Setup:</strong> ${currentSetup}</p>`,
-            reason ? `<p><strong>Why self-hosted:</strong> ${reason}</p>` : '',
+            `<p><strong>Current Setup:</strong> ${escapeHtml(currentSetup)}</p>`,
+            reason ? `<p><strong>Why self-hosted:</strong> ${escapeHtml(reason)}</p>` : '',
             deployment ? `<p><strong>Preferred Deployment:</strong> ${deployment}</p>` : '',
             timeline ? `<p><strong>Timeline:</strong> ${timeline}</p>` : '',
             '<hr/>',

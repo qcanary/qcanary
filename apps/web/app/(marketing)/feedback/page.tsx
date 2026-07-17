@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import {
@@ -65,12 +65,12 @@ export default function FeedbackPage() {
     <main id="main-content" className="min-h-screen bg-bg text-text-primary">
       <MarketingNav showCompare={false} showBlog={false} />
 
-      {/* ── Section A: Hero ────────────────────────────────── */}
+      {/* â”€â”€ Section A: Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="relative overflow-hidden border-b border-border">
 
         <div className="mx-auto max-w-4xl px-6 py-20 text-center md:py-28">
           <Badge variant="outline" className="mb-6 border-amber-500/40 text-amber-400 animate-fade-in-up">
-            Limited spots — 20 teams max
+            Limited spots â€” 20 teams max
           </Badge>
           <h1 className="animate-fade-in-up-delay-1 text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
             Use QCanary Pro for free.{" "}
@@ -79,7 +79,7 @@ export default function FeedbackPage() {
           <p className="animate-fade-in-up-delay-2 mx-auto mt-4 max-w-2xl text-base leading-relaxed text-text-muted md:text-lg">
             We&rsquo;re a small team building the queue monitoring tool we wish existed.
             We need honest feedback from real BullMQ users. In exchange, you get 3 months of
-            Pro — no credit card, no strings, no sales calls.
+            Pro â€” no credit card, no strings, no sales calls.
           </p>
           <div className="animate-fade-in-up-delay-3 mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <a href="#apply">
@@ -95,7 +95,7 @@ export default function FeedbackPage() {
         </div>
       </section>
 
-      {/* ── Section B: What's Included ──────────────────────── */}
+      {/* â”€â”€ Section B: What's Included â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto max-w-5xl px-6 py-16 md:py-20">
           <h2 className="mb-10 text-center text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">What you get</h2>
@@ -139,7 +139,7 @@ export default function FeedbackPage() {
         </div>
       </section>
 
-      {/* ── Section C: Who This Is For ──────────────────────── */}
+      {/* â”€â”€ Section C: Who This Is For â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-y border-border bg-bg">
         <div className="mx-auto max-w-3xl px-6 py-16 md:py-20">
           <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">Who this is for</h2>
@@ -169,7 +169,7 @@ export default function FeedbackPage() {
         </div>
       </section>
 
-      {/* ── Section D: The Form ─────────────────────────────── */}
+      {/* â”€â”€ Section D: The Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section id="apply" className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto max-w-2xl px-6 py-16 md:py-20">
           <div className="mb-8 text-center">
@@ -184,7 +184,7 @@ export default function FeedbackPage() {
               <Crown className="mx-auto mb-4 h-10 w-10 text-accent" />
               <h3 className="text-lg font-semibold text-text-primary">Application received!</h3>
               <p className="mt-2 text-sm text-text-muted">
-                Thanks for applying. Check your email within 24 hours — we&rsquo;ll send setup
+                Thanks for applying. Check your email within 24 hours â€” we&rsquo;ll send setup
                 instructions if you&rsquo;re a good fit.
               </p>
             </div>
@@ -223,7 +223,7 @@ export default function FeedbackPage() {
                   required
                   rows={3}
                   placeholder="Email processing, image generation, webhook delivery..."
-                  className="flex w-full rounded-xl border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                  className="flex w-full rounded-xl border border-border bg-code-bg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                 />
               </div>
 
@@ -247,7 +247,7 @@ export default function FeedbackPage() {
                   name="reason"
                   rows={3}
                   placeholder="Tell us what caught your attention..."
-                  className="flex w-full rounded-xl border border-border bg-[#0B0B0B] px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                  className="flex w-full rounded-xl border border-border bg-code-bg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                 />
               </div>
 
@@ -258,7 +258,7 @@ export default function FeedbackPage() {
                   name="agreesToFeedback"
                   type="checkbox"
                   required
-                  className="mt-1 h-4 w-4 shrink-0 rounded border-border bg-[#0B0B0B] text-accent focus:ring-accent/70"
+                  className="mt-1 h-4 w-4 shrink-0 rounded border-border bg-code-bg text-accent focus:ring-accent/70"
                 />
                 <Label htmlFor="agreesToFeedback" className="text-sm text-text-primary">
                   Yes, I agree to share honest feedback after 2 weeks of use
@@ -301,7 +301,7 @@ export default function FeedbackPage() {
         </div>
       </section>
 
-      {/* ── Section E: Honesty Footer ───────────────────────── */}
+      {/* â”€â”€ Section E: Honesty Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <section className="border-y border-border bg-bg">
         <div className="mx-auto max-w-3xl px-6 py-16 text-center md:py-20">
           <Shield className="mx-auto mb-4 h-8 w-8 text-accent/60" />

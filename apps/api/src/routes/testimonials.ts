@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { insertRow, updateRows } from '../lib/typedSupabase';
 import { getResend, getResendFromAddress } from '../lib/resend';
 import { errorResponse } from '../lib/responseUtils';
+import { escapeHtml } from '../lib/alertDelivery';
 import { getAppUrl } from '../lib/validationUtils';
 import { logger } from '../lib/logger';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
@@ -107,12 +108,12 @@ publicRouter.post('/submit', async (req: Request, res: Response): Promise<void> 
           subject: `[Testimonial] New submission from ${name} at ${company}`,
           html: [
             '<h1>New Testimonial Submission</h1>',
-            `<p><strong>Name:</strong> ${name}</p>`,
-            `<p><strong>Title:</strong> ${title}</p>`,
-            `<p><strong>Company:</strong> ${company}</p>`,
+            `<p><strong>Name:</strong> ${escapeHtml(name)}</p>`,
+            `<p><strong>Title:</strong> ${escapeHtml(title)}</p>`,
+            `<p><strong>Company:</strong> ${escapeHtml(company)}</p>`,
             linkedinUrl ? `<p><strong>LinkedIn:</strong> ${linkedinUrl}</p>` : '',
             `<p><strong>Recommendation:</strong> ${recommendation}</p>`,
-            `<hr/><blockquote>${testimonial}</blockquote>`,
+            `<hr/><blockquote>${escapeHtml(testimonial)}</blockquote>`,
             '<p>Log into the admin dashboard to review: <a href="${getAppUrl()}/testimonials">${getAppUrl()}/testimonials</a></p>',
           ].join(''),
         });
