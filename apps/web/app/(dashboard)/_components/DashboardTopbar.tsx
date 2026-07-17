@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import * as React from "react";
@@ -26,7 +26,7 @@ function formatSegment(segment: string): string {
   if (breadcrumbLabels[segment]) return breadcrumbLabels[segment];
   // Check if it looks like a UUID (project IDs)
   if (/^[a-f0-9]{8}-[a-f0-9]{4}/i.test(segment) || segment.length > 20) {
-    return segment.slice(0, 8) + "…";
+    return segment.slice(0, 8) + "â€¦";
   }
   // Title-case the segment
   return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
@@ -103,7 +103,7 @@ export function DashboardTopbar() {
 
         {/* Right: search, theme toggle, org switcher, user */}
         <div className="flex items-center gap-2">
-          {/* Search button — placeholder for future cmd+k palette */}
+          {/* Search button â€” placeholder for future cmd+k palette */}
           <div className="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface text-text-muted cursor-default"
             title="Search (Ctrl+K)"
           >
@@ -112,7 +112,7 @@ export function DashboardTopbar() {
 
           {/* Cmd+K hint */}
           <kbd className="hidden lg:inline-flex items-center gap-1 rounded-lg border border-border bg-code-bg px-2 py-1 font-mono text-[10px] text-text-muted">
-            <span className="text-xs">⌘</span>K
+            <span className="text-xs">âŒ˜</span>K
           </kbd>
 
           {/* Theme toggle */}
@@ -124,11 +124,11 @@ export function DashboardTopbar() {
             appearance={{
               variables: {
                 colorPrimary: "#22C55E",
-                colorBackground: "#111111",
-                colorText: "#FAFAFA",
-                colorTextSecondary: "#71717A",
+                colorBackground: "var(--color-surface)",
+                colorText: "var(--color-text-primary)",
+                colorTextSecondary: "var(--color-text-muted)",
                 colorInputBackground: "#0F0F0F",
-                colorInputText: "#FAFAFA",
+                colorInputText: "var(--color-text-primary)",
                 borderRadius: "0.5rem",
               },
               elements: {
@@ -153,9 +153,9 @@ export function DashboardTopbar() {
             appearance={{
               variables: {
                 colorPrimary: "#22C55E",
-                colorBackground: "#111111",
-                colorText: "#FAFAFA",
-                colorTextSecondary: "#71717A",
+                colorBackground: "var(--color-surface)",
+                colorText: "var(--color-text-primary)",
+                colorTextSecondary: "var(--color-text-muted)",
               },
               elements: {
                 userButtonTrigger: "hover:opacity-80 transition-opacity",

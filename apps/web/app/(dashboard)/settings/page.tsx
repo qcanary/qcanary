@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 
@@ -106,7 +106,50 @@ function UsageMeter({
   const percent = limit === null || limit <= 0 ? 100 : Math.min((used / limit) * 100, 100);
   const atLimit = limit !== null && used >= limit;
 
-  return (
+        {/* Key Label Dialog */}
+      {showKeyLabelDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="rounded-xl border border-border bg-surface p-6 shadow-lg w-96">
+            <h3 className="text-lg font-semibold text-text-primary">Create API Key</h3>
+            <p className="mt-2 text-sm text-text-muted">Enter a label for this API key.</p>
+            <input
+              type="text"
+              value={keyLabelInput}
+              onChange={(e) => setKeyLabelInput(e.target.value)}
+              placeholder="e.g., Production CI, Staging"
+              className="mt-4 w-full rounded-lg border border-border bg-code-bg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setShowKeyLabelDialog(false);
+                  // Trigger createKey with the label
+                  createKeyWithLabel(keyLabelInput);
+                } else if (e.key === 'Escape') {
+                  setShowKeyLabelDialog(false);
+                }
+              }}
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setShowKeyLabelDialog(false)}
+                className="rounded-lg px-4 py-2 text-sm text-text-muted hover:text-text-primary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowKeyLabelDialog(false);
+                  createKeyWithLabel(keyLabelInput);
+                }}
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-black hover:bg-accent/90"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-4">
         <div className="text-sm font-medium text-text-primary">{label}</div>
@@ -150,8 +193,12 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
     }
   }, [projectId]);
 
-  async function createKey() {
-    const keyLabel = window.prompt('Enter a label for this API key (e.g., "Production CI", "Staging"):', 'default');
+const [showKeyLabelDialog, setShowKeyLabelDialog] = React.useState(false);
+const [keyLabelInput, setKeyLabelInput] = React.useState('default');
+
+  async function createKeyWithLabel(label: string) {
+    setShowKeyLabelDialog(true);
+    return;
     if (keyLabel === null) return;
     setError(null);
     setCreating(true);
@@ -189,7 +236,50 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
     }
   }
 
-  return (
+        {/* Key Label Dialog */}
+      {showKeyLabelDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="rounded-xl border border-border bg-surface p-6 shadow-lg w-96">
+            <h3 className="text-lg font-semibold text-text-primary">Create API Key</h3>
+            <p className="mt-2 text-sm text-text-muted">Enter a label for this API key.</p>
+            <input
+              type="text"
+              value={keyLabelInput}
+              onChange={(e) => setKeyLabelInput(e.target.value)}
+              placeholder="e.g., Production CI, Staging"
+              className="mt-4 w-full rounded-lg border border-border bg-code-bg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setShowKeyLabelDialog(false);
+                  // Trigger createKey with the label
+                  createKeyWithLabel(keyLabelInput);
+                } else if (e.key === 'Escape') {
+                  setShowKeyLabelDialog(false);
+                }
+              }}
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setShowKeyLabelDialog(false)}
+                className="rounded-lg px-4 py-2 text-sm text-text-muted hover:text-text-primary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowKeyLabelDialog(false);
+                  createKeyWithLabel(keyLabelInput);
+                }}
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-black hover:bg-accent/90"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+return (
     <div className="border border-border rounded-md">
       <button
         type="button"
@@ -203,7 +293,7 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
           <div className="text-sm font-medium text-text-primary">{projectName}</div>
           <div className="text-xs text-text-muted font-mono">{projectId}</div>
         </div>
-        <div className="text-xs text-text-muted">{expanded ? "▲" : "▼"}</div>
+        <div className="text-xs text-text-muted">{expanded ? "â–²" : "â–¼"}</div>
       </button>
 
       {expanded && (
@@ -227,7 +317,7 @@ function ApiKeysPanel({ projectId, projectName }: { projectId: string; projectNa
                         </div>
                         <div className="text-xs text-text-muted">
                           Created {new Date(key.createdAt).toLocaleDateString()}
-                          {key.lastUsedAt && ` · Last used ${new Date(key.lastUsedAt).toLocaleDateString()}`}
+                          {key.lastUsedAt && ` Â· Last used ${new Date(key.lastUsedAt).toLocaleDateString()}`}
                         </div>
                       </div>
                       <Button
@@ -398,7 +488,50 @@ export default function SettingsPage() {
     }
 
     void loadAll();
-    return () => {
+          {/* Key Label Dialog */}
+      {showKeyLabelDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="rounded-xl border border-border bg-surface p-6 shadow-lg w-96">
+            <h3 className="text-lg font-semibold text-text-primary">Create API Key</h3>
+            <p className="mt-2 text-sm text-text-muted">Enter a label for this API key.</p>
+            <input
+              type="text"
+              value={keyLabelInput}
+              onChange={(e) => setKeyLabelInput(e.target.value)}
+              placeholder="e.g., Production CI, Staging"
+              className="mt-4 w-full rounded-lg border border-border bg-code-bg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setShowKeyLabelDialog(false);
+                  // Trigger createKey with the label
+                  createKeyWithLabel(keyLabelInput);
+                } else if (e.key === 'Escape') {
+                  setShowKeyLabelDialog(false);
+                }
+              }}
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setShowKeyLabelDialog(false)}
+                className="rounded-lg px-4 py-2 text-sm text-text-muted hover:text-text-primary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowKeyLabelDialog(false);
+                  createKeyWithLabel(keyLabelInput);
+                }}
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-black hover:bg-accent/90"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+return () => {
       cancelled = true;
     };
   }, []);
@@ -431,7 +564,50 @@ export default function SettingsPage() {
   const currentPlan = plan ?? "free";
   const expiresText = planExpiresAt ? new Date(planExpiresAt).toLocaleString() : null;
 
-  return (
+        {/* Key Label Dialog */}
+      {showKeyLabelDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="rounded-xl border border-border bg-surface p-6 shadow-lg w-96">
+            <h3 className="text-lg font-semibold text-text-primary">Create API Key</h3>
+            <p className="mt-2 text-sm text-text-muted">Enter a label for this API key.</p>
+            <input
+              type="text"
+              value={keyLabelInput}
+              onChange={(e) => setKeyLabelInput(e.target.value)}
+              placeholder="e.g., Production CI, Staging"
+              className="mt-4 w-full rounded-lg border border-border bg-code-bg px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setShowKeyLabelDialog(false);
+                  // Trigger createKey with the label
+                  createKeyWithLabel(keyLabelInput);
+                } else if (e.key === 'Escape') {
+                  setShowKeyLabelDialog(false);
+                }
+              }}
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setShowKeyLabelDialog(false)}
+                className="rounded-lg px-4 py-2 text-sm text-text-muted hover:text-text-primary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowKeyLabelDialog(false);
+                  createKeyWithLabel(keyLabelInput);
+                }}
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-black hover:bg-accent/90"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
@@ -495,7 +671,7 @@ export default function SettingsPage() {
                 {expiresText && <span className="text-sm text-text-muted">Renews/ends: {expiresText}</span>}
                 {currentPlan !== "business" && (
                   <span className="text-xs text-text-muted">
-                    — <button type="button" onClick={() => setActiveTab("Billing")} className="text-accent hover:underline">Upgrade</button> for more features
+                    â€” <button type="button" onClick={() => setActiveTab("Billing")} className="text-accent hover:underline">Upgrade</button> for more features
                   </span>
                 )}
               </div>
@@ -520,7 +696,7 @@ export default function SettingsPage() {
                 <UsageMeter label="Daily events" used={usage.eventsUsedToday} limit={usage.eventsLimit} />
                 {usage.eventsStatus === "grace" && (
                   <div className="rounded-md border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-200">
-                    You&apos;re over your daily event limit but still within the 20% grace period. Events keep flowing — upgrade or wait for the daily reset to avoid a hard cut.
+                    You&apos;re over your daily event limit but still within the 20% grace period. Events keep flowing â€” upgrade or wait for the daily reset to avoid a hard cut.
                   </div>
                 )}
                 {usage.eventsStatus === "hard_capped" && (
@@ -579,7 +755,7 @@ export default function SettingsPage() {
           {couponCode && (
             <div className="rounded-xl border-2 border-orange-400/30 bg-gradient-to-r from-orange-500/10 via-yellow-500/10 to-orange-500/10 p-4">
               <div className="flex items-center gap-2 text-sm">
-                <span>🎉</span>
+                <span>ðŸŽ‰</span>
                 <span className="font-medium text-orange-300">
                   Coupon <code className="rounded-md bg-code-bg px-1.5 py-0.5 font-mono text-accent ring-1 ring-accent/20">{couponCode}</code> applied
                 </span>
@@ -618,7 +794,7 @@ export default function SettingsPage() {
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-md border border-border bg-surface/50 p-4">
               <div className="text-sm font-medium text-text-primary">
-                Solo — {billingInterval === "year" ? "$144/yr" : "$15/mo"}
+                Solo â€” {billingInterval === "year" ? "$144/yr" : "$15/mo"}
               </div>
               <div className="mt-1 text-xs text-text-muted">1 project, 5 queues, Slack + email (2 rules), 14-day history.</div>
               {billingInterval === "year" && (
@@ -633,13 +809,13 @@ export default function SettingsPage() {
                   ? "Current plan"
                   : upgradingPlan === "solo"
                     ? "Redirecting..."
-                    : billingInterval === "year" ? "Upgrade — $144/yr" : "Upgrade to Solo"}
+                    : billingInterval === "year" ? "Upgrade â€” $144/yr" : "Upgrade to Solo"}
               </Button>
             </div>
 
             <div className="rounded-md border border-border bg-surface/50 p-4">
               <div className="text-sm font-medium text-text-primary">
-                Team — {billingInterval === "year" ? "$374/yr" : "$39/mo"}
+                Team â€” {billingInterval === "year" ? "$374/yr" : "$39/mo"}
               </div>
               <div className="mt-1 text-xs text-text-muted">3 projects, webhooks, 100K events/day, 30-day history.</div>
               {billingInterval === "year" && (
@@ -654,13 +830,13 @@ export default function SettingsPage() {
                   ? "Current plan"
                   : upgradingPlan === "team"
                     ? "Redirecting..."
-                    : billingInterval === "year" ? "Upgrade — $374/yr" : "Upgrade to Team"}
+                    : billingInterval === "year" ? "Upgrade â€” $374/yr" : "Upgrade to Team"}
               </Button>
             </div>
 
             <div className="rounded-md border border-border bg-surface/50 p-4">
               <div className="text-sm font-medium text-text-primary">
-                Business — {billingInterval === "year" ? "$1,430/yr" : "$149/mo"}
+                Business â€” {billingInterval === "year" ? "$1,430/yr" : "$149/mo"}
               </div>
               <div className="mt-1 text-xs text-text-muted">Unlimited projects/queues/events, 90-day history.</div>
               {billingInterval === "year" && (
@@ -675,7 +851,7 @@ export default function SettingsPage() {
                   ? "Current plan"
                   : upgradingPlan === "business"
                     ? "Redirecting..."
-                    : billingInterval === "year" ? "Upgrade — $1,430/yr" : "Upgrade to Business"}
+                    : billingInterval === "year" ? "Upgrade â€” $1,430/yr" : "Upgrade to Business"}
               </Button>
             </div>
           </div>

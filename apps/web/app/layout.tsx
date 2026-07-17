@@ -193,12 +193,12 @@ export default function RootLayout({
             appearance={{
               variables: {
                 colorPrimary: "#22C55E",
-                colorBackground: "#111111",
-                colorText: "#FAFAFA",
-                colorTextSecondary: "#71717A",
+                colorBackground: "var(--color-surface)",
+                colorText: "var(--color-text-primary)",
+                colorTextSecondary: "var(--color-text-muted)",
                 colorInputBackground: "#0F0F0F",
-                colorInputText: "#FAFAFA",
-                colorDanger: "#F87171",
+                colorInputText: "var(--color-text-primary)",
+                colorDanger: "var(--color-danger)",
                 borderRadius: "0.5rem",
                 fontFamily: "var(--font-geist)",
               },
