@@ -7,7 +7,8 @@ import { UpgradeModal } from "@/components/dashboard/UpgradeModal";
 import { ToastProvider } from "@/components/Toast";
 import { PageTransition } from "@/components/PageTransition";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { CommandPalette } from "@/components/CommandPalette";
+import dynamic from "next/dynamic";
+const CommandPalette = dynamic(() => import("@/components/CommandPalette").then(m => ({ default: m.CommandPalette })), { ssr: false });
 import type { ReactNode } from "react";
 
 export default function DashboardLayout({

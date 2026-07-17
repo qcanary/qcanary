@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import type { Request, Response } from 'express';
 import * as Sentry from '@sentry/node';
 import { getDodo, verifyDodoWebhook } from '../lib/dodo';
@@ -51,7 +51,7 @@ async function updateTeamPlanById(
   }
 }
 
-// ── In-memory rate limiter for public webhook ─────────────
+// â”€â”€ In-memory rate limiter for public webhook â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const webhookRateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const WEBHOOK_RATE_LIMIT = 100; // requests per window
 const WEBHOOK_RATE_WINDOW_MS = 60_000; // 1 minute
@@ -80,7 +80,7 @@ setInterval(() => {
   }
 }, 60_000);
 
-// ── Public Webhook Endpoint ────────────────────────────────
+// â”€â”€ Public Webhook Endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 publicRouter.post('/webhook', express.raw({ type: 'application/json', limit: '500kb' }), async (req: Request, res: Response) => {
   // Rate limit by IP to protect against webhook floods
@@ -214,13 +214,13 @@ publicRouter.post('/webhook', express.raw({ type: 'application/json', limit: '50
   });
 });
 
-// ── Authenticated Routes ──────────────────────────────────
+// â”€â”€ Authenticated Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 router.use(express.json({ limit: '1mb' }));
 
 
 
-// POST /billing/checkout-session — Create Dodo checkout session
+// POST /billing/checkout-session â€” Create Dodo checkout session
 router.post('/checkout-session', async (req: Request, res: Response) => {
   const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
@@ -285,7 +285,7 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    // Best-effort Sentry capture — never let error reporting crash the handler
+    // Best-effort Sentry capture â€” never let error reporting crash the handler
     if (process.env.SENTRY_DSN) {
       try {
         Sentry.captureException(error, { level: 'error' });
@@ -325,7 +325,7 @@ router.post('/checkout-session', async (req: Request, res: Response) => {
   }
 });
 
-// POST /billing/cancel — Cancel active subscription at next billing date
+// POST /billing/cancel â€” Cancel active subscription at next billing date
 router.post('/cancel', async (req: Request, res: Response) => {
   const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
@@ -348,7 +348,7 @@ router.post('/cancel', async (req: Request, res: Response) => {
     const subscriptionId = teamRow.dodo_subscription_id;
 
     if (!subscriptionId) {
-      // No Dodo subscription on record — just downgrade plan directly
+      // No Dodo subscription on record â€” just downgrade plan directly
       await updateTeamPlanById(teamId, 'free', null);
       res.status(200).json({ success: true, data: { cancelled: true } });
       return;
@@ -372,7 +372,7 @@ router.post('/cancel', async (req: Request, res: Response) => {
   }
 });
 
-// GET /billing/plan — Get current plan for the authenticated team
+// GET /billing/plan â€” Get current plan for the authenticated team
 router.get('/plan', async (req: Request, res: Response) => {
   const teamId = requireTeamContext(req as DashboardAuthedRequest, res);
   if (!teamId) {
