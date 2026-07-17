@@ -1,15 +1,15 @@
-/**
+﻿/**
  * Queue Health Benchmark Engine
  *
  * Aggregates anonymized queue metrics across all QCanary customers and calculates
  * percentile distributions per queue CATEGORY (not per customer). This creates a
- * data moat — the more customers we have, the better the benchmarks become.
+ * data moat â€” the more customers we have, the better the benchmarks become.
  */
 
 import { supabase } from './supabase';
 import { logger } from './logger';
 
-// ── Categories ──────────────────────────────────────────────
+// â”€â”€ Categories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type QueueCategory =
   | 'email'
@@ -34,7 +34,7 @@ export const ALL_CATEGORIES: QueueCategory[] = [
 
 /**
  * Map a queue name to its benchmark category based on keywords.
- * This is deliberately coarse — it groups queues by their typical purpose
+ * This is deliberately coarse â€” it groups queues by their typical purpose
  * so we can compare "email queues" to "email queues" across customers.
  * No individual queue or customer data is ever exposed.
  */
@@ -51,7 +51,7 @@ export function categorizeQueue(queueName: string): QueueCategory {
   return 'general';
 }
 
-// ── Percentile Math ────────────────────────────────────────
+// â”€â”€ Percentile Math â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface PercentileResult {
   p10: number | null;
@@ -101,7 +101,7 @@ export function calculatePercentiles(values: number[]): PercentileResult {
   };
 }
 
-// ── Per-Queue Metrics ──────────────────────────────────────
+// â”€â”€ Per-Queue Metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface QueueMetrics {
   queueName: string;
@@ -205,7 +205,7 @@ async function computeQueueMetrics(
   };
 }
 
-// ── Metric Names ───────────────────────────────────────────
+// â”€â”€ Metric Names â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const BENCHMARK_METRICS = [
   'failure_rate',
@@ -218,7 +218,7 @@ export const BENCHMARK_METRICS = [
 
 export type BenchmarkMetric = typeof BENCHMARK_METRICS[number];
 
-// ── Full Benchmark Calculation ─────────────────────────────
+// â”€â”€ Full Benchmark Calculation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const MIN_SAMPLE_SIZE = 5;
 
@@ -279,7 +279,7 @@ export async function calculateBenchmarks(): Promise<void> {
     if (metricsList.length < MIN_SAMPLE_SIZE) {
       logger.info(
         { category, sampleSize: metricsList.length, minRequired: MIN_SAMPLE_SIZE },
-        'Skipping benchmark — insufficient sample size'
+        'Skipping benchmark â€” insufficient sample size'
       );
       continue;
     }
@@ -362,7 +362,7 @@ export async function calculateBenchmarks(): Promise<void> {
   logger.info({ totalBenchmarks }, 'Benchmark calculation complete');
 }
 
-// ── Assessment Rules ───────────────────────────────────────
+// â”€â”€ Assessment Rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type Assessment = 'excellent' | 'good' | 'average' | 'warning' | 'critical';
 
@@ -405,21 +405,21 @@ export function benchmarkMessage(
   const better = `Better than ${Math.max(1, 100 - percentile)}% of ${sampleSize} similar queues`;
 
   if (assessment === 'excellent') {
-    return `Excellent — ${better}`;
+    return `Excellent â€” ${better}`;
   }
   if (assessment === 'good') {
-    return `Good — ${better}`;
+    return `Good â€” ${better}`;
   }
   if (assessment === 'average') {
-    return 'Average — typical for this type of queue';
+    return 'Average â€” typical for this type of queue';
   }
   if (assessment === 'warning') {
-    return 'Below average — worth investigating';
+    return 'Below average â€” worth investigating';
   }
-  return 'Needs attention — among the lowest performing queues';
+  return 'Needs attention â€” among the lowest performing queues';
 }
 
-// ── Benchmark Retrieval ────────────────────────────────────
+// â”€â”€ Benchmark Retrieval â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface BenchmarkComparison {
   queue: {

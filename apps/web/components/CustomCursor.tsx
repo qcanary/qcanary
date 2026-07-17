@@ -1,4 +1,5 @@
-'use client';
+﻿'use client';
+
 
 import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
@@ -19,7 +20,7 @@ export function CustomCursor() {
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX - 12);
       cursorY.set(e.clientY - 12);
-      setIsVisible(true);
+          requestAnimationFrame(() => setIsVisible(true));
     };
 
     const handleHoverStart = () => setIsHovering(true);
