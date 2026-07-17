@@ -1,16 +1,17 @@
-import express from 'express';
+﻿import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import { insertRow, updateRows } from '../lib/typedSupabase';
 import { getResend, getResendFromAddress } from '../lib/resend';
 import { errorResponse } from '../lib/responseUtils';
+import { getAppUrl } from '../lib/validationUtils';
 import { logger } from '../lib/logger';
 import type { DashboardAuthedRequest } from '../middleware/dashboardAuth';
 
 const publicRouter = express.Router();
 const protectedRouter = express.Router();
 
-// ── Rate limiting (in-memory, public endpoint only) ──────────
+// â”€â”€ Rate limiting (in-memory, public endpoint only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_MAX = 2;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
@@ -39,7 +40,7 @@ const VALID_RECOMMENDATIONS = ['definitely', 'probably', 'maybe', 'no'] as const
 publicRouter.use(express.json({ limit: '256kb' }));
 protectedRouter.use(express.json({ limit: '256kb' }));
 
-// ── POST /submit — Public testimonial submission ─────────────
+// â”€â”€ POST /submit â€” Public testimonial submission â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 publicRouter.post('/submit', async (req: Request, res: Response): Promise<void> => {
   try {
     const clientIp = req.ip ?? req.socket.remoteAddress ?? 'unknown';
@@ -112,7 +113,7 @@ publicRouter.post('/submit', async (req: Request, res: Response): Promise<void> 
             linkedinUrl ? `<p><strong>LinkedIn:</strong> ${linkedinUrl}</p>` : '',
             `<p><strong>Recommendation:</strong> ${recommendation}</p>`,
             `<hr/><blockquote>${testimonial}</blockquote>`,
-            '<p>Log into the admin dashboard to review: <a href="https://qcanary.dev/testimonials">https://qcanary.dev/testimonials</a></p>',
+            '<p>Log into the admin dashboard to review: <a href="${getAppUrl()}/testimonials">${getAppUrl()}/testimonials</a></p>',
           ].join(''),
         });
       }
@@ -130,7 +131,7 @@ publicRouter.post('/submit', async (req: Request, res: Response): Promise<void> 
   }
 });
 
-// ── GET / — List testimonials (protected, admin only) ────────
+// â”€â”€ GET / â€” List testimonials (protected, admin only) â”€â”€â”€â”€â”€â”€â”€â”€
 protectedRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const status = typeof req.query.status === 'string' ? req.query.status : undefined;
@@ -181,7 +182,7 @@ protectedRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// ── PATCH /:id — Update testimonial status (protected) ───────
+// â”€â”€ PATCH /:id â€” Update testimonial status (protected) â”€â”€â”€â”€â”€â”€â”€
 protectedRouter.patch('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -226,7 +227,7 @@ protectedRouter.patch('/:id', async (req: Request, res: Response): Promise<void>
   }
 });
 
-// ── DELETE /:id — Delete testimonial (protected) ─────────────
+// â”€â”€ DELETE /:id â€” Delete testimonial (protected) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 protectedRouter.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;

@@ -1,15 +1,16 @@
-import express from 'express';
+﻿import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import { insertRow } from '../lib/typedSupabase';
 import { getResend, getResendFromAddress } from '../lib/resend';
 import { errorResponse } from '../lib/responseUtils';
+import { getAppUrl } from '../lib/validationUtils';
 import { logger } from '../lib/logger';
 
 const publicRouter = express.Router();
 const protectedRouter = express.Router();
 
-// ── Rate limiting (in-memory, public endpoint only) ──────────
+// â”€â”€ Rate limiting (in-memory, public endpoint only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_MAX = 2;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -40,7 +41,7 @@ const VALID_TIMELINES = ['ASAP', 'This quarter', 'Next quarter', 'Just exploring
 publicRouter.use(express.json({ limit: '256kb' }));
 protectedRouter.use(express.json({ limit: '256kb' }));
 
-// ── POST /inquiry — Public enterprise inquiry submission ─────
+// â”€â”€ POST /inquiry â€” Public enterprise inquiry submission â”€â”€â”€â”€â”€
 publicRouter.post('/inquiry', async (req: Request, res: Response): Promise<void> => {
   try {
     const clientIp = req.ip ?? req.socket.remoteAddress ?? 'unknown';
@@ -118,7 +119,7 @@ publicRouter.post('/inquiry', async (req: Request, res: Response): Promise<void>
             deployment ? `<p><strong>Preferred Deployment:</strong> ${deployment}</p>` : '',
             timeline ? `<p><strong>Timeline:</strong> ${timeline}</p>` : '',
             '<hr/>',
-            '<p>Log into the admin dashboard to view: <a href="https://qcanary.dev/enterprise">https://qcanary.dev/enterprise</a></p>',
+            '<p>Log into the admin dashboard to view: <a href="${getAppUrl()}/enterprise">${getAppUrl()}/enterprise</a></p>',
           ].join(''),
         });
 
@@ -133,12 +134,12 @@ publicRouter.post('/inquiry', async (req: Request, res: Response): Promise<void>
             '<p>Thanks for your interest in QCanary Enterprise. We\'ve received your inquiry and will review it within 24 hours.</p>',
             '<p>If you\'d like to speak with us sooner, reply to this email and we\'ll fast-track your request.</p>',
             '<hr/>',
-            '<p style="color: #666; font-size: 12px;">QCanary — Monitor BullMQ without exposing Redis</p>',
+            '<p style="color: #666; font-size: 12px;">QCanary â€” Monitor BullMQ without exposing Redis</p>',
           ].join(''),
         });
       }
     } catch (emailErr) {
-      // Don't fail the request if email fails — data is stored
+      // Don't fail the request if email fails â€” data is stored
       logger.warn({ err: emailErr }, 'Failed to send enterprise inquiry notification email');
     }
 
@@ -152,7 +153,7 @@ publicRouter.post('/inquiry', async (req: Request, res: Response): Promise<void>
   }
 });
 
-// ── GET / — List inquiries (protected, admin only) ───────────
+// â”€â”€ GET / â€” List inquiries (protected, admin only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 protectedRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const status = typeof req.query.status === 'string' ? req.query.status : undefined;
@@ -201,7 +202,7 @@ protectedRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// ── PATCH /:id — Update inquiry status/notes (protected) ─────
+// â”€â”€ PATCH /:id â€” Update inquiry status/notes (protected) â”€â”€â”€â”€â”€
 protectedRouter.patch('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -241,7 +242,7 @@ protectedRouter.patch('/:id', async (req: Request, res: Response): Promise<void>
   }
 });
 
-// ── DELETE /:id — Delete inquiry (protected) ────────────────
+// â”€â”€ DELETE /:id â€” Delete inquiry (protected) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 protectedRouter.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;

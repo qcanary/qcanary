@@ -1,7 +1,8 @@
-import express from 'express';
+﻿import express from 'express';
 import type { Request, Response } from 'express';
 import { supabase } from '../lib/supabase';
 import { insertRow } from '../lib/typedSupabase';
+import { getAppUrl } from '../lib/validationUtils';
 import { getResend, getResendFromAddress } from '../lib/resend';
 import { errorResponse } from '../lib/responseUtils';
 import { logger } from '../lib/logger';
@@ -10,7 +11,7 @@ import crypto from 'node:crypto';
 
 const router = express.Router();
 
-// POST /invite — Invite a team member
+// POST /invite â€” Invite a team member
 router.post('/invite', async (req: Request, res: Response): Promise<void> => {
   try {
     const authReq = req as DashboardAuthedRequest;
@@ -58,7 +59,7 @@ router.post('/invite', async (req: Request, res: Response): Promise<void> => {
     const resend = getResend();
     if (resend) {
       const fromAddress = getResendFromAddress();
-      const inviteUrl = `https://qcanary.dev/accept-invite?token=${token}`;
+    const inviteUrl = `${getAppUrl()}/accept-invite?token=${token}`;
 
       await resend.emails.send({
         from: fromAddress,
@@ -82,7 +83,7 @@ router.post('/invite', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// POST /accept — Accept an invite
+// POST /accept â€” Accept an invite
 router.post('/accept', async (req: Request, res: Response): Promise<void> => {
   try {
     const { token } = req.body as { token?: string };
@@ -131,7 +132,7 @@ router.post('/accept', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// GET / — List pending invites
+// GET / â€” List pending invites
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const authReq = req as DashboardAuthedRequest;
@@ -162,7 +163,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// DELETE /:id — Revoke an invite
+// DELETE /:id â€” Revoke an invite
 router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
