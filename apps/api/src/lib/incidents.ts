@@ -1,27 +1,5 @@
-import { supabase } from './supabase';
+﻿import { supabase } from './supabase';
 import { logger } from './logger';
-
-export interface IncidentEvent {
-  queueName: string;
-  jobId: string;
-  jobName: string | null;
-  status: string;
-  errorMessage: string | null;
-  durationMs: number | null;
-  timestamp: string;
-}
-
-export interface Incident {
-  id: string;
-  projectId: string;
-  startTime: string;
-  endTime: string | null;
-  affectedQueues: string[];
-  totalEvents: number;
-  failedEvents: number;
-  rootCause: string | null;
-  events: IncidentEvent[];
-}
 
 interface EventRow {
   queue_name: string;
@@ -33,32 +11,60 @@ interface EventRow {
   timestamp: string;
 }
 
-export async function detectActiveIncidents(
-  projectId: string
-): Promise<Incident[]> {
+export interface Incident {
+  id: string;
+  projectId: string;
+  startTime: string;
+  endTime: string;
+  affectedQueues: string[];
+  totalEvents: number;
+  failedEvents: number;
+  rootCause: string | null;
+  events: Array<{
+    queueName: string;
+    jobId: string;
+    jobName: string | null;
+    status: string;
+    errorMessage: string | null;
+    durationMs: number | null;
+    timestamp: string;
+  }>;
+}
+
+const INCIDENT_BUCKET_MS = 5 * 60 * 1000; // 5 minutes
+const INCIDENT_THRESHOLD = 3;
+
+/**
+ * Detect active incidents for a project by analyzing recent failures.
+ * Groups failed/stalled events into 5-minute buckets and identifies
+ * buckets with 3+ failures as potential incidents.
+ */
+export async function detectActiveIncidents(projectId: string): Promise<Incident[]> {
   try {
-    // Find recent failure clusters — events with status 'failed' in the last hour
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
-    const { data: recentEvents, error } = await supabase
+    // Single query: fetch all failed/stalled events in the last hour
+    const { data: events, error } = await supabase
       .from('job_events')
       .select('queue_name, job_id, job_name, status, error_message, duration_ms, timestamp')
       .eq('project_id', projectId)
-      .gte('timestamp', oneHourAgo)
       .in('status', ['failed', 'stalled'])
+      .gte('timestamp', oneHourAgo)
       .order('timestamp', { ascending: true });
 
-    if (error || !recentEvents || recentEvents.length === 0) {
+    if (error) {
+      logger.error({ err: error, projectId }, 'Failed to query job events for incidents');
       return [];
     }
 
-    const events = recentEvents as EventRow[];
+    const failedEvents = (events ?? []) as EventRow[];
+    if (failedEvents.length === 0) return [];
 
-    // Group failures by time window (5-minute buckets)
+    // Group into 5-minute buckets
     const buckets = new Map<string, EventRow[]>();
-    for (const event of events) {
+    for (const event of failedEvents) {
       const time = new Date(event.timestamp);
-      const bucketKey = `${Math.floor(time.getTime() / (5 * 60 * 1000)) * 5 * 60 * 1000}`;
+      const bucketKey = `${Math.floor(time.getTime() / INCIDENT_BUCKET_MS) * INCIDENT_BUCKET_MS}`;
       if (!buckets.has(bucketKey)) buckets.set(bucketKey, []);
       buckets.get(bucketKey)!.push(event);
     }
@@ -68,13 +74,13 @@ export async function detectActiveIncidents(
     let incidentId = 0;
 
     for (const [, bucketEvents] of buckets) {
-      if (bucketEvents.length < 3) continue;
+      if (bucketEvents.length < INCIDENT_THRESHOLD) continue;
 
       const affectedQueues = [...new Set(bucketEvents.map((e) => e.queue_name))];
       const startTime = bucketEvents[0].timestamp;
       const endTime = bucketEvents[bucketEvents.length - 1].timestamp;
 
-      // Get all events in this time window (including non-failed for context)
+      // Fetch context events (all events in this time window, not just failed)
       const { data: contextEvents } = await supabase
         .from('job_events')
         .select('queue_name, job_id, job_name, status, error_message, duration_ms, timestamp')
