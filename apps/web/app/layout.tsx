@@ -147,7 +147,7 @@ export default function RootLayout({
                 "@type": "Offer",
                 price: "0",
                 priceCurrency: "USD",
-                description: "Free tier available. Solo $15/mo, Team $39/mo, Business $149/mo.",
+                description: "Free tier available. Team $39/mo, Business $149/mo. Enterprise custom pricing.",
               },
               author: {
                 "@type": "Organization",

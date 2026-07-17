@@ -1,8 +1,8 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Script from "next/script";
 import type { Metadata } from "next";
 
-import MarketingNav from "@/components/MarketingNav";
+
 import { BrandLockup } from "@/components/Brand";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://qcanary.dev";
 
 export const metadata: Metadata = {
-  title: "QCanary Docs — BullMQ Monitoring Agent",
+  title: "QCanary Docs â€” BullMQ Monitoring Agent",
   description:
     "Install @qcanary/agent in your worker process to stream BullMQ queue events over HTTPS. No Redis credentials required. Quick start, configuration, alert rules, and API key management.",
   alternates: {
@@ -35,9 +35,8 @@ function CodeBlock({ children }: { children: string }) {
 export default function DocsPage() {
   return (
     <>
-      <MarketingNav showCompare={false} showBlog={false} />
       <div className="mx-auto w-full max-w-5xl space-y-8 px-4 py-10 md:px-6">
-        {/* ── Header ───────────────────────────────────────────── */}
+        {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="space-y-3">
           <BrandLockup
             href="/"
@@ -54,7 +53,7 @@ export default function DocsPage() {
           </Link>
         </div>
 
-        {/* ── Quick Start (condensed) ──────────────────────────── */}
+        {/* â”€â”€ Quick Start (condensed) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <Card>
           <CardHeader>
             <CardTitle>Quick start</CardTitle>
@@ -82,7 +81,7 @@ await monitor.start();`}</CodeBlock>
 
         <Separator />
 
-        {/* ── Browse by topic ──────────────────────────────────── */}
+        {/* â”€â”€ Browse by topic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="space-y-4">
           <h2 className="text-xl font-semibold tracking-tight">Browse by topic</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -121,7 +120,7 @@ await monitor.start();`}</CodeBlock>
           </div>
         </div>
 
-        {/* ── Dashboard overview ───────────────────────────────── */}
+        {/* â”€â”€ Dashboard overview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <Card id="dashboard">
           <CardHeader>
             <CardTitle>Dashboard overview</CardTitle>
@@ -160,7 +159,7 @@ await monitor.start();`}</CodeBlock>
           </CardContent>
         </Card>
 
-        {/* ── Team Management ──────────────────────────────────── */}
+        {/* â”€â”€ Team Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <Card id="teams">
           <CardHeader>
             <CardTitle>Team management</CardTitle>
@@ -174,7 +173,7 @@ await monitor.start();`}</CodeBlock>
           </CardContent>
         </Card>
 
-        {/* ── Security Model ───────────────────────────────────── */}
+        {/* â”€â”€ Security Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <Card>
           <CardHeader>
             <CardTitle>Security model</CardTitle>
@@ -214,7 +213,7 @@ await monitor.start();`}</CodeBlock>
           </CardContent>
         </Card>
 
-        {/* ── Plans & Limits ───────────────────────────────────── */}
+        {/* â”€â”€ Plans & Limits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <Card>
           <CardHeader>
             <CardTitle>Plans &amp; limits</CardTitle>
@@ -295,7 +294,7 @@ await monitor.start();`}</CodeBlock>
           </CardContent>
         </Card>
 
-        {/* ── Troubleshooting ──────────────────────────────────── */}
+        {/* â”€â”€ Troubleshooting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <Card>
           <CardHeader>
             <CardTitle>Troubleshooting</CardTitle>

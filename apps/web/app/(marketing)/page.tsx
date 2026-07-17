@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
 import MarketingNav from "@/components/MarketingNav";
@@ -48,13 +48,13 @@ const pricingRows: Array<{
   { feature: "Queues per project", free: "1", solo: "5", team: "10", business: "Unlimited", enterprise: "Unlimited" },
   { feature: "Event history", free: "24 hours", solo: "14 days", team: "30 days", business: "90 days", enterprise: "Unlimited" },
   { feature: "Events per day", free: "5,000", solo: "25,000", team: "100,000", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Slack alerts", free: "—", solo: "✓", team: "✓", business: "✓", enterprise: "✓" },
+  { feature: "Slack alerts", free: "â€”", solo: "âœ“", team: "âœ“", business: "âœ“", enterprise: "âœ“" },
   { feature: "Email alerts", free: "1 rule", solo: "2 rules", team: "Unlimited", business: "Unlimited", enterprise: "Unlimited" },
-  { feature: "Webhook alerts", free: "—", solo: "—", team: "✓", business: "✓", enterprise: "✓" },
+  { feature: "Webhook alerts", free: "â€”", solo: "â€”", team: "âœ“", business: "âœ“", enterprise: "âœ“" },
   { feature: "Team members", free: "1", solo: "1", team: "5", business: "20", enterprise: "Unlimited" },
-  { feature: "SSO/SAML", free: "—", solo: "—", team: "—", business: "✓", enterprise: "✓" },
-  { feature: "Self-hosted", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
-  { feature: "Custom SLA", free: "—", solo: "—", team: "—", business: "—", enterprise: "✓" },
+  { feature: "SSO/SAML", free: "â€”", solo: "â€”", team: "â€”", business: "âœ“", enterprise: "âœ“" },
+  { feature: "Self-hosted", free: "â€”", solo: "â€”", team: "â€”", business: "â€”", enterprise: "âœ“" },
+  { feature: "Custom SLA", free: "â€”", solo: "â€”", team: "â€”", business: "â€”", enterprise: "âœ“" },
 ];
 
 async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
@@ -72,7 +72,7 @@ async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
           </p>
         </div>
 
-        {/* Featured post — full-width highlight */}
+        {/* Featured post â€” full-width highlight */}
         <Link href={`/blog/${first.slug}`} className="group block">
           <div className="mb-6 rounded-xl border border-border bg-surface/50 p-6 transition-all hover:border-accent/30 md:p-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -99,7 +99,7 @@ async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
           </div>
         </Link>
 
-        {/* Rest — compact side-by-side */}
+        {/* Rest â€” compact side-by-side */}
         <div className="grid gap-4 md:grid-cols-2">
           {rest.map((post) => (
             <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
@@ -121,7 +121,7 @@ async function LatestBlogSection({ posts }: { posts: BlogPostMeta[] }) {
 
         <div className="mt-8 text-center">
           <Link href="/blog">
-            <Button variant="secondary" size="sm">View all posts →</Button>
+            <Button variant="secondary" size="sm">View all posts â†’</Button>
           </Link>
         </div>
       </div>
@@ -148,7 +148,7 @@ export default async function MarketingPage() {
       <ComparisonSection />
       <SocialProofSection />
 
-      {/* ── Dashboard Preview ──────────────────────────────────── */}
+      {/* â”€â”€ Dashboard Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <ParallaxSection>
         <section className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
           <div className="mb-10 max-w-2xl">
@@ -175,7 +175,7 @@ export default async function MarketingPage() {
       <TestimonialShowcase />
       <SecuritySection />
 
-      {/* ── Why I Built This ──────────────────────────────────── */}
+      {/* â”€â”€ Why I Built This â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <ScrollReveal>
         <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 md:py-20">
@@ -191,7 +191,7 @@ export default async function MarketingPage() {
               </p>
               <p>
                 So I built QCanary. The agent runs inside your own worker process. Your Redis
-                credentials never leave your network. We only see metadata — never your job payloads,
+                credentials never leave your network. We only see metadata â€” never your job payloads,
                 never your data, never your keys.
               </p>
             </div>
@@ -230,7 +230,7 @@ export default async function MarketingPage() {
             </p>
           </div>
 
-          {/* Pricing — 5-tier grid */}
+          {/* Pricing â€” 5-tier grid */}
           <div className="mb-10 grid gap-4 md:grid-cols-3 lg:grid-cols-5">
             {/* Free */}
             <div className="relative rounded-xl border border-border bg-surface/30 p-5">
@@ -267,7 +267,7 @@ export default async function MarketingPage() {
               <Link href="/sign-up" className="mt-5 block"><Button size="sm" className="w-full" variant="secondary">Start Solo</Button></Link>
             </div>
 
-            {/* Team — featured */}
+            {/* Team â€” featured */}
             <div className="relative -mx-2 scale-[1.04] z-10 rounded-2xl border-2 border-accent/40 bg-gradient-to-br from-accent/5 via-surface/30 to-code-bg p-6 shadow-lg shadow-accent/10">
               <div className="pointer-events-none absolute -right-12 -top-12 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
               <h3 className="text-base font-semibold text-text-primary">Team</h3>
@@ -367,10 +367,10 @@ export default async function MarketingPage() {
       </section>
       </ScrollReveal>
 
-      {/* ── Latest from the Blog ───────────────────────────────── */}
+      {/* â”€â”€ Latest from the Blog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <LatestBlogSection posts={posts} />
 
-      {/* ── FAQ ────────────────────────────────────────────────── */}
+      {/* â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <ScrollReveal>
         <section className="border-y border-border bg-gradient-to-b from-surface/20 to-bg">
         <div className="mx-auto w-full max-w-3xl px-6 py-16 md:py-20">
@@ -393,7 +393,7 @@ export default async function MarketingPage() {
               },
               {
                 q: "Can I view failed job details?",
-                a: "Yes. Every plan includes job-level detail and stack traces — full error message, attempts, and metadata.",
+                a: "Yes. Every plan includes job-level detail and stack traces â€” full error message, attempts, and metadata.",
               },
               {
                 q: "Is there a free plan?",
@@ -463,10 +463,10 @@ export default async function MarketingPage() {
         }}
       />
 
-      {/* ── Email Capture ──────────────────────────────────────── */}
+      {/* â”€â”€ Email Capture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <EmailCapture />
 
-      {/* ── CTA ────────────────────────────────────────────────── */}
+      {/* â”€â”€ CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <ScrollReveal>
         <section className="relative overflow-hidden border-y border-border bg-gradient-to-b from-bg via-accent/[0.02] to-bg">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-24 text-center md:py-32">
@@ -491,7 +491,7 @@ export default async function MarketingPage() {
             </Link>
           </div>
           <p className="animate-fade-in-up-delay-3 mt-8 text-xs text-text-muted">
-            No credit card required · 3-line setup · 10 minutes to first event
+            No credit card required Â· 3-line setup Â· 10 minutes to first event
           </p>
         </div>
       </section>

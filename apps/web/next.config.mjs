@@ -1,4 +1,4 @@
-import { withReticle } from '@reticlehq/core/next';
+﻿import { withReticle } from '@reticlehq/core/next';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -9,6 +9,40 @@ const nextConfig = {
         hostname: 'img.shields.io',
       },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/testimonials',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/enterprise-leads',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/ph',
+        destination: '/blog',
+        permanent: true,
+      },
+      {
+        source: '/compare',
+        destination: '/pricing',
+        permanent: true,
+      },
+      {
+        source: '/features',
+        destination: '/docs',
+        permanent: true,
+      },
+      {
+        source: '/testimonial',
+        destination: '/',
+        permanent: true,
+      },
+    ];
   },
 };
 
