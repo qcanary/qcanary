@@ -1,4 +1,4 @@
 {
   "framework": "nextjs",
-  "installCommand": "npm install --install-strategy=linked"
+  "installCommand": "npm install --install-strategy=linked --legacy-peer-deps"
 }
